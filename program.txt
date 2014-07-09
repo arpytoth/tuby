@@ -1,0 +1,9 @@
+int i; 
+int k;
+k = 98;
+i = 10; 
+
+int j;
+j = i + k;
+print(j);
+print(k);
