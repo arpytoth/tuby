@@ -36,6 +36,16 @@ Value *eval(AstNode *node)
         result->data.int_val = v1->data.int_val + v2->data.int_val;
         return result;
     }
+    else if (node->type == antMul)
+    {
+        Binary *terms = &node->content.bin_terms;
+        Value *v1 = eval(terms->term1);
+        Value *v2 = eval(terms->term2);
+
+        Value *result = (Value*)malloc(sizeof(Value));
+        result->data.int_val = v1->data.int_val * v2->data.int_val;
+        return result;
+    }
     else
     {
         error("Fatal Error: invalid expression node");

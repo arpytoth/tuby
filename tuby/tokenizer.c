@@ -119,6 +119,9 @@ int next_token()
     if (g_source.current == '+')
         return read_add();
     
+    if (g_source.current == '*')
+        return read_mul();
+    
     if (is_letter(g_source.current))
         return read_identifier();
 
@@ -176,6 +179,16 @@ int read_identifier()
 }
 
 
+int read_mul()
+{
+    g_token.type = ttMul;
+    g_token.repr[0] = '*';
+    g_token.repr[1] = '\0';
+    next_char();
+    return 1;
+}
+
+
 int read_add()
 {
     g_token.type = ttAdd;
@@ -184,7 +197,6 @@ int read_add()
     next_char();
     return 1;
 }
-
 
 
 int read_open_bracket()

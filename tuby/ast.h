@@ -96,6 +96,7 @@ enum AstNodeType
     antAssign,
     antVarVal,
     antAdd,
+    antMul,
     antStmtList
 };
 
@@ -189,5 +190,10 @@ struct AstNodeT
  * Create a new add node between the two terms, t1 and t2.
  */
 AstNode *ast_add(AstNode *t1, AstNode *t2);
+
+/*
+ * Create a new multiply node between the two terms t1 and t2. 
+ */
+AstNode *ast_mul(AstNode *t1, AstNode *t2);
 
 #endif // _AST_H_ 

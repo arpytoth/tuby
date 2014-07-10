@@ -13,6 +13,7 @@ enum TokenType
     ttCloseBracket,
     ttAssign,
     ttAdd,
+    ttMul,
     ttEOF
 };
 
@@ -58,6 +59,11 @@ int read_closed_bracket();
 int read_semilcon();
 
 int read_identifier();
+
+/*
+ * Reat the multiplier operator from the token stream.
+ */
+int read_mul();
 
 /*
  * Read the add operator from the token stream (+).

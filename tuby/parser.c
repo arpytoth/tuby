@@ -105,48 +105,76 @@ AstNode *parse_stmt()
     return 0;
 }
 
-//-----------------------------------------------------------------------------
 
-AstNode *parse_expr()
+AstNode *parse_term()
 {
-    AstNode *expr = NULL;
+    AstNode *term = NULL;
     
     if (g_token.type == ttNumber)
     {
-        expr = (AstNode*)malloc(sizeof(AstNode));
-        expr->content.int_val.value = atoi(g_token.repr);
-        expr->type = antIntVal;
-        expr->value_type = &IntType;
+        term = (AstNode*)malloc(sizeof(AstNode));
+        term->content.int_val.value = atoi(g_token.repr);
+        term->type = antIntVal;
+        term->value_type = &IntType;
         next_token();
     }
     else if (g_token.type == ttIdentifier)
     {
-        expr = (AstNode*)malloc(sizeof(AstNode));
-        expr->content.var_val.name = get_token_repr();
-        expr->type = antVarVal;
-        expr->value_type = &IntType;
+        term = (AstNode*)malloc(sizeof(AstNode));
+        term->content.var_val.name = get_token_repr();
+        term->type = antVarVal;
+        term->value_type = &IntType;
         next_token();
     }
     else
     {
         error("Expression expected.");
     }
+    return term;
+}
 
-    if (g_token.type == ttAdd)
+
+AstNode *parse_mul()
+{
+    AstNode *term1 = parse_term();
+    if (g_token.type == ttMul)
     {
-        AstNode *add = NULL;
-        AstNode *t1 = expr;
-        AstNode *t2 = NULL;
+        AstNode *term2 = NULL;
+        AstNode *mul = NULL;
 
         next_token();
-        t2 = parse_expr();
-        if (t2 == NULL)
-            error("Expression expected");
-
-        add = ast_add(t1, t2);
-        expr = add;
+        term2 = parse_mul();
+        mul = ast_mul(term1, term2);
+        return mul;
     }
-   
+    else
+    {
+        return term1;
+    }
+}
+
+AstNode *parse_add()
+{
+    AstNode *term1 = parse_mul();
+    if (g_token.type == ttAdd)
+    {
+        AstNode *term2 = NULL;
+        AstNode *add = NULL;
+        next_token();
+        term2 = parse_add();
+        add = ast_add(term1, term2);
+        return add;
+    }
+    else
+    {
+        return term1;
+    }
+}
+
+AstNode *parse_expr()
+{
+    AstNode *expr = NULL;
+    expr = parse_add();
     return expr;
 }
 
