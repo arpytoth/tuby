@@ -1,7 +1,9 @@
 #ifndef _TOKENIZER_H_
 #define _TOKENIZER_H_
 
-/* Enumeration of all possible token types.*/
+/* 
+ * Enumeration of all possible token types.
+ */
 enum TokenType
 {
     ttNumber,
@@ -10,6 +12,7 @@ enum TokenType
     ttOpenBracket,
     ttCloseBracket,
     ttAssign,
+    ttAdd,
     ttEOF
 };
 
@@ -55,6 +58,11 @@ int read_closed_bracket();
 int read_semilcon();
 
 int read_identifier();
+
+/*
+ * Read the add operator from the token stream (+).
+ */
+int read_add();
 
 /*
  * Read assignment token from the stream.

@@ -116,6 +116,9 @@ int next_token()
     if (g_source.current == '=')
         return read_assign();
 
+    if (g_source.current == '+')
+        return read_add();
+    
     if (is_letter(g_source.current))
         return read_identifier();
 
@@ -171,6 +174,18 @@ int read_identifier()
     g_token.type = ttIdentifier;
     return 1;
 }
+
+
+int read_add()
+{
+    g_token.type = ttAdd;
+    g_token.repr[0] = '+';
+    g_token.repr[1] = '\0';
+    next_char();
+    return 1;
+}
+
+
 
 int read_open_bracket()
 {

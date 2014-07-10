@@ -95,6 +95,7 @@ enum AstNodeType
     antVarDecl,
     antAssign,
     antVarVal,
+    antAdd,
     antStmtList
 };
 
@@ -141,6 +142,16 @@ typedef struct
 } Assign;
 
 
+/*
+ * Structure that holds the two terms of a binary operation.
+ */
+typedef struct
+{
+    AstNode *term1;
+    AstNode *term2;
+} Binary;
+
+
 /* Union of all node contents.*/
 union AllNodeContent
 {
@@ -150,7 +161,12 @@ union AllNodeContent
     Assign assign;
     VarDecl var_decl;
     VarVal var_val;
+
+    /* In case of a binary operation this is where the terms are held. */
+    Binary bin_terms;
 };
+
+
 /* 
  * Well this is basically a node in the abstract syntax tree. The job of the
  * parser is to convert from tokens to AstNodes. Then the AST nodes are fed to
@@ -164,5 +180,14 @@ struct AstNodeT
     /* Data type of this expression. If expression. */
     ValueType *value_type;
 };
+
+
+//------------------------------------------------------------------------------
+
+
+/*
+ * Create a new add node between the two terms, t1 and t2.
+ */
+AstNode *ast_add(AstNode *t1, AstNode *t2);
 
 #endif // _AST_H_ 

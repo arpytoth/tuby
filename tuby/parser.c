@@ -109,32 +109,45 @@ AstNode *parse_stmt()
 
 AstNode *parse_expr()
 {
+    AstNode *expr = NULL;
+    
     if (g_token.type == ttNumber)
     {
-        AstNode *int_val;
-        int_val = (AstNode*)malloc(sizeof(AstNode));
-        int_val->content.int_val.value = atoi(g_token.repr);
-        int_val->type = antIntVal;
-        int_val->value_type = &IntType;
+        expr = (AstNode*)malloc(sizeof(AstNode));
+        expr->content.int_val.value = atoi(g_token.repr);
+        expr->type = antIntVal;
+        expr->value_type = &IntType;
         next_token();
-        return int_val;
     }
     else if (g_token.type == ttIdentifier)
     {
-        AstNode *var_node;
-
-        var_node = (AstNode*)malloc(sizeof(AstNode));
-        var_node->content.var_val.name = get_token_repr();
-        var_node->type = antVarVal;
-        var_node->value_type = &IntType;
+        expr = (AstNode*)malloc(sizeof(AstNode));
+        expr->content.var_val.name = get_token_repr();
+        expr->type = antVarVal;
+        expr->value_type = &IntType;
         next_token();
-        return var_node;
     }
     else
     {
         error("Expression expected.");
     }
-    return NULL;
+
+    if (g_token.type == ttAdd)
+    {
+        AstNode *add = NULL;
+        AstNode *t1 = expr;
+        AstNode *t2 = NULL;
+
+        next_token();
+        t2 = parse_expr();
+        if (t2 == NULL)
+            error("Expression expected");
+
+        add = ast_add(t1, t2);
+        expr = add;
+    }
+   
+    return expr;
 }
 
 //-----------------------------------------------------------------------------
