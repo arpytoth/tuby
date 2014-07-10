@@ -174,7 +174,14 @@ int read_identifier()
     size = end - start + 2;
     strncpy(g_token.repr, g_source.buffer + start, size - 1);
     g_token.repr[size - 1] = '\0';
-    g_token.type = ttIdentifier;
+    
+    if (strcmp(g_token.repr, "true") == 0)
+        g_token.type = ttTrue;
+    else if (strcmp(g_token.repr, "false") == 0)
+        g_token.type = ttFalse;
+    else
+        g_token.type = ttIdentifier;
+    
     return 1;
 }
 

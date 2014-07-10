@@ -11,12 +11,15 @@
 struct AstNodeT;
 typedef struct AstNodeT AstNode;
 
+
 /* Enumeration of all primitive types.*/
 enum PrimitiveType
 {
     ptVoid,
+    ptBool,
     ptInt
 };
+
 
 /* Type of a value.*/
 typedef struct
@@ -32,7 +35,9 @@ typedef struct
 typedef union
 {
     int int_val;
+    int bool_val;
 } AllValues;
+
 
 /*
  * A value in the Tuby program, basically a meaningfull chunk of memory such as
@@ -50,6 +55,7 @@ typedef struct
     /* Number of actual variables  that are currently using this value. */
     int ref_count;
 } Value;
+
 
 /* 
  * A variable from the Tuby program. 
@@ -91,6 +97,7 @@ enum AstNodeType
 {
     antFuncCall,
     antIntVal,
+    antBoolVal,
     antVarDecl,
     antAssign,
     antVarVal,
@@ -99,6 +106,7 @@ enum AstNodeType
     antStmtList
 };
 
+
 /* Causes the interpretor to call a function. */
 typedef struct FuncCallT
 {
@@ -106,12 +114,14 @@ typedef struct FuncCallT
     struct FuncDef* func; /* The function to be called. */
 } FuncCall;
 
+
 /* An integer literal value in a Tuby Program.*/
 typedef struct
 {
     /* The actual int value. */
     int value;
 } IntVal;
+
 
 /*
  * Instruction that will cause the creation of a new variable with the
@@ -123,10 +133,12 @@ typedef struct
     char *name;
 } VarDecl;
 
+
 typedef struct
 {
     char *name;
 }VarVal;
+
 
 /*
  * Instruction that will cause the variable with the specified name to
@@ -161,6 +173,9 @@ union AllNodeContent
     Assign assign;
     VarDecl var_decl;
     VarVal var_val;
+    
+    /* 0 for false, 1 for true.*/
+    int bool_val;
 
     /* In case of a binary operation this is where the terms are held. */
     Binary bin_terms;
@@ -181,9 +196,9 @@ struct AstNodeT
     ValueType *value_type;
 };
 
-
-//------------------------------------------------------------------------------
-
+////////////////////////////////////////////////////////////////////////////////
+// AST functions.
+////////////////////////////////////////////////////////////////////////////////
 
 /*
  * Create a new add node between the two terms, t1 and t2.
@@ -194,5 +209,11 @@ AstNode *ast_add(AstNode *t1, AstNode *t2);
  * Create a new multiply node between the two terms t1 and t2. 
  */
 AstNode *ast_mul(AstNode *t1, AstNode *t2);
+
+/*
+ * Create a new BoolValue node for the specified boolean value.
+ * value = 0 means false, value = 1 means true.
+ */
+AstNode *ast_bool_val(int value);
 
 #endif // _AST_H_ 

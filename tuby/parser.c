@@ -129,6 +129,17 @@ AstNode *parse_term()
         term->value_type = IntType;
         next_token();
     }
+    else if (g_token.type == ttTrue || g_token.type == ttFalse)
+    {
+        int val;
+        if (g_token.type == ttTrue)
+            val = 1;
+        else
+            val = 0;
+
+        term = ast_bool_val(val);
+        next_token();
+    }
     else if (g_token.type == ttIdentifier)
     {
         term = (AstNode*)malloc(sizeof(AstNode));
