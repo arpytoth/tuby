@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "type_map.h"
 #include "func_table.h"
 #include "stack.h"
 
@@ -58,7 +59,7 @@ void init_func_table()
     g_tuby_print_int.native = print;
     g_tuby_print_int.params = (vector*)malloc(sizeof(vector));
     vector_init(g_tuby_print_int.params);
-    vector_push(g_tuby_print_int.params, &IntType);
+    vector_push(g_tuby_print_int.params, IntType);
     insert_func(&g_tuby_print_int);
 }
 

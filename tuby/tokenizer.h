@@ -14,6 +14,12 @@ enum TokenType
     ttAssign,
     ttAdd,
     ttMul,
+    ttEquals,
+    ttLess,
+    ttGreater,
+    ttTrue,
+    ttFalse,
+    ttIF,
     ttEOF
 };
 
@@ -69,6 +75,10 @@ int read_mul();
  * Read the add operator from the token stream (+).
  */
 int read_add();
+
+int read_less();
+int read_greater();
+int read_equals();
 
 /*
  * Read assignment token from the stream.

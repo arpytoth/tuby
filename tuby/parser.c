@@ -8,7 +8,8 @@
 #include "utils.h"
 #include "vector.h"
 #include "var_map.h"
-
+#include "type_map.h"
+ 
 /* Root node of the syntax tree. */
 AstNode g_root;
 
@@ -19,11 +20,13 @@ AstNode *parse_stmt()
 
     if (g_token.type == ttIdentifier)
     {
+        ValueType *val_type = NULL;
         char *identifier = get_token_repr();
         next_token();
         
+        val_type = type_map_get(identifier);
         // Variable declaration.
-        if (strcmp(identifier, "int") == 0)
+        if (val_type != NULL)
         {
             AstNode *var_decl;
 
@@ -109,13 +112,21 @@ AstNode *parse_stmt()
 AstNode *parse_term()
 {
     AstNode *term = NULL;
-    
-    if (g_token.type == ttNumber)
+  
+    if (g_token.type == ttOpenBracket)
+    {
+        next_token();
+        term = parse_expr();
+        if (g_token.type != ttCloseBracket)
+            error("Missing ) ");
+        next_token();
+    }
+    else  if (g_token.type == ttNumber)
     {
         term = (AstNode*)malloc(sizeof(AstNode));
         term->content.int_val.value = atoi(g_token.repr);
         term->type = antIntVal;
-        term->value_type = &IntType;
+        term->value_type = IntType;
         next_token();
     }
     else if (g_token.type == ttIdentifier)
@@ -123,7 +134,7 @@ AstNode *parse_term()
         term = (AstNode*)malloc(sizeof(AstNode));
         term->content.var_val.name = get_token_repr();
         term->type = antVarVal;
-        term->value_type = &IntType;
+        term->value_type = IntType;
         next_token();
     }
     else

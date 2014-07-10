@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "ast.h"
-ValueType IntType;
 
 AstNode *ast_add(AstNode *t1, AstNode *t2)
 {

@@ -1,3 +1,3 @@
-int i; 
-i = 1 + 10 * 2 + 2 * 5 ;
-print(i);
+boolean ok;
+ok = true;
+print(ok);
