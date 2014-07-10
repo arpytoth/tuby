@@ -2,6 +2,7 @@
 #define _AST_H_
 
 #include "vector.h"
+#include "list.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Types
@@ -139,25 +140,12 @@ typedef struct
     AstNode *expr;
 } Assign;
 
-/* An entry in an AstNode list. */
-struct AstNodeListEntry
-{
-    struct AstNodeT *stmt;
-    struct AstNodeListEntry *next;
-};
-
-/* A list of AST nodes.*/
-struct AstNodeList
-{
-    struct AstNodeListEntry *first;
-    struct AstNodeListEntry *last;
-};
 
 /* Union of all node contents.*/
 union AllNodeContent
 {
     FuncCall func_call;
-    struct AstNodeList stmt_list;
+    list stmt_list;
     IntVal int_val;
     Assign assign;
     VarDecl var_decl;

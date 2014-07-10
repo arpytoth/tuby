@@ -1,9 +1,11 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "interpretor.h"
 #include "parser.h"
 #include "utils.h"
 #include "stack.h"
 #include "var_map.h"
+#include "list.h"
 
 //------------------------------------------------------------------------------
 
@@ -37,11 +39,12 @@ void interpret_node(AstNode *node)
 {
     if (node->type == antStmtList)
     {
-        struct AstNodeList *list = &node->content.stmt_list;
-        struct AstNodeListEntry *e = list->first;
-        while (e != 0)
+        list *stmt_list = &node->content.stmt_list;
+        list_elem *e = stmt_list->first;
+        while (e != NULL)
         {
-            interpret_node(e->stmt);
+            AstNode *stmt = (AstNode*)e->data;
+            interpret_node(stmt);
             e = e->next;
         }
     }

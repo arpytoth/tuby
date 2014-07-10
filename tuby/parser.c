@@ -9,7 +9,7 @@
 #include "vector.h"
 #include "var_map.h"
 
-/* Root node of the syntax tree.*/
+/* Root node of the syntax tree. */
 AstNode g_root;
 
 AstNode *parse_stmt()
@@ -32,12 +32,14 @@ AstNode *parse_stmt()
 
             var_decl = (AstNode*)malloc(sizeof(AstNode));
             var_decl->type = antVarDecl;
-            var_decl->content.var_decl.name = identifier;
+            var_decl->content.var_decl.name = get_token_repr();
+            
             next_token();
             if (g_token.type != ttSemilcon)
                 parse_error("; expected.");
             next_token();
             
+            free(identifier);
             return var_decl;
         }
         
@@ -117,23 +119,38 @@ AstNode *parse_expr()
         next_token();
         return int_val;
     }
-    return 0;
+    else if (g_token.type == ttIdentifier)
+    {
+        AstNode *var_node;
+
+        var_node = (AstNode*)malloc(sizeof(AstNode));
+        var_node->content.var_val.name = get_token_repr();
+        var_node->type = antVarVal;
+        var_node->value_type = &IntType;
+        next_token();
+        return var_node;
+    }
+    else
+    {
+        error("Expression expected.");
+    }
+    return NULL;
 }
 
 //-----------------------------------------------------------------------------
 
 void parse()
 {
-    struct AstNodeList stmt_list;
-    AstNode *stmt = 0;
+    list stmt_list;
+    AstNode *stmt = NULL;
 
     next_token();
-    stmt_list.first = 0;
-    stmt_list.last = 0;
+    
+    list_init(&stmt_list);
     stmt = parse_stmt();
-    while (stmt != 0)
+    while (stmt != NULL)
     {
-        add_node(&stmt_list, stmt); 
+        list_push(&stmt_list, stmt); 
         stmt = parse_stmt();
     }
 

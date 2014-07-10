@@ -15,10 +15,10 @@ typedef struct list_t
     struct list_elem_t *last;
 } list;
 
-/* Initialize a new linked list. */
+/* Initialize a new Linked List. */
 void list_init(list *l);
 
-/* Release data held by this linked list. */
+/* Release data held by this Linked List. */
 void list_free(list *l);
 
 /* Push a new element at the end of this list. */
