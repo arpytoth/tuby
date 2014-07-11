@@ -105,7 +105,7 @@ AstNode *parse_stmt()
             next_token();
 
             func_call_node->content.func_call.func = 
-                get_func(identifier, &func_call->params);
+                func_get(identifier, &func_call->params);
             
             if (func_call_node->content.func_call.func == NULL)
                 parse_error("Function %s not defined\n", identifier);

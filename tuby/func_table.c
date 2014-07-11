@@ -22,11 +22,8 @@ struct FuncTable
 
 /* Global function table, the place where all function will be stored.*/
 struct FuncTable g_func_table;
-
-
-// TEST FUNCTIONS vv
-
 struct FuncDef g_tuby_func;
+
 void tuby()
 {
     printf("Tuby!!!");
@@ -51,9 +48,10 @@ void print()
     }
 }
 
+
 // TEST FUNCTIONS ^^
 
-void init_func_table()
+void func_init()
 {
     struct FuncDef *func = NULL;
 
@@ -64,7 +62,7 @@ void init_func_table()
     g_tuby_func.name = "tuby";
     g_tuby_func.native = tuby;
     g_tuby_func.params = 0;
-    insert_func(&g_tuby_func);
+    func_def(&g_tuby_func);
 
     // print function
     g_tuby_print_int.name = "print";
@@ -72,7 +70,7 @@ void init_func_table()
     g_tuby_print_int.params = (vector*)malloc(sizeof(vector));
     vector_init(g_tuby_print_int.params);
     vector_push(g_tuby_print_int.params, IntType);
-    insert_func(&g_tuby_print_int);
+    func_def(&g_tuby_print_int);
 
     // print(boolean);
     func = (struct FuncDef*)malloc(sizeof(struct FuncDef));
@@ -81,14 +79,14 @@ void init_func_table()
     func->params = (vector*)malloc(sizeof(vector));
     vector_init(func->params);
     vector_push(func->params, BoolType);
-    insert_func(func);
+    func_def(func);
 
 
 }
 
 //-----------------------------------------------------------------------------
 
-void insert_func(struct FuncDef *func)
+void func_def(struct FuncDef *func)
 {
     struct FuncTableEntry *entry;
 
@@ -110,7 +108,7 @@ void insert_func(struct FuncDef *func)
 
 //-----------------------------------------------------------------------------
 
-struct FuncDef *get_func(const char *name, vector *params)
+struct FuncDef *func_get(const char *name, vector *params)
 {
     struct FuncTableEntry *e = g_func_table.first;
     while (e != 0)

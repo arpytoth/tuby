@@ -4,16 +4,20 @@
 #include "parser.h"
 #include "vector.h"
 
-/* Initialize the functions table. */
-void init_func_table();
+/*
+ * Initialize the functions table.
+ */
+void func_init();
 
 /*
  * Insert a new function into the functions table.
  */
-void insert_func(struct FuncDef *func);
+void func_def(struct FuncDef *func);
 
-/* Search for the method with the specified name.*/
-struct FuncDef *get_func(const char *name, vector *params);
+/*
+ * Search for the method with the specified name.
+ */
+struct FuncDef *func_get(const char *name, vector *params);
 
 
 

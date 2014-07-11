@@ -12,7 +12,7 @@ int main()
 {
     stack_init();
     type_map_init();
-    init_func_table();
+    func_init();
     load_from_file("program.txt");
     parse();
     varmap_release();
