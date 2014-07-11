@@ -13,10 +13,13 @@ void type_map_init()
     g_type_map.last = NULL;
 
     IntType = (ValueType*)malloc(sizeof(ValueType));
-    BoolType = (ValueType*)malloc(sizeof(ValueType));
+    IntType->name = strdup("int");
 
-   type_map_put("int", IntType);
-   type_map_put("boolean", BoolType);
+    BoolType = (ValueType*)malloc(sizeof(ValueType));
+    BoolType->name = strdup("boolean");
+
+    type_map_put(IntType);
+    type_map_put(BoolType);
 }
 
 
@@ -25,7 +28,7 @@ ValueType *type_map_get(const char *name)
     type_map_entry *e = g_type_map.first;
     while (e != NULL)
     {
-        if (strcmp(e->name, name) == 0)
+        if (strcmp(e->value_type->name, name) == 0)
             return e->value_type;
         e = e->next;
     }
@@ -33,12 +36,10 @@ ValueType *type_map_get(const char *name)
 }
 
 
-void type_map_put(const char *name, ValueType *value_type)
+void type_map_put(ValueType *value_type)
 {
     type_map_entry *e = (type_map_entry*)malloc(sizeof(type_map_entry));
     e->next = NULL;
-    e->name = (char*)malloc(strlen(name)+1);
-    strcpy(e->name, name);
     e->value_type = value_type;
 
     if (g_type_map.last == NULL)

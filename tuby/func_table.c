@@ -36,16 +36,29 @@ struct FuncDef g_tuby_print_int;
 void print()
 {
     Value *param1 = stack_function_param(0);
-    int int_val = param1->data.int_val;
-    printf("%d\n", int_val);
+    if (param1->value_type == IntType)
+    {
+        int int_val = param1->data.int_val;
+        printf("%d\n", int_val);
+    }    
+    else if (param1->value_type == BoolType)
+    {
+        int bool_val = param1->data.bool_val;
+        if (bool_val == 0)
+            printf("false\n");
+        else
+            printf("true\n");
+    }
 }
 
 // TEST FUNCTIONS ^^
 
 void init_func_table()
 {
-    g_func_table.first = 0;
-    g_func_table.last = 0;
+    struct FuncDef *func = NULL;
+
+    g_func_table.first = NULL;
+    g_func_table.last = NULL;
 
     // tuby function
     g_tuby_func.name = "tuby";
@@ -54,13 +67,23 @@ void init_func_table()
     insert_func(&g_tuby_func);
 
     // print function
-    // tuby function
     g_tuby_print_int.name = "print";
     g_tuby_print_int.native = print;
     g_tuby_print_int.params = (vector*)malloc(sizeof(vector));
     vector_init(g_tuby_print_int.params);
     vector_push(g_tuby_print_int.params, IntType);
     insert_func(&g_tuby_print_int);
+
+    // print(boolean);
+    func = (struct FuncDef*)malloc(sizeof(struct FuncDef));
+    func->name = strdup("print");
+    func->native = print;
+    func->params = (vector*)malloc(sizeof(vector));
+    vector_init(func->params);
+    vector_push(func->params, BoolType);
+    insert_func(func);
+
+
 }
 
 //-----------------------------------------------------------------------------

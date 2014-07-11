@@ -12,9 +12,6 @@
  */
 typedef struct type_map_entry_t
 {
-    /* Name of this type. */
-    char *name;
-
     /* Actual type. */
     ValueType *value_type;
 
@@ -63,7 +60,7 @@ ValueType *type_map_get(const char *name);
 /*
  * Put a new type into the type map.
  */
-void type_map_put(const char *name, ValueType *value_type);
+void type_map_put(ValueType *value_type);
 
 /*
  * Releases all types in the type map. Clean type_map_entries so basically

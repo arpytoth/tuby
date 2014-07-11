@@ -22,21 +22,21 @@ AstNode *parse_stmt()
     {
         ValueType *val_type = NULL;
         char *identifier = get_token_repr();
-        next_token();
         
-        val_type = type_map_get(identifier);
+        next_token();
+       
         // Variable declaration.
+        val_type = type_map_get(identifier);
         if (val_type != NULL)
         {
             AstNode *var_decl;
-
+            
             if (g_token.type != ttIdentifier)
                 error("Identifier expected");
 
-            var_decl = (AstNode*)malloc(sizeof(AstNode));
-            var_decl->type = antVarDecl;
-            var_decl->content.var_decl.name = get_token_repr();
-            
+            var_decl = ast_var_decl(g_token.repr, val_type); 
+            varmap_def(g_token.repr, val_type);
+
             next_token();
             if (g_token.type != ttSemilcon)
                 parse_error("; expected.");
@@ -49,16 +49,31 @@ AstNode *parse_stmt()
         // Assignment.
         if (g_token.type == ttAssign)
         {
-            next_token();
             AstNode *assign_node = NULL;
             Assign *assign = NULL;
-            
+            Var *var = NULL;
+
+            var = varmap_get(identifier);
+            if (var == NULL)
+                parse_error("Variable %s not defined yet", identifier);
+
+            next_token();
             assign_node = (AstNode*)malloc(sizeof(AstNode));
             assign_node->type = antAssign;
+            assign_node->value_type = NULL;
             assign = &assign_node->content.assign;
 
             assign->name  = identifier;
             assign->expr = parse_expr();
+
+            if (assign->expr->value_type != var->val_type)
+            {
+                parse_error("Could not assign expression of type %s to "
+                            "variable %s of type %s", 
+                             assign->expr->value_type->name, identifier,
+                             var->val_type->name);
+            }
+
             if (g_token.type != ttSemilcon)
                 parse_error("; expected.");
             next_token();
@@ -142,10 +157,17 @@ AstNode *parse_term()
     }
     else if (g_token.type == ttIdentifier)
     {
+        char *identifier = get_token_repr();
+        Var *var = varmap_get(identifier);
+
+        if (var == NULL)
+            parse_error("Variable %s is not defined yet.", identifier);
+
+
         term = (AstNode*)malloc(sizeof(AstNode));
-        term->content.var_val.name = get_token_repr();
+        term->content.var_val.name = identifier;
         term->type = antVarVal;
-        term->value_type = IntType;
+        term->value_type = var->val_type;
         next_token();
     }
     else

@@ -6,6 +6,7 @@
 #include "stack.h"
 #include "vector.h"
 #include "type_map.h"
+#include "var_map.h"
 
 int main()
 {
@@ -14,6 +15,7 @@ int main()
     init_func_table();
     load_from_file("program.txt");
     parse();
+    varmap_release();
     interpret();
     return 1;
 }

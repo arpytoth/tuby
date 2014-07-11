@@ -24,6 +24,9 @@ enum PrimitiveType
 /* Type of a value.*/
 typedef struct
 {
+    /* Name of this value type. For example: int, bool ...*/
+    char *name;
+
     /* Base primitive type of this type.*/
     enum PrimitiveType primitive;
 } ValueType;
@@ -47,7 +50,7 @@ typedef union
 typedef struct
 {
     /* Type of this value. */
-    ValueType *type;
+    ValueType *value_type;
 
     /* The data of this value. */
     AllValues data;
@@ -62,8 +65,10 @@ typedef struct
  */
 typedef struct
 {
+    char *name;
+
     /* Type of this variable. */
-    ValueType value_type;
+    ValueType *val_type;
 
     /* Value assigned to this variable. */
     Value *val;
@@ -131,6 +136,8 @@ typedef struct
 {
     /* Name of the variable. */
     char *name;
+
+    ValueType *val_type;
 } VarDecl;
 
 
@@ -216,4 +223,9 @@ AstNode *ast_mul(AstNode *t1, AstNode *t2);
  */
 AstNode *ast_bool_val(int value);
 
+/*
+ * Create a new Variable Declaration node that will create a variable with
+ * the specified name and type.
+ */
+AstNode *ast_var_decl(char *name, ValueType *value_type);
 #endif // _AST_H_ 

@@ -3,23 +3,30 @@
 
 #include "ast.h"
 
+/*
+ * An entry from the variables map.
+ */
 typedef struct VarMapEntryT
 {
     /* The actual variable. */
     Var var;
 
-    /* Name of this variable. */
-    char *name;
-
     /* The next varmap entry. If null this is the last element in list. */
     struct VarMapEntryT *next;
 } VarMapEntry;
 
-/* A recursive variables map. It also has a parent. */
+
+/* 
+ * A recursive variables map. It also has a parent. For not this is implemented
+ * as a linked list, but in the future this will be a map.
+ */
 typedef struct VarMapT
 {
     VarMapEntry *first;
     VarMapEntry *last;
+
+    /* If this have a parent, all searches must go to the parent. */
+    struct VarMapT *parent;
 } VarMap;
 
 
@@ -37,7 +44,7 @@ Var *varmap_get(const char *name);
 /*
  * Define a new variable with the specified name, and return the variable.  
  */
-Var *varmap_def(const char *name);
+Var *varmap_def(const char *name, ValueType *val_type);
 
 /*
  * Release variables map and free all allocated variables.

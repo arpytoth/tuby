@@ -21,7 +21,7 @@ Var *varmap_get(const char *name)
         VarMapEntry *e = g_varmap.first;
         while (e != NULL)
         {
-            if (strcmp(e->name, name) == 0)
+            if (strcmp(e->var.name, name) == 0)
             {
                 return &e->var;
             }
@@ -37,12 +37,13 @@ Var *varmap_get(const char *name)
 
 //------------------------------------------------------------------------------
 
-Var *varmap_def(const char *name)
+Var *varmap_def(const char *name, ValueType *val_type)
 {   
     VarMapEntry *e = (VarMapEntry *)malloc(sizeof(VarMapEntry));
-    e->name = (char *)malloc(strlen(name) + 1);
-    strcpy(e->name, name);
+    e->var.name = (char *)malloc(strlen(name) + 1);
+    strcpy(e->var.name, name);
     e->next = NULL;
+    e->var.val_type = val_type;
    
     if (g_varmap.last != NULL)
     {
@@ -67,7 +68,7 @@ void varmap_release()
         while (e != NULL)
         {
             VarMapEntry *next = e->next;
-            free(e->name);
+            free(e->var.name);
             free(e);
             e = next;
         }

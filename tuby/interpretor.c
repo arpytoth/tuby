@@ -6,12 +6,22 @@
 #include "stack.h"
 #include "var_map.h"
 #include "list.h"
+#include "allocator.h"
+#include "type_map.h"
 
 //------------------------------------------------------------------------------
 
 Value *eval(AstNode *node)
 {
-    if (node->type == antIntVal)
+    if (node->type == antBoolVal)
+    {
+        Value *val = NULL;
+        val = alloc_get_val(val);
+        val->data.bool_val = node->content.bool_val;
+        val->value_type = BoolType;
+        return val;
+    }
+    else if (node->type == antIntVal)
     {
         Value *val = (Value*)malloc(sizeof(Value));
         val->data.int_val = node->content.int_val.value;
@@ -89,7 +99,7 @@ void interpret_node(AstNode *node)
     else if (node->type == antVarDecl)
     {
         VarDecl *var_decl = &node->content.var_decl;
-        varmap_def(var_decl->name);
+        varmap_def(var_decl->name, var_decl->val_type);
     }
     else if (node->type == antAssign)
     {

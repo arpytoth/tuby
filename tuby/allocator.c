@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "allocator.h"
 
-Value *get_val(Value *val)
+Value *alloc_get_val(Value *val)
 {
     if (val == NULL)
     {
@@ -15,7 +15,8 @@ Value *get_val(Value *val)
     return val;
 }
 
-void free_val(Value *val)
+
+void alloc_free_val(Value *val)
 {
     val->ref_count--;
     if (val->ref_count == 0)
