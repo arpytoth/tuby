@@ -5,6 +5,7 @@
 #include "type_map.h"
 #include "func_table.h"
 #include "stack.h"
+#include "allocator.h"
 
 /* An entry in the function table. */
 struct FuncTableEntry
@@ -48,6 +49,17 @@ void print()
     }
 }
 
+
+void add_int()
+{
+    Value *param1 = stack_function_param(0);
+    Value *param2 = stack_function_param(1);
+    int int_val1 = param1->data.int_val;
+    int int_val2 = param2->data.int_val;
+    Value *ret_val = alloc_get_val(NULL);
+    ret_val->data.int_val = int_val1 + int_val2;
+    ret_val->value_type = IntType;
+}
 
 // TEST FUNCTIONS ^^
 
