@@ -108,6 +108,7 @@ enum AstNodeType
     antVarVal,
     antAdd,
     antMul,
+    antReturn,
     antStmtList
 };
 
@@ -171,6 +172,16 @@ typedef struct
 } Binary;
 
 
+/*
+ * Instruction that causes a subprogram to exit and also sets the return
+ * value in the stack frame.
+ */
+typedef struct
+{
+    /* Will be evaluated into the return value. */
+    AstNode *ret_val;
+} Return;
+
 /* Union of all node contents.*/
 union AllNodeContent
 {
@@ -186,6 +197,8 @@ union AllNodeContent
 
     /* In case of a binary operation this is where the terms are held. */
     Binary bin_terms;
+
+    Return ret;
 };
 
 

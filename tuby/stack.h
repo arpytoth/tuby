@@ -5,10 +5,16 @@
 #include "ast.h"
 
 /* A frame in The Stack. Holds the informations about a function call. */
-typedef struct StackFrameT
+typedef struct 
 {
     /* List of called parameters. */
     vector params;
+    
+    /* 
+     * When a subprogram exists, this is where the value will be 
+     * stored
+     */
+    Value *ret_val;
 } StackFrame;
 
 /* The execution stack. */
