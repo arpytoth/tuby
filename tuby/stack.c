@@ -65,6 +65,25 @@ Value *stack_function_param(int index)
     }
 }
 
-//------------------------------------------------------------------------------
 
+void stack_set_ret_val(Value *val)
+{
+    StackFrame *top = stack_top();
+    if (top != NULL)
+    {
+        top->ret_val = val;
+    }
+}
+
+
+Value *stack_get_ret_val()
+{
+    StackFrame *top = stack_top();
+    if (top != NULL)
+    {
+        return top->ret_val;
+    }
+
+    return NULL;
+}
 

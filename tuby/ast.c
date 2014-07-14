@@ -2,16 +2,29 @@
 #include <string.h>
 #include "ast.h"
 #include "type_map.h"
+#include "func_table.h"
+#include "utils.h"
 
 AstNode *ast_add(AstNode *t1, AstNode *t2)
 {
-    AstNode *add = (AstNode*)malloc(sizeof(AstNode));
+    AstNode *func_call_node = NULL;
+    FuncCall *func_call = NULL;
 
-    add->content.bin_terms.term1 = t1;
-    add->content.bin_terms.term2 = t2;
-    add->type = antAdd;
-    
-    return add;
+    func_call_node = (AstNode*)malloc(sizeof(AstNode));
+    func_call_node->type = antFuncCall;
+    func_call = &func_call_node->content.func_call;
+
+    vector_init(&func_call->params);
+    vector_push(&func_call->params, t1);
+    vector_push(&func_call->params, t2);
+
+    func_call_node->content.func_call.func = 
+        func_get("+", &func_call->params);
+
+    if (func_call_node->content.func_call.func == NULL)
+        parse_error("Operator + not defined for arguments of type %s "
+                    "and %s", t1->value_type->name, t2->value_type->name);
+    return func_call_node;
 }
 
 

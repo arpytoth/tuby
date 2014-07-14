@@ -52,5 +52,15 @@ StackFrame *stack_push();
 StackFrame *stack_top();
 
 Value *stack_function_param(int index);
+
+/*
+ * Set the return value for the current stack frame.
+ */
+void stack_set_ret_val(Value *val);
+
+/*
+ * Get the return value for the current stack frame.
+ */
+Value *stack_get_ret_val();
 #endif // _STACK_H_
 

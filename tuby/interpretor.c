@@ -13,7 +13,30 @@
 
 Value *eval(AstNode *node)
 {
-    if (node->type == antBoolVal)
+    
+    if (node->type == antFuncCall)
+    {
+        FuncCall *fc = &node->content.func_call;
+        if (fc->func->native != 0)
+        {
+            int i = 0;
+            StackFrame *frame = stack_push();
+            
+            vector_init(&frame->params);
+            for (i = 0; i < vector_length(&fc->params); i++)
+            {
+                AstNode *param = (AstNode*)vector_at(&fc->params, i);
+                vector_push(&frame->params, eval(param)); 
+            }
+            fc->func->native();
+            stack_pop();
+            return frame->ret_val;
+        }
+        error("Function Definition Not Found.. Only Native supported!!!");
+        return 0;
+
+    }
+    else if (node->type == antBoolVal)
     {
         Value *val = NULL;
         val = alloc_get_val(val);
@@ -42,7 +65,7 @@ Value *eval(AstNode *node)
         Value *v1 = eval(terms->term1);
         Value *v2 = eval(terms->term2);
 
-        Value *result = (Value*)malloc(sizeof(Value));
+        Value *result = alloc_get_val(NULL);
         result->data.int_val = v1->data.int_val + v2->data.int_val;
         return result;
     }
