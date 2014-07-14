@@ -12,8 +12,8 @@ AstNode *ast_add(AstNode *t1, AstNode *t2)
 
     func_call_node = (AstNode*)malloc(sizeof(AstNode));
     func_call_node->type = antFuncCall;
+    func_call_node->value_type = IntType;
     func_call = &func_call_node->content.func_call;
-
     vector_init(&func_call->params);
     vector_push(&func_call->params, t1);
     vector_push(&func_call->params, t2);

@@ -59,6 +59,7 @@ void add_int()
     Value *ret_val = alloc_get_val(NULL);
     ret_val->data.int_val = int_val1 + int_val2;
     ret_val->value_type = IntType;
+    stack_set_ret_val(ret_val); 
 }
 
 // TEST FUNCTIONS ^^
@@ -93,6 +94,15 @@ void func_init()
     vector_push(func->params, BoolType);
     func_def(func);
 
+    // int + int;
+    func = (struct FuncDef*)malloc(sizeof(struct FuncDef));
+    func->name = strdup("+");
+    func->native = add_int;
+    func->params = (vector*)malloc(sizeof(vector));
+    vector_init(func->params);
+    vector_push(func->params, IntType);
+    vector_push(func->params, IntType);
+    func_def(func);
 
 }
 
