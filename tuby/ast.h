@@ -109,8 +109,6 @@ enum AstNodeType
     antVarDecl,
     antAssign,
     antVarVal,
-    antAdd,
-    antMul,
     antReturn,
     antStmtList
 };
@@ -230,11 +228,6 @@ struct AstNodeT
  */
 AstNode *ast_binary(const char *symbol, AstNode *t1, AstNode *t2);
 
-
-/*
- * Create a new multiply node between the two terms t1 and t2. 
- */
-AstNode *ast_mul(AstNode *t1, AstNode *t2);
 
 /*
  * Create a new BoolValue node for the specified boolean value.

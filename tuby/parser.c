@@ -188,7 +188,7 @@ AstNode *parse_mul()
 
         next_token();
         term2 = parse_mul();
-        mul = ast_mul(term1, term2);
+        mul = ast_binary("*", term1, term2);
         return mul;
     }
     else
