@@ -2,23 +2,24 @@
 #include <stdlib.h>
 #include "var_map.h"
 
-VarMap g_varmap;
+VarMap *g_varmap;
 
 //------------------------------------------------------------------------------
 
 void varmap_init()
 {
-    g_varmap.first = NULL;
-    g_varmap.last = NULL;
+    g_varmap = (VarMap*)malloc(sizeof(VarMap));
+    g_varmap->first = NULL;
+    g_varmap->last = NULL;
 }
 
 //------------------------------------------------------------------------------
 
 Var *varmap_get(const char *name)
 {
-    if (g_varmap.first != NULL)
+    if (g_varmap->first != NULL)
     {
-        VarMapEntry *e = g_varmap.first;
+        VarMapEntry *e = g_varmap->first;
         while (e != NULL)
         {
             if (strcmp(e->var.name, name) == 0)
@@ -45,15 +46,15 @@ Var *varmap_def(const char *name, ValueType *val_type)
     e->next = NULL;
     e->var.val_type = val_type;
    
-    if (g_varmap.last != NULL)
+    if (g_varmap->last != NULL)
     {
-        g_varmap.last->next = e;
-        g_varmap.last = e;
+        g_varmap->last->next = e;
+        g_varmap->last = e;
     }
     else
     {
-        g_varmap.last = e;
-        g_varmap.first = e;
+        g_varmap->last = e;
+        g_varmap->first = e;
     }
     return &e->var;
 }
@@ -62,9 +63,9 @@ Var *varmap_def(const char *name, ValueType *val_type)
 
 void varmap_release()
 {
-    if (g_varmap.first != NULL)
+    if (g_varmap->first != NULL)
     {
-        VarMapEntry *e = g_varmap.first;
+        VarMapEntry *e = g_varmap->first;
         while (e != NULL)
         {
             VarMapEntry *next = e->next;
@@ -73,8 +74,8 @@ void varmap_release()
             e = next;
         }
     }
-    g_varmap.first = NULL;
-    g_varmap.last = NULL;
+    g_varmap->first = NULL;
+    g_varmap->last = NULL;
 }
 
 //------------------------------------------------------------------------------

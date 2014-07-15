@@ -51,4 +51,14 @@ Var *varmap_def(const char *name, ValueType *val_type);
  */
 void varmap_release();
 
+/*
+ * Create a new varmap an push it into the current varmap.
+ */
+VarMap *varmap_push();
+
+/*
+ * Pops the current varmap.. and release all variables.
+ */
+VarMap *varmap_pop();
+
 #endif // _VAR_MAP_H_
