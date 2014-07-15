@@ -110,6 +110,7 @@ enum AstNodeType
     antAssign,
     antVarVal,
     antReturn,
+    antIf,
     antStmtList
 };
 
@@ -164,13 +165,23 @@ typedef struct
 
 
 /*
- * Structure that holds the two terms of a binary operation.
+ * The IF statement. Basically this must have a condition, an then 
+ * branch and an else brach.
  */
 typedef struct
 {
-    AstNode *term1;
-    AstNode *term2;
-} Binary;
+    /* 
+     * Boolean condition that if is true the then statement is
+     * executed
+     */
+    AstNode *cond;
+
+    /*  Executed if cond is true */
+    AstNode *then;
+
+    /* Executed if cond is false.*/
+    AstNode *els;
+} If;
 
 
 /*
@@ -195,10 +206,6 @@ union AllNodeContent
     
     /* 0 for false, 1 for true.*/
     int bool_val;
-
-    /* In case of a binary operation this is where the terms are held. */
-    Binary bin_terms;
-
     Return ret;
 };
 

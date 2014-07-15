@@ -17,8 +17,16 @@ AstNode *parse_stmt()
 {
     if (g_token.type == ttEOF)
         return 0;
-
-    if (g_token.type == ttIdentifier)
+    
+    if (g_token.type == ttIF)
+    {
+        AstNode *condition = NULL;
+        next_token();
+        if (g_token.type != ttOpenBracket)
+            parse_error("( expected");
+            		
+    }
+    else if (g_token.type == ttIdentifier)
     {
         ValueType *val_type = NULL;
         char *identifier = get_token_repr();
