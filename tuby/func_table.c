@@ -137,7 +137,7 @@ void func_init()
      // int * int;
     func = (FuncDef*)malloc(sizeof(FuncDef));
     func->name = strdup("*");
-    func->native = add_int;
+    func->native = mul_int;
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = IntType;
     vector_init(func->params);
