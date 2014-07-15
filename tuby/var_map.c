@@ -11,6 +11,7 @@ void varmap_init()
     g_varmap = (VarMap*)malloc(sizeof(VarMap));
     g_varmap->first = NULL;
     g_varmap->last = NULL;
+    g_varmap->parent = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -78,6 +79,41 @@ void varmap_release()
     g_varmap->last = NULL;
 }
 
-//------------------------------------------------------------------------------
+
+VarMap *varmap_push()
+{
+    if (g_varmap == NULL)
+    {
+        g_varmap = (VarMap*)malloc(sizeof(VarMap));
+        g_varmap->first = NULL;
+        g_varmap->last = NULL;
+        g_varmap->parent = NULL;
+    }
+    else
+    {
+        VarMap *new = NULL;
+        new = (VarMap*)malloc(sizeof(VarMap));
+        new->first = NULL;
+        new->last = NULL;
+        new->parent = g_varmap;
+        g_varmap = new;
+    }
+    return g_varmap;
+}
+
+
+VarMap *varmap_pop()
+{
+    if (g_varmap == NULL)
+    {
+        return g_varmap;
+    }
+    else
+    {
+        VarMap *to_pop = g_varmap;
+        g_varmap = g_varmap->parent;
+        return to_pop;
+    }
+}
 
 

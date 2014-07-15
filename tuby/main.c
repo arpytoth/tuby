@@ -10,6 +10,7 @@
 
 int main()
 {
+    varmap_init();
     stack_init();
     type_map_init();
     func_init();
