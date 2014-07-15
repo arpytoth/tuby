@@ -78,20 +78,23 @@ typedef struct
 /* 
  * Definition of a function.
  */
-struct FuncDef
+typedef struct
 {
     /* List of parameter types. */    
     vector *params; 
 
     /* The name of the function. */
     char *name; 
-    
+   
+    /* The return value of this function. */
+    ValueType *value_type;
+
     /*
      * Callback to the native implementation of the function. If NULL it 
      * means we don't have a native imlpementation of this function.
      */
     void (*native)(); /* Native function definition. */
-};
+} FuncDef;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +120,7 @@ enum AstNodeType
 typedef struct FuncCallT
 {
     vector params; /* A vector of parameters. */
-    struct FuncDef* func; /* The function to be called. */
+    FuncDef* func; /* The function to be called. */
 } FuncCall;
 
 
@@ -221,9 +224,12 @@ struct AstNodeT
 ////////////////////////////////////////////////////////////////////////////////
 
 /*
- * Create a new add node between the two terms, t1 and t2.
+ * Create a new operation node between the two terms, t1 and t2. 
+ * Basically the resultant node will be a binary operator of two terms such
+ * as t1+t2 or t1==t2.. 
  */
-AstNode *ast_add(AstNode *t1, AstNode *t2);
+AstNode *ast_binary(const char *symbol, AstNode *t1, AstNode *t2);
+
 
 /*
  * Create a new multiply node between the two terms t1 and t2. 

@@ -56,6 +56,12 @@ void load_from_string(const char *string);
 
 int next_token();
 
+/*
+ * Take a look at the character that is at the current_position + pos. If 
+ * the position is out of stream simply return -1. 
+ */
+int token_peek(int pos);
+
 int read_number();
 
 int read_open_bracket();
@@ -65,6 +71,7 @@ int read_closed_bracket();
 int read_semilcon();
 
 int read_identifier();
+
 
 /*
  * Reat the multiplier operator from the token stream.

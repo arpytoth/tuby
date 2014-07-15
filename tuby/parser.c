@@ -206,7 +206,7 @@ AstNode *parse_add()
         AstNode *add = NULL;
         next_token();
         term2 = parse_add();
-        add = ast_add(term1, term2);
+        add = ast_binary("+", term1, term2);
         return add;
     }
     else
@@ -215,10 +215,29 @@ AstNode *parse_add()
     }
 }
 
+AstNode *parse_equals()
+{
+    AstNode *term1 = parse_add();
+    if (g_token.type == ttEquals)
+    {
+        AstNode *term2 = NULL;
+        AstNode *equals = NULL;
+        next_token();
+        term2 = parse_equals();
+        equals = ast_binary("==", term1, term2);
+        return equals;
+    }
+    else
+    {
+        return term1;
+    }
+
+}
+
 AstNode *parse_expr()
 {
     AstNode *expr = NULL;
-    expr = parse_add();
+    expr = parse_equals();
     return expr;
 }
 

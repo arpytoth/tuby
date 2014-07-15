@@ -10,7 +10,7 @@
 /* An entry in the function table. */
 struct FuncTableEntry
 {
-    struct FuncDef *function; /* Function implementation. */
+    FuncDef *function; /* Function implementation. */
     struct FuncTableEntry *next; /* Next element in the function table. */
 };
 
@@ -23,14 +23,14 @@ struct FuncTable
 
 /* Global function table, the place where all function will be stored.*/
 struct FuncTable g_func_table;
-struct FuncDef g_tuby_func;
+FuncDef g_tuby_func;
 
 void tuby()
 {
     printf("Tuby!!!");
 }
 
-struct FuncDef g_tuby_print_int;
+FuncDef g_tuby_print_int;
 void print()
 {
     Value *param1 = stack_function_param(0);
@@ -62,11 +62,25 @@ void add_int()
     stack_set_ret_val(ret_val); 
 }
 
+
+void equals_int()
+{
+    Value *param1 = stack_function_param(0);
+    Value *param2 = stack_function_param(1);
+    int int_val1 = param1->data.int_val;
+    int int_val2 = param2->data.int_val;
+    Value *ret_val = alloc_get_val(NULL);
+    ret_val->data.bool_val = int_val1 == int_val2;
+    ret_val->value_type = BoolType;
+    stack_set_ret_val(ret_val); 
+
+}
+
 // TEST FUNCTIONS ^^
 
 void func_init()
 {
-    struct FuncDef *func = NULL;
+    FuncDef *func = NULL;
 
     g_func_table.first = NULL;
     g_func_table.last = NULL;
@@ -86,19 +100,32 @@ void func_init()
     func_def(&g_tuby_print_int);
 
     // print(boolean);
-    func = (struct FuncDef*)malloc(sizeof(struct FuncDef));
+    func = (FuncDef*)malloc(sizeof(FuncDef));
     func->name = strdup("print");
     func->native = print;
     func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = NULL;
     vector_init(func->params);
     vector_push(func->params, BoolType);
     func_def(func);
 
     // int + int;
-    func = (struct FuncDef*)malloc(sizeof(struct FuncDef));
+    func = (FuncDef*)malloc(sizeof(FuncDef));
     func->name = strdup("+");
     func->native = add_int;
     func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = IntType;
+    vector_init(func->params);
+    vector_push(func->params, IntType);
+    vector_push(func->params, IntType);
+    func_def(func);
+
+    // int == int;
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("==");
+    func->native = equals_int;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = BoolType;
     vector_init(func->params);
     vector_push(func->params, IntType);
     vector_push(func->params, IntType);
@@ -108,7 +135,7 @@ void func_init()
 
 //-----------------------------------------------------------------------------
 
-void func_def(struct FuncDef *func)
+void func_def(FuncDef *func)
 {
     struct FuncTableEntry *entry;
 
@@ -130,7 +157,7 @@ void func_def(struct FuncDef *func)
 
 //-----------------------------------------------------------------------------
 
-struct FuncDef *func_get(const char *name, vector *params)
+FuncDef *func_get(const char *name, vector *params)
 {
     struct FuncTableEntry *e = g_func_table.first;
     while (e != 0)

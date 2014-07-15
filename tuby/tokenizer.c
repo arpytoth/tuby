@@ -44,6 +44,22 @@ int eof()
     return g_source.current == -1;
 }
 
+
+int token_peek(int pos)
+{
+    int actual_pos = g_source.pos + pos;
+
+    if (g_source.pos < g_source.length - 1)
+    {
+        return g_source.buffer[actual_pos];
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+
 /* Read the next character in the stream. Return 1 if ok, 0 if EOF reached.*/
 int next_char()
 {
@@ -113,6 +129,12 @@ int next_token()
     if (g_source.current == ';')
         return read_semilcon();
 
+
+    if (g_source.current == '=' && token_peek(1) == '=')
+    {
+        return read_equals();        
+    }
+
     if (g_source.current == '=')
         return read_assign();
 
@@ -175,13 +197,23 @@ int read_identifier()
     strncpy(g_token.repr, g_source.buffer + start, size - 1);
     g_token.repr[size - 1] = '\0';
     
-    if (strcmp(g_token.repr, "true") == 0)
+    if (strcmp(g_token.repr, "if") == 0)
+    {
+        g_token.type = ttIF;
+    }
+    else if (strcmp(g_token.repr, "true") == 0)
+    {
         g_token.type = ttTrue;
+    }
     else if (strcmp(g_token.repr, "false") == 0)
+    {
         g_token.type = ttFalse;
+    }
     else
+    {
         g_token.type = ttIdentifier;
-    
+    }
+
     return 1;
 }
 
@@ -240,6 +272,18 @@ int read_assign()
     g_token.type = ttAssign;
     g_token.repr[0] = '=';
     g_token.repr[1] = '\0';
+    next_char();
+    return 1;
+}
+
+
+int read_equals()
+{
+    g_token.type = ttEquals;
+    g_token.repr[0] = '=';
+    g_token.repr[1] = '=';
+    g_token.repr[2] = '\0';
+    next_char();
     next_char();
     return 1;
 }

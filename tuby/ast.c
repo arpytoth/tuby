@@ -5,25 +5,31 @@
 #include "func_table.h"
 #include "utils.h"
 
-AstNode *ast_add(AstNode *t1, AstNode *t2)
+AstNode *ast_binary(const char *symbol, AstNode *t1, AstNode *t2)
 {
     AstNode *func_call_node = NULL;
     FuncCall *func_call = NULL;
+    ValueType *ret_type = NULL;
 
     func_call_node = (AstNode*)malloc(sizeof(AstNode));
     func_call_node->type = antFuncCall;
-    func_call_node->value_type = IntType;
     func_call = &func_call_node->content.func_call;
     vector_init(&func_call->params);
     vector_push(&func_call->params, t1);
     vector_push(&func_call->params, t2);
 
     func_call_node->content.func_call.func = 
-        func_get("+", &func_call->params);
+        func_get(symbol, &func_call->params);
 
-    if (func_call_node->content.func_call.func == NULL)
+    if (func_call_node->content.func_call.func == NULL) 
+    {
         parse_error("Operator + not defined for arguments of type %s "
-                    "and %s", t1->value_type->name, t2->value_type->name);
+                    "and %s", t1->value_type == 0 ? "void":t1->value_type->name,
+                    t2->value_type == 0 ? "void" : t2->value_type->name);
+    }
+
+    ret_type = func_call_node->content.func_call.func->value_type;
+    func_call_node->value_type = ret_type; 
     return func_call_node;
 }
 

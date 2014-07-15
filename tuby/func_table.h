@@ -12,12 +12,12 @@ void func_init();
 /*
  * Insert a new function into the functions table.
  */
-void func_def(struct FuncDef *func);
+void func_def(FuncDef *func);
 
 /*
  * Search for the method with the specified name.
  */
-struct FuncDef *func_get(const char *name, vector *params);
+FuncDef *func_get(const char *name, vector *params);
 
 
 
