@@ -11,6 +11,8 @@ enum TokenType
     ttIdentifier,
     ttOpenBracket,
     ttCloseBracket,
+    ttOpenCurly,
+    ttCloseCurly,
     ttAssign,
     ttAdd,
     ttMul,
@@ -91,6 +93,10 @@ int read_equals();
  * Read assignment token from the stream.
  */
 int read_assign();
+
+int read_open_curly();
+
+int read_close_curly();
 
 /* Get a copy of the token representation. */
 char *get_token_repr();

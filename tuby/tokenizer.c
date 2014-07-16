@@ -129,6 +129,11 @@ int next_token()
     if (g_source.current == ';')
         return read_semilcon();
 
+    if (g_source.current == '{')
+        return read_open_curly();
+
+    if (g_source.current == '}')
+        return read_close_curly();
 
     if (g_source.current == '=' && token_peek(1) == '=')
     {
@@ -271,6 +276,26 @@ int read_assign()
 {
     g_token.type = ttAssign;
     g_token.repr[0] = '=';
+    g_token.repr[1] = '\0';
+    next_char();
+    return 1;
+}
+
+
+int read_open_curly()
+{
+    g_token.type = ttOpenCurly;
+    g_token.repr[0] = '{';
+    g_token.repr[1] = '\0';
+    next_char();
+    return 1;
+}
+
+
+int read_close_curly()
+{
+    g_token.type = ttCloseCurly;
+    g_token.repr[0] = '}';
     g_token.repr[1] = '\0';
     next_char();
     return 1;
