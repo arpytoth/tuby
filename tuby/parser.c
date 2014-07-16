@@ -46,10 +46,20 @@ AstNode *parse_stmt()
     if (g_token.type == ttIF)
     {
         AstNode *condition = NULL;
+        AstNode *then = NULL;
+
         next_token();
         if (g_token.type != ttOpenBracket)
             parse_error("( expected");
-            		
+        next_token();     
+        condition = parse_expr();
+        if (condition->value_type != BoolType)
+            parse_error("Boolean expression expected.");
+        
+        if (g_token.type != ttCloseBracket)
+            parse_error(") expected");
+        then = parse_stmt();
+        parse_error("OKEY");    		
     }
     else if (g_token.type == ttIdentifier)
     {
