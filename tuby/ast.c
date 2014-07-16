@@ -56,3 +56,15 @@ AstNode *ast_var_decl(char *name, ValueType *val_type)
     return var_decl_node;
 }
 
+
+AstNode *ast_if(AstNode *cond, AstNode *then, AstNode *els)
+{
+    AstNode *node = (AstNode*)malloc(sizeof(AstNode));
+    node->type =antIf;
+    node->content.if_.cond = cond;
+    node->content.if_.then = then;
+    node->content.if_.els = els;
+    node->value_type = NULL;
+    return node;
+}
+

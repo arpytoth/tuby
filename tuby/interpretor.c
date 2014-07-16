@@ -89,6 +89,16 @@ void interpret_node(AstNode *node)
         }
         varmap_purge();
     }
+    else if (node->type == antIf)
+    {
+        If *i = &node->content.if_;
+        Value *val = eval(i->cond);
+        if (val->data.bool_val != 0)
+        {
+            interpret_node(i->then);
+        }
+        alloc_free_val(val);
+    }
     else if (node->type == antFuncCall)
     {
         FuncCall *fc = &node->content.func_call;

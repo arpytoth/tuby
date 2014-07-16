@@ -40,6 +40,11 @@ Var *varmap_get_rec(VarMap *map, const char *name)
     }
     else
     {
+        // Recursivly search the parent scopes :)
+        if (map->parent != NULL)
+        {
+            return varmap_get_rec(map->parent, name);
+        }
         return NULL;
     }
 

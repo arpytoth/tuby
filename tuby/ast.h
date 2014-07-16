@@ -207,6 +207,7 @@ union AllNodeContent
     /* 0 for false, 1 for true.*/
     int bool_val;
     Return ret;
+    If if_;
 };
 
 
@@ -247,4 +248,6 @@ AstNode *ast_bool_val(int value);
  * the specified name and type.
  */
 AstNode *ast_var_decl(char *name, ValueType *value_type);
+
+AstNode *ast_if(AstNode *cond, AstNode *then, AstNode *els);
 #endif // _AST_H_ 
