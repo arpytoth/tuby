@@ -18,6 +18,31 @@ AstNode *parse_stmt()
     if (g_token.type == ttEOF)
         return 0;
     
+    if (g_token.type == ttOpenCurly)
+    {
+        varmap_push();
+        list stmt_list;
+        AstNode *stmt_list_node = NULL; 
+        AstNode *stmt = NULL;
+        next_token();
+        list_init(&stmt_list);
+        stmt = parse_stmt();
+        while (stmt != NULL)
+        {
+            list_push(&stmt_list, stmt); 
+            stmt = parse_stmt();
+        }
+       
+        if (g_token.type != ttCloseCurly)
+            parse_error("} expected");
+        next_token();
+        stmt_list_node = (AstNode*)malloc(sizeof(AstNode));
+        stmt_list_node->type = antStmtList;
+        stmt_list_node->content.stmt_list = stmt_list;
+        varmap_purge();
+        return stmt_list_node; 
+    }
+
     if (g_token.type == ttIF)
     {
         AstNode *condition = NULL;
@@ -256,6 +281,7 @@ void parse()
     list stmt_list;
     AstNode *stmt = NULL;
 
+    varmap_push();
     next_token();
     
     list_init(&stmt_list);
@@ -268,6 +294,7 @@ void parse()
 
     g_root.type = antStmtList;
     g_root.content.stmt_list = stmt_list;
+    varmap_purge();
 }
 
 

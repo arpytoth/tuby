@@ -21,7 +21,6 @@ Value *eval(AstNode *node)
         {
             int i = 0;
             StackFrame *frame = stack_push();
-            
             vector_init(&frame->params);
             for (i = 0; i < vector_length(&fc->params); i++)
             {
@@ -29,6 +28,11 @@ Value *eval(AstNode *node)
                 vector_push(&frame->params, eval(param)); 
             }
             fc->func->native();
+            for (i = 0; i < vector_length(&frame->params); i++)
+            {
+                Value *val = (Value*)vector_at(&frame->params, i);
+                alloc_free_val(val);
+            }
             stack_pop();
             return frame->ret_val;
         }
@@ -46,7 +50,9 @@ Value *eval(AstNode *node)
     }
     else if (node->type == antIntVal)
     {
-        Value *val = (Value*)malloc(sizeof(Value));
+        Value *val = NULL;
+        val = alloc_get_val(val);
+        val->value_type = IntType;
         val->data.int_val = node->content.int_val.value;
         return val;
     }
@@ -56,8 +62,8 @@ Value *eval(AstNode *node)
         Var *var = varmap_get(var_val->name);
         if (var == NULL)
             error("Variable not defined yet");
-        
-        return var->val;
+       
+        return alloc_get_val(var->val);
     }
     else
     {
@@ -72,6 +78,7 @@ void interpret_node(AstNode *node)
 {
     if (node->type == antStmtList)
     {
+        varmap_push();
         list *stmt_list = &node->content.stmt_list;
         list_elem *e = stmt_list->first;
         while (e != NULL)
@@ -80,6 +87,7 @@ void interpret_node(AstNode *node)
             interpret_node(stmt);
             e = e->next;
         }
+        varmap_purge();
     }
     else if (node->type == antFuncCall)
     {
@@ -88,7 +96,6 @@ void interpret_node(AstNode *node)
         {
             int i = 0;
             StackFrame *frame = stack_push();
-            
             vector_init(&frame->params);
             for (i = 0; i < vector_length(&fc->params); i++)
             {
@@ -96,6 +103,11 @@ void interpret_node(AstNode *node)
                 vector_push(&frame->params, eval(param)); 
             }
             fc->func->native();
+            for (i = 0; i < vector_length(&frame->params); i++)
+            {
+                Value *val = (Value*)vector_at(&frame->params, i);
+                alloc_free_val(val);
+            }
             stack_pop();
         }
     }

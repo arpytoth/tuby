@@ -47,6 +47,10 @@ void print()
         else
             printf("true\n");
     }
+    else
+    {
+        printf("NULL\n");
+    }
 }
 
 

@@ -1,6 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
+
 #include "var_map.h"
+#include "utils.h"
+#include "allocator.h"
 
 VarMap *g_varmap;
 
@@ -41,42 +44,64 @@ Var *varmap_get(const char *name)
 
 Var *varmap_def(const char *name, ValueType *val_type)
 {   
-    VarMapEntry *e = (VarMapEntry *)malloc(sizeof(VarMapEntry));
-    e->var.name = (char *)malloc(strlen(name) + 1);
-    strcpy(e->var.name, name);
-    e->next = NULL;
-    e->var.val_type = val_type;
-   
-    if (g_varmap->last != NULL)
+    Var *var = varmap_get(name);
+    if (var == NULL)
     {
-        g_varmap->last->next = e;
-        g_varmap->last = e;
+        VarMapEntry *e = (VarMapEntry *)malloc(sizeof(VarMapEntry));
+        e->var.name = (char *)malloc(strlen(name) + 1);
+        strcpy(e->var.name, name);
+        e->next = NULL;
+        e->var.val_type = val_type;
+        e->var.val = NULL;
+
+        if (g_varmap->last != NULL)
+        {
+            g_varmap->last->next = e;
+            g_varmap->last = e;
+        }
+        else
+        {
+            g_varmap->last = e;
+            g_varmap->first = e;
+        }
+    
+        return &e->var;
     }
     else
     {
-        g_varmap->last = e;
-        g_varmap->first = e;
+        parse_error("Variable %s already defined before", name);
+        return NULL;
     }
-    return &e->var;
 }
 
-//------------------------------------------------------------------------------
 
-void varmap_release()
+void varmap_rel(VarMap *amap)
 {
-    if (g_varmap->first != NULL)
+    if (amap->first != NULL)
     {
-        VarMapEntry *e = g_varmap->first;
+        VarMapEntry *e = amap->first;
         while (e != NULL)
         {
             VarMapEntry *next = e->next;
             free(e->var.name);
+            if (e->var.val != NULL)
+                alloc_free_val(e->var.val);
+
             free(e);
             e = next;
         }
     }
-    g_varmap->first = NULL;
-    g_varmap->last = NULL;
+    amap->first = NULL;
+    amap->last = NULL;
+}
+
+
+void varmap_release()
+{
+    if (g_varmap != NULL)
+    {
+        varmap_rel(g_varmap);
+    }
 }
 
 
@@ -117,3 +142,12 @@ VarMap *varmap_pop()
 }
 
 
+void varmap_purge()
+{
+    VarMap *map = varmap_pop();
+    if (map != NULL)
+    {
+        varmap_rel(map);
+        free(map);
+    }
+}

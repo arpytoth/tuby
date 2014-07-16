@@ -61,4 +61,9 @@ VarMap *varmap_push();
  */
 VarMap *varmap_pop();
 
+/*
+ * If current map is not the global varmap, simply purge the hashmap. 
+ */
+void varmap_purge();
+
 #endif // _VAR_MAP_H_
