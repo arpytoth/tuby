@@ -17,13 +17,12 @@ void varmap_init()
     g_varmap->parent = NULL;
 }
 
-//------------------------------------------------------------------------------
 
-Var *varmap_get(const char *name)
+Var *varmap_get_rec(VarMap *map, const char *name)
 {
-    if (g_varmap->first != NULL)
+    if (map->first != NULL)
     {
-        VarMapEntry *e = g_varmap->first;
+        VarMapEntry *e = map->first;
         while (e != NULL)
         {
             if (strcmp(e->var.name, name) == 0)
@@ -32,12 +31,24 @@ Var *varmap_get(const char *name)
             }
             e = e->next;
         }
+        // Recursivly search the parent scopes :)
+        if (map->parent != NULL)
+        {
+            return varmap_get_rec(map->parent, name);
+        }
         return NULL;
     }
     else
     {
         return NULL;
     }
+
+}
+
+
+Var *varmap_get(const char *name)
+{
+    return varmap_get_rec(g_varmap, name);
 }
 
 //------------------------------------------------------------------------------

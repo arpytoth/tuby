@@ -9,7 +9,7 @@ Value *alloc_get_val(Value *val)
     {
         val = (Value*)malloc(sizeof(Value));
         val->ref_count = 1;
-        LOG(llDebug, "iAllocated new value: %d", (int)val);
+        LOG(llDebug, "Allocated new value: %d", (int)val);
     }
     else
     {
@@ -24,7 +24,7 @@ Value *alloc_get_val(Value *val)
 void alloc_free_val(Value *val)
 {
     val->ref_count--;
-    LOG(llDebug, "Decreased count to value: %i to %i\n", 
+    LOG(llDebug, "Decreased count to value: %i to %i", 
         (int)val, val->ref_count);
 
     if (val->ref_count == 0)

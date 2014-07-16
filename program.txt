@@ -1,8 +1,8 @@
 int i;
-i = 32;
-int j;
-j = i;
-int k;
-k = i + j;
-print(k);
+{
+    int k;
+    i = 10;
+    k = i;
+}
+print(i);
 
