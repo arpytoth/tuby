@@ -47,6 +47,7 @@ AstNode *parse_stmt()
     {
         AstNode *cond = NULL;
         AstNode *then = NULL;
+        AstNode *els = NULL;
 
         next_token();
         if (g_token.type != ttOpenBracket)
@@ -62,7 +63,12 @@ AstNode *parse_stmt()
         then = parse_stmt();
         if (then == NULL)
             parse_error("Error, then code expected.");
-        return ast_if(cond, then, NULL);    		
+        if (g_token.type == ttElse)
+        {
+            next_token();
+            els = parse_stmt();
+        }
+        return ast_if(cond, then, els);    		
     }
     else if (g_token.type == ttIdentifier)
     {

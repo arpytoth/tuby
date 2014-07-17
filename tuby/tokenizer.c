@@ -206,6 +206,10 @@ int read_identifier()
     {
         g_token.type = ttIF;
     }
+    else if (strcmp(g_token.repr, "else") == 0)
+    {
+        g_token.type = ttElse;
+    }
     else if (strcmp(g_token.repr, "true") == 0)
     {
         g_token.type = ttTrue;

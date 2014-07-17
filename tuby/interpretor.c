@@ -97,6 +97,10 @@ void interpret_node(AstNode *node)
         {
             interpret_node(i->then);
         }
+        else
+        {
+            interpret_node(i->els);
+        }
         alloc_free_val(val);
     }
     else if (node->type == antFuncCall)

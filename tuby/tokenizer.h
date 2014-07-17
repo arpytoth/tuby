@@ -22,6 +22,7 @@ enum TokenType
     ttTrue,
     ttFalse,
     ttIF,
+    ttElse,
     ttEOF
 };
 
