@@ -131,6 +131,7 @@ enum AstNodeType
     antVarVal,
     antReturn,
     antIf,
+    antWhile,
     antStmtList
 };
 
@@ -205,6 +206,20 @@ typedef struct
 
 
 /*
+ * The While instruction. Basically the classical loop instruction
+ * executed by the interpretor.
+ */
+typedef struct
+{
+    /* The while condition. */
+    AstNode *cond;
+
+    /* What to execute while the while condition is true */
+    AstNode *body;
+} While;
+
+
+/*
  * Instruction that causes a subprogram to exit and also sets the return
  * value in the stack frame.
  */
@@ -228,6 +243,7 @@ union AllNodeContent
     int bool_val;
     Return ret;
     If if_;
+    While while_;
 };
 
 
@@ -270,4 +286,11 @@ AstNode *ast_bool_val(int value);
 AstNode *ast_var_decl(char *name, ValueType *value_type);
 
 AstNode *ast_if(AstNode *cond, AstNode *then, AstNode *els);
+
+/*
+ * Create a new AST node for a While statement with the specified
+ * condition and body.
+ */
+AstNode *ast_while(AstNode *cond, AstNode *body);
+
 #endif // _AST_H_ 

@@ -88,3 +88,15 @@ AstNode *ast_if(AstNode *cond, AstNode *then, AstNode *els)
     return node;
 }
 
+
+AstNode *ast_while(AstNode *cond, AstNode *body)
+{
+    AstNode *node = (AstNode*)malloc(sizeof(AstNode));
+    node->type =antWhile;
+    node->content.while_.cond = cond;
+    node->content.while_.body = body;
+    node->value_type = NULL;
+    return node;
+}
+
+

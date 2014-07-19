@@ -63,6 +63,28 @@ AstNode *parse_stmt()
         return stmt_list_node; 
     }
 
+    if (g_token.type == ttWhile)
+    {
+        AstNode *cond = NULL;
+        AstNode *body = NULL;
+
+        next_token();
+        if (g_token.type != ttOpenBracket)
+            parse_error("( expected");
+        next_token();     
+        cond = parse_expr();
+        if (cond->value_type != BoolType)
+            parse_error("Boolean expression expected.");
+        
+        if (g_token.type != ttCloseBracket)
+            parse_error(") expected");
+        next_token();    
+        body = parse_stmt();
+        if (body == NULL)
+            parse_error("Error, while body expected.");
+        return ast_while(cond, body);    		
+    }
+ 
     if (g_token.type == ttIF)
     {
         AstNode *cond = NULL;

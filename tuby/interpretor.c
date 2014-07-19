@@ -96,6 +96,9 @@ Value *eval(AstNode *node)
 
 void interpret_node(AstNode *node)
 {
+    if (node == NULL)
+        error("Fatal ERROR!! NULL NODE");
+
     if (node->type == antStmtList)
     {
         varmap_push();
@@ -115,11 +118,25 @@ void interpret_node(AstNode *node)
         Value *val = eval(i->cond);
         if (val->data.bool_val != 0)
         {
-            interpret_node(i->then);
+            if (i->then != NULL)
+                interpret_node(i->then);
         }
         else
         {
-            interpret_node(i->els);
+            if (i->els != NULL)
+                interpret_node(i->els);
+        }
+        alloc_free_val(val);
+    }
+    else if (node->type == antWhile)
+    {
+        While *i = &node->content.while_;
+        Value *val = eval(i->cond);
+        while (val->data.bool_val != 0)
+        {
+            interpret_node(i->body);
+            alloc_free_val(val);
+            val = eval(i->cond);
         }
         alloc_free_val(val);
     }
