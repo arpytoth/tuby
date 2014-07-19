@@ -123,20 +123,44 @@ AstNode *parse_stmt()
         val_type = type_map_get(identifier);
         if (val_type != NULL)
         {
-            AstNode *var_decl;
-            
+            AstNode *var_decl = NULL;
+            AstNode *init = NULL;
+            char *varname = NULL;
+
             if (g_token.type != ttIdentifier)
-                error("Identifier expected");
+            {
+                free(identifier);
+                parse_error("Identifier expected");
+            }
 
-            var_decl = ast_var_decl(g_token.repr, val_type); 
-            varmap_def(g_token.repr, val_type);
-
+            varname = get_token_repr();
             next_token();
+            if (g_token.type == ttAssign)
+            {
+                next_token();
+                init = parse_expr();
+                if (init->value_type != val_type)
+                {
+                    free(identifier);
+                    free(varname);
+                    parse_error("Could not assign expression of type %s to "
+                                "variable %s of type %s", 
+                                 init->value_type->name, identifier,
+                                 var_decl->value_type->name);
+                }
+            }
+            var_decl = ast_var_decl(varname, val_type, init); 
+            varmap_def(varname, val_type);
+
             if (g_token.type != ttSemilcon)
+            {
+                free(varname);
+                free(identifier);
                 parse_error("; expected.");
+            }
             next_token();
-            
             free(identifier);
+            free(varname);
             return var_decl;
         }
         

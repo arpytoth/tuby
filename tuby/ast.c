@@ -65,13 +65,14 @@ AstNode *ast_bool_val(int value)
 }
 
 
-AstNode *ast_var_decl(char *name, ValueType *val_type)
+AstNode *ast_var_decl(char *name, ValueType *val_type, AstNode *init)
 {
     AstNode *var_decl_node = (AstNode*)malloc(sizeof(AstNode));
     var_decl_node->type = antVarDecl;
     var_decl_node->content.var_decl.name = (char*)malloc(strlen(name)+1);
     strcpy(var_decl_node->content.var_decl.name, name);
     var_decl_node->content.var_decl.val_type = val_type;
+    var_decl_node->content.var_decl.init = init;
     var_decl_node->value_type = NULL;
     return var_decl_node;
 }

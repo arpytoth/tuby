@@ -165,7 +165,11 @@ void interpret_node(AstNode *node)
     else if (node->type == antVarDecl)
     {
         VarDecl *var_decl = &node->content.var_decl;
-        varmap_def(var_decl->name, var_decl->val_type);
+        Var *var =varmap_def(var_decl->name, var_decl->val_type);
+        if (var_decl->init != NULL)
+        {
+            var->val = eval(var_decl->init);
+        }
     }
     else if (node->type == antAssign)
     {

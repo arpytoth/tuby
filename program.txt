@@ -1,7 +1,5 @@
-int i;
-i = 1;
-int ok;
-ok = 1;
+int i = 1;
+int ok = 1;
 while (ok == 1)
 {
     print (i);

@@ -161,7 +161,11 @@ typedef struct
     /* Name of the variable. */
     char *name;
 
+    /**/
     ValueType *val_type;
+
+    /* Initializer. */
+    AstNode *init;
 } VarDecl;
 
 
@@ -283,7 +287,7 @@ AstNode *ast_bool_val(int value);
  * Create a new Variable Declaration node that will create a variable with
  * the specified name and type.
  */
-AstNode *ast_var_decl(char *name, ValueType *value_type);
+AstNode *ast_var_decl(char *name, ValueType *value_type, AstNode *init);
 
 AstNode *ast_if(AstNode *cond, AstNode *then, AstNode *els);
 
