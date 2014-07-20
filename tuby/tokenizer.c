@@ -142,6 +142,21 @@ int next_token()
     {
         return read_equals();        
     }
+   
+    if (g_source.current == '-')
+    {
+        g_token.type = ttSub;
+        next_char();
+        return 1;
+    }
+
+    if (g_source.current == '!' && token_peek(1) == '=')
+    {
+        g_token.type = ttNotEquals;
+        next_char();
+        next_char();
+        return 1;     
+    }
 
     if (g_source.current == '=')
         return read_assign();
@@ -205,7 +220,11 @@ int read_identifier()
     strncpy(g_token.repr, g_source.buffer + start, size - 1);
     g_token.repr[size - 1] = '\0';
    
-    if (strcmp(g_token.repr, "while") == 0)
+    if (strcmp(g_token.repr, "for") == 0)
+    {
+        g_token.type = ttFor;
+    }
+    else if (strcmp(g_token.repr, "while") == 0)
     {
         g_token.type = ttWhile;
     }

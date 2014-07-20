@@ -1,6 +1,7 @@
 /* 
  * Copyright (C) 2014 Toth Arpad 
  */
+
 #ifndef _TOKENIZER_H_
 #define _TOKENIZER_H_
 
@@ -18,8 +19,14 @@ enum TokenType
     ttCloseCurly,
     ttAssign,
     ttAdd,
+    ttSub,
     ttMul,
+    ttDiv,
+    ttMod,
     ttEquals,
+    ttNotEquals,
+    ttInc,
+    ttDec,
     ttLess,
     ttGreater,
     ttTrue,
@@ -27,6 +34,7 @@ enum TokenType
     ttIF,
     ttElse,
     ttWhile,
+    ttFor,
     ttDo,
     ttEOF
 };
