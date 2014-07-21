@@ -116,62 +116,98 @@ int next_token()
         g_token.type =  ttEOF;
         return 0;
     }
-
+    
     if (is_whitespace(g_source.current))
         next_nonwhite();
 
     if (is_digit(g_source.current))
+    {
         return read_number();
-    
-    if (g_source.current == '(')
+    }
+    else if (g_source.current == '(')
+    {
         return read_open_bracket();
-
-    if (g_source.current == ')')
+    }
+    else if (g_source.current == ')')
+    {
         return read_closed_bracket();
-
-    if (g_source.current == ';')
+    }
+    else if (g_source.current == ';')
+    {
         return read_semilcon();
-
-    if (g_source.current == '{')
+    }
+    else if (g_source.current == '{')
+    {
         return read_open_curly();
-
-    if (g_source.current == '}')
+    }
+    else if (g_source.current == '}')
+    {
         return read_close_curly();
-
-    if (g_source.current == '=' && token_peek(1) == '=')
+    }
+    else if (g_source.current == '=' && token_peek(1) == '=')
     {
         return read_equals();        
     }
-   
-    if (g_source.current == '-')
-    {
-        g_token.type = ttSub;
-        next_char();
-        return 1;
-    }
-
-    if (g_source.current == '!' && token_peek(1) == '=')
+    else if (g_source.current == '!' && token_peek(1) == '=')
     {
         g_token.type = ttNotEquals;
         next_char();
         next_char();
         return 1;     
     }
-
-    if (g_source.current == '=')
+    else if (g_source.current == '+' && token_peek(1) == '+')
+    {
+        g_token.type = ttInc;
+        next_char();
+        next_char();
+        return 1;     
+    }
+    else if (g_source.current == '-' && token_peek(1) == '-')
+    {
+        g_token.type = ttDec;
+        next_char();
+        next_char();
+        return 1;     
+    }
+    else if (g_source.current == '=')
+    {
         return read_assign();
-
-    if (g_source.current == '+')
+    }
+    else if (g_source.current == '-')
+    {
+        g_token.type = ttSub;
+        next_char();
+        return 1;
+    }
+    else if (g_source.current == '+')
+    {
         return read_add();
-    
-    if (g_source.current == '*')
+    }
+    else if (g_source.current == '*')
+    {
         return read_mul();
-    
-    if (is_letter(g_source.current))
+    }
+    else if (g_source.current == '/')
+    {
+        g_token.type = ttDiv;
+        next_char();
+        return 1;
+    }
+    else if (g_source.current == '%')
+    {
+        g_token.type = ttMod;
+        next_char();
+        return 1;
+    }
+    else if (is_letter(g_source.current))
+    {
         return read_identifier();
-
-    g_token.type = ttEOF; 
-    return 0;
+    }
+    else
+    {
+        g_token.type = ttEOF; 
+        return 0;
+   }
 }
 
 /* Read the next number token from the stream. */
