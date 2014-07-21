@@ -276,6 +276,11 @@ struct AstNodeT
  */
 AstNode *ast_binary(const char *symbol, AstNode *t1, AstNode *t2);
 
+/*
+ * Create a new unary operation node such ash unary ++, -- 
+ * and so one.. you'we got the ideea.
+ */
+AstNode *ast_unary(const char *symbol, AstNode *term);
 
 /*
  * Create a new BoolValue node for the specified boolean value.
@@ -297,4 +302,10 @@ AstNode *ast_if(AstNode *cond, AstNode *then, AstNode *els);
  */
 AstNode *ast_while(AstNode *cond, AstNode *body);
 
+/*
+ * Create a node that will be evaluated to the value of a variable.
+ */
+AstNode *ast_varval(Var *var);
+
+AstNode *ast_assign(Var *ref, AstNode *val);
 #endif // _AST_H_ 

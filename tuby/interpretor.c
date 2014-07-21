@@ -81,7 +81,7 @@ Value *eval(AstNode *node)
         VarVal *var_val = &node->content.var_val;
         Var *var = varmap_get(var_val->name);
         if (var == NULL)
-            error("Variable not defined yet");
+            error("Variable %s not defined yet, var_val->name");
        
         return alloc_get_val(var->val);
     }

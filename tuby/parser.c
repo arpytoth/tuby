@@ -164,6 +164,32 @@ AstNode *parse_stmt()
             return var_decl;
         }
         
+        // Unary Operator
+        if (g_token.type == ttInc)
+        {
+            /*
+             * Note that if unary operator is called as statement
+             * we will actually do an assigment too. For example
+             * i++ means i = i + 1;
+             */
+            AstNode *assign = NULL;
+            AstNode *unary_node = NULL;
+            AstNode *varval = NULL;
+            Var *var = NULL;
+            var = varmap_get(identifier);
+            if (var == NULL)
+                parse_error("Variable %s not defined yet", identifier);
+
+            varval = ast_varval(var);
+            unary_node = ast_unary("++", varval);
+            next_token();
+            if (g_token.type != ttSemilcon)
+                parse_error("; expected");
+            next_token();
+            assign = ast_assign(var, unary_node);
+            return assign;
+        }
+
         // Assignment.
         if (g_token.type == ttAssign)
         {

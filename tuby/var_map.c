@@ -27,7 +27,6 @@
 
 VarMap *g_varmap;
 
-//------------------------------------------------------------------------------
 
 void varmap_init()
 {
@@ -84,8 +83,7 @@ Var *varmap_def(const char *name, ValueType *val_type)
     if (var == NULL)
     {
         VarMapEntry *e = (VarMapEntry *)malloc(sizeof(VarMapEntry));
-        e->var.name = (char *)malloc(strlen(name) + 1);
-        strcpy(e->var.name, name);
+        e->var.name = strdup(name);
         e->next = NULL;
         e->var.val_type = val_type;
         e->var.val = NULL;

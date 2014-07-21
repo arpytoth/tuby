@@ -54,6 +54,33 @@ AstNode *ast_binary(const char *symbol, AstNode *t1, AstNode *t2)
 }
 
 
+AstNode *ast_unary(const char *symbol, AstNode *t)
+{
+    AstNode *func_call_node = NULL;
+    FuncCall *func_call = NULL;
+    ValueType *ret_type = NULL;
+
+    func_call_node = (AstNode*)malloc(sizeof(AstNode));
+    func_call_node->type = antFuncCall;
+    func_call = &func_call_node->content.func_call;
+    vector_init(&func_call->params);
+    vector_push(&func_call->params, t);
+
+    func_call_node->content.func_call.func = 
+        func_get(symbol, &func_call->params);
+
+    if (func_call_node->content.func_call.func == NULL) 
+    {
+        parse_error("Operator %s not defined for argument of type %s ",
+                     symbol, t->value_type == 0 ? "void": t->value_type->name);
+    }
+
+    ret_type = func_call_node->content.func_call.func->value_type;
+    func_call_node->value_type = ret_type; 
+    return func_call_node;
+}
+
+
 AstNode *ast_bool_val(int value)
 {
     AstNode *bool_val_node = (AstNode*)malloc(sizeof(AstNode));
@@ -101,3 +128,27 @@ AstNode *ast_while(AstNode *cond, AstNode *body)
 }
 
 
+AstNode *ast_varval(Var *var)
+{
+    AstNode *var_val_node = NULL;
+    var_val_node = (AstNode*)malloc(sizeof(AstNode));
+    var_val_node->content.var_val.name = strdup(var->name);
+    var_val_node->type = antVarVal;
+    var_val_node->value_type = var->val_type;
+    return var_val_node;
+}
+
+
+AstNode *ast_assign(Var *ref, AstNode *val)
+{
+    AstNode *assign_node = NULL;
+    Assign *assign = NULL;
+
+    assign_node = (AstNode*)malloc(sizeof(AstNode));
+    assign_node->type = antAssign;
+    assign_node->value_type = NULL;
+    assign = &assign_node->content.assign;
+    assign->name  = strdup(ref->name);
+    assign->expr = val;
+    return assign_node;
+}

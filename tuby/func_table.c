@@ -74,6 +74,16 @@ void print()
 }
 
 
+void inc()
+{
+    Value *param1 = stack_function_param(0);
+    int int_val1 = param1->data.int_val;
+    Value *ret_val = alloc_get_val(NULL);
+    ret_val->data.int_val = int_val1 + 1;
+    ret_val->value_type = IntType;
+    stack_set_ret_val(ret_val);
+}
+
 void add_int()
 {
     Value *param1 = stack_function_param(0);
@@ -180,6 +190,17 @@ void func_init()
     vector_push(func->params, IntType);
     vector_push(func->params, IntType);
     func_def(func);
+
+    // int++;
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("++");
+    func->native = inc;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = IntType;
+    vector_init(func->params);
+    vector_push(func->params, IntType);
+    func_def(func);
+
 
 }
 
