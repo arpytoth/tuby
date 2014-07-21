@@ -359,9 +359,27 @@ AstNode *parse_add()
     }
 }
 
-AstNode *parse_equals()
+AstNode *parse_not_equals()
 {
     AstNode *term1 = parse_add();
+    if (g_token.type == ttNotEquals)
+    {
+        AstNode *term2 = NULL;
+        AstNode *equals = NULL;
+        next_token();
+        term2 = parse_not_equals();
+        equals = ast_binary("!=", term1, term2);
+        return equals;
+    }
+    else
+    {
+        return term1;
+    }
+}
+
+AstNode *parse_equals()
+{
+    AstNode *term1 = parse_not_equals();
     if (g_token.type == ttEquals)
     {
         AstNode *term2 = NULL;

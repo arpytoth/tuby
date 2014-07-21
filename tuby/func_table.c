@@ -110,6 +110,18 @@ void equals_int()
 
 }
 
+void int_not_equals()
+{
+    Value *param1 = stack_function_param(0);
+    Value *param2 = stack_function_param(1);
+    int int_val1 = param1->data.int_val;
+    int int_val2 = param2->data.int_val;
+    Value *ret_val = alloc_get_val(NULL);
+    ret_val->data.bool_val = int_val1 != int_val2;
+    ret_val->value_type = BoolType;
+    stack_set_ret_val(ret_val); 
+}
+
 
 void mul_int()
 {
@@ -184,6 +196,17 @@ void func_init()
     func = (FuncDef*)malloc(sizeof(FuncDef));
     func->name = strdup("==");
     func->native = equals_int;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = BoolType;
+    vector_init(func->params);
+    vector_push(func->params, IntType);
+    vector_push(func->params, IntType);
+    func_def(func);
+
+    // int != int;
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("!=");
+    func->native = int_not_equals;
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = BoolType;
     vector_init(func->params);

@@ -1,5 +1,8 @@
 int i = 1;
-int ok = i;
-i = 2;
-i++;
-print(i);
+int ok = 10;
+
+while(ok != i)
+{
+    print(i);
+    i++;
+}
