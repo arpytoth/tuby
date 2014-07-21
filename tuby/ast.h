@@ -131,6 +131,7 @@ enum AstNodeType
     antVarVal,
     antReturn,
     antIf,
+    antFor,
     antWhile,
     antStmtList
 };
@@ -223,6 +224,13 @@ typedef struct
 } While;
 
 
+typedef struct
+{
+    AstNode *init;
+    AstNode *cond;
+    AstNode *inc;
+} For;
+
 /*
  * Instruction that causes a subprogram to exit and also sets the return
  * value in the stack frame.
@@ -242,12 +250,11 @@ union AllNodeContent
     Assign assign;
     VarDecl var_decl;
     VarVal var_val;
-    
-    /* 0 for false, 1 for true.*/
     int bool_val;
     Return ret;
     If if_;
     While while_;
+    For for_;
 };
 
 
