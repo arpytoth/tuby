@@ -229,6 +229,7 @@ typedef struct
     AstNode *init;
     AstNode *cond;
     AstNode *inc;
+    AstNode *body;
 } For;
 
 /*

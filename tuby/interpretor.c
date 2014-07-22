@@ -128,6 +128,21 @@ void interpret_node(AstNode *node)
         }
         alloc_free_val(val);
     }
+    else if (node->type == antFor)
+    {
+        For *f = &node->content.for_;
+        Value *val = NULL;
+
+        interpret_node(f->init);
+        val = eval(f->cond);
+        while(val->data.bool_val != 0)
+        {
+            interpret_node(f->body);
+            alloc_free_val(val);
+            interpret_node(f->inc);
+            val = eval(f->cond);
+        }
+    }
     else if (node->type == antWhile)
     {
         While *i = &node->content.while_;
