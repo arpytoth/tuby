@@ -277,43 +277,14 @@ struct AstNodeT
 // AST functions.
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
- * Create a new operation node between the two terms, t1 and t2. 
- * Basically the resultant node will be a binary operator of two terms such
- * as t1+t2 or t1==t2.. 
- */
 AstNode *ast_binary(const char *symbol, AstNode *t1, AstNode *t2);
-
-/*
- * Create a new unary operation node such ash unary ++, -- 
- * and so one.. you'we got the ideea.
- */
-AstNode *ast_unary(const char *symbol, AstNode *term);
-
-/*
- * Create a new BoolValue node for the specified boolean value.
- * value = 0 means false, value = 1 means true.
- */
+AstNode *ast_unary(const char *symbol, AstNode *t);
 AstNode *ast_bool_val(int value);
-
-/*
- * Create a new Variable Declaration node that will create a variable with
- * the specified name and type.
- */
 AstNode *ast_var_decl(char *name, ValueType *value_type, AstNode *init);
-
 AstNode *ast_if(AstNode *cond, AstNode *then, AstNode *els);
-
-/*
- * Create a new AST node for a While statement with the specified
- * condition and body.
- */
 AstNode *ast_while(AstNode *cond, AstNode *body);
-
-/*
- * Create a node that will be evaluated to the value of a variable.
- */
+AstNode *ast_for(AstNode *init, AstNode *cond, AstNode *inc, AstNode *body);
 AstNode *ast_varval(Var *var);
-
 AstNode *ast_assign(Var *ref, AstNode *val);
+
 #endif // _AST_H_ 

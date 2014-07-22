@@ -31,12 +31,10 @@ extern AstNode g_root;
 /* Do the parsing job. Parse the THING. */
 void parse();
 
-/*
- * Parse the next expression.
- */
+AstNode *parse_stmt();
 AstNode *parse_expr();
 
-
+AstNode *parse_for();
 
 
 #endif // _PARSER_H_

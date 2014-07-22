@@ -128,6 +128,20 @@ AstNode *ast_while(AstNode *cond, AstNode *body)
 }
 
 
+AstNode *ast_for(AstNode *init, AstNode *cond, AstNode *inc, AstNode *body)
+{
+    AstNode *node = (AstNode*)malloc(sizeof(AstNode));
+    node->type =antFor;
+    node->content.for_.cond = cond;
+    node->content.for_.init = init;
+    node->content.for_.inc = inc;
+    node->content.for_.body = body;
+    node->value_type = NULL;
+    return node;
+
+}
+
+
 AstNode *ast_varval(Var *var)
 {
     AstNode *var_val_node = NULL;

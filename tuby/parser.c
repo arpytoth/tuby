@@ -33,6 +33,53 @@
 /* Root node of the syntax tree. */
 AstNode g_root;
 
+
+AstNode *parse_for()
+{
+    varmap_push();
+    AstNode *body = NULL;
+    AstNode *cond = NULL;
+    AstNode *incr = NULL;
+    AstNode *init = NULL;
+
+    next_token();
+    if (g_token.type != ttOpenBracket)
+        parse_error("( expected.");
+    next_token();
+
+    init = parse_stmt();
+    if (init == NULL)
+        parse_error("Expected initializer statement. For example "
+                     "for (int i = 1 ....");
+
+    cond = parse_expr();
+    if (cond == NULL)
+        parse_error("Expected a stop condition");
+
+    if (cond->value_type != BoolType)
+        parse_error("Stop condition must be of type boolean");
+
+    if (g_token.type != ttSemilcon)
+        parse_error("; expected");
+    next_token();
+
+    incr = parse_stmt();
+    if (incr == NULL)
+        parse_error("Expected an incrementor statement");
+
+    if (g_token.type != ttCloseBracket)
+        parse_error(") expected");
+    next_token();
+
+    body = parse_stmt();
+    if (body == NULL)
+        parse_error("For loop must have a body.");
+
+    varmap_purge();
+    return ast_for(init, cond, incr, body);
+}
+
+
 AstNode *parse_stmt()
 {
     if (g_token.type == ttEOF)
@@ -62,6 +109,9 @@ AstNode *parse_stmt()
         varmap_purge();
         return stmt_list_node; 
     }
+
+    if (g_token.type == ttFor)
+        return parse_for();
 
     if (g_token.type == ttWhile)
     {

@@ -19,6 +19,7 @@
  */
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include "allocator.h"
 #include "log.h"
@@ -29,13 +30,13 @@ Value *alloc_get_val(Value *val)
     {
         val = (Value*)malloc(sizeof(Value));
         val->ref_count = 1;
-        LOG(llDebug, "Allocated new value: %d", (int)val);
+        LOG(llDebug, "Allocated new value: %d", (int)(uintptr_t)val);
     }
     else
     {
         val->ref_count++;
         LOG(llDebug, "Increased count to value: %i to %i", 
-            (int)val, val->ref_count);
+            (int)(uintptr_t)val, val->ref_count);
     }
     return val;
 }
@@ -45,11 +46,11 @@ void alloc_free_val(Value *val)
 {
     val->ref_count--;
     LOG(llDebug, "Decreased count to value: %i to %i", 
-        (int)val, val->ref_count);
+        (int)(uintptr_t)val, val->ref_count);
 
     if (val->ref_count == 0)
     {
-        LOG(llDebug, "Freeing value %d", (int)val);
+        LOG(llDebug, "Freeing value %d", (int)(uintptr_t)val);
         free(val);
     }
 }

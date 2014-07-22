@@ -130,6 +130,7 @@ void interpret_node(AstNode *node)
     }
     else if (node->type == antFor)
     {
+        varmap_push();
         For *f = &node->content.for_;
         Value *val = NULL;
 
@@ -138,10 +139,12 @@ void interpret_node(AstNode *node)
         while(val->data.bool_val != 0)
         {
             interpret_node(f->body);
-            alloc_free_val(val);
             interpret_node(f->inc);
+            alloc_free_val(val);
             val = eval(f->cond);
         }
+        alloc_free_val(val);
+        varmap_purge();
     }
     else if (node->type == antWhile)
     {

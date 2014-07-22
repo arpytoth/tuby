@@ -31,7 +31,7 @@ typedef enum
 
 
 #define LOG(LEVEL, MSG, args...)\
-if (0)\ 
+if (0)\
 {\
 printf(MSG, ##args);\
 printf("\n");\
