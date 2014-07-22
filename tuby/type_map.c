@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "type_map.h"
+#include "string.h"
 
 ValueType *IntType;
 ValueType *BoolType;
@@ -53,6 +54,27 @@ ValueType *type_map_get(const char *name)
         e = e->next;
     }
     return NULL;
+}
+
+
+ValueType *typemap_get_array(ValueType *primitive)
+{
+    char *arrayname = str_concat(primitive->name, "[]");
+    ValueType *type = type_map_get(arrayname);
+
+    if (type == NULL)
+    {
+        type = (ValueType*)malloc(sizeof(ValueType));
+        type->name = arrayname;
+        type->type = vtArray;
+        type_map_put(type);
+        return type;
+    }
+    else
+    {
+        free(arrayname);
+        return type;
+    }
 }
 
 

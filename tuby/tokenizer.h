@@ -17,6 +17,8 @@ enum TokenType
     ttCloseBracket,
     ttOpenCurly,
     ttCloseCurly,
+    ttOpenSquare,
+    ttCloseSquare,
     ttAssign,
     ttAdd,
     ttSub,

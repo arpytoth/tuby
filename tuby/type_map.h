@@ -76,6 +76,7 @@ void type_map_init();
  */
 ValueType *type_map_get(const char *name);
 
+ValueType *typemap_get_array(ValueType *primitive);
 
 /*
  * Put a new type into the type map.

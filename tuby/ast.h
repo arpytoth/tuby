@@ -31,24 +31,24 @@
 struct AstNodeT;
 typedef struct AstNodeT AstNode;
 
-
-/* Enumeration of all primitive types.*/
-enum PrimitiveType
+/*
+ * There can be derived types from a value type. Primitive means the actual
+ * value type but for example vtArray means an array of that type.
+ */
+typedef enum
 {
-    ptVoid,
-    ptBool,
-    ptInt
-};
+    vtPrimitive,
+    vtArray
+} ValueTypeType;
 
-
-/* Type of a value.*/
+/*
+ * Strong type in Tuby. Such as int, bool or anything else.
+ */
 typedef struct
 {
     /* Name of this value type. For example: int, bool ...*/
     char *name;
-
-    /* Base primitive type of this type.*/
-    enum PrimitiveType primitive;
+    ValueTypeType type;    
 } ValueType;
 
 
@@ -59,6 +59,7 @@ typedef union
 {
     int int_val;
     int bool_val;
+    vector vector_val;
 } AllValues;
 
 

@@ -144,6 +144,18 @@ int next_token()
     {
         return read_close_curly();
     }
+    else if (g_source.current == '[')
+    {
+        g_token.type = ttOpenSquare;
+        next_char();
+        return 1;
+    }
+    else if (g_source.current == ']')
+    {
+        g_token.type = ttCloseSquare;
+        next_char();
+        return 1;
+    }
     else if (g_source.current == '=' && token_peek(1) == '=')
     {
         return read_equals();        

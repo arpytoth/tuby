@@ -33,6 +33,21 @@
 /* Root node of the syntax tree. */
 AstNode g_root;
 
+ValueType *parse_valuetype(ValueType *underlying)
+{
+    if (g_token.type == ttOpenSquare)
+    {
+        next_token();
+        if (g_token.type != ttCloseSquare)
+            parse_error("] expected");
+        next_token();
+        return typemap_get_array(underlying);
+    }
+    else
+    {
+        return underlying;
+    }
+}
 
 AstNode *parse_for()
 {
@@ -173,6 +188,7 @@ AstNode *parse_stmt()
         val_type = type_map_get(identifier);
         if (val_type != NULL)
         {
+            val_type = parse_valuetype(val_type);
             AstNode *var_decl = NULL;
             AstNode *init = NULL;
             char *varname = NULL;

@@ -27,6 +27,7 @@
 #include "vector.h"
 #include "type_map.h"
 #include "var_map.h"
+#include "string.h"
 
 int main()
 {
