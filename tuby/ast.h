@@ -171,10 +171,16 @@ typedef struct
 } VarDecl;
 
 
+/* Evaluated into the value of the specified variable. */
 typedef struct
 {
+    /* Name of the variable to get value from. */
     char *name;
-}VarVal;
+
+    /* Index in case of array or map. */
+    AstNode *index;
+
+} VarVal;
 
 
 /*
@@ -185,9 +191,13 @@ typedef struct
 {
     /* Name of the variable.*/
     char *name;
+    
+    /* Index where to assign value, in case of array.*/
+    AstNode *index;
 
     /* Expression that will be evaluated and then assigned.*/
     AstNode *expr;
+    
 } Assign;
 
 
