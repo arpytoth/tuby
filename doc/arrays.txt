@@ -1,0 +1,8 @@
+                                 
+                                  Arrays
+
+Assign to an array value
+-------------------------
+
+It is fairly easy. We basically have an antIndexAccess node in our AST
+that will be evaluated to the value of the array at the specified index.

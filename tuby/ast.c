@@ -153,7 +153,7 @@ AstNode *ast_varval(Var *var)
 }
 
 
-AstNode *ast_assign(Var *ref, AstNode *val)
+AstNode *ast_assign(AstNode *lvalue, AstNode *val)
 {
     AstNode *assign_node = NULL;
     Assign *assign = NULL;
@@ -162,7 +162,23 @@ AstNode *ast_assign(Var *ref, AstNode *val)
     assign_node->type = antAssign;
     assign_node->value_type = NULL;
     assign = &assign_node->content.assign;
-    assign->name  = strdup(ref->name);
+    assign->lvalue  = lvalue;
     assign->expr = val;
     return assign_node;
 }
+
+
+AstNode *ast_index_access(AstNode *value, AstNode *index)
+{
+    AstNode *node = NULL;
+    IndexAccess *ia = NULL;
+
+    node = (AstNode*)malloc(sizeof(AstNode));
+    node->type = antIndexAccess;
+    node->value_type = NULL;
+    ia = &node->content.index_access;
+    ia->val = value;
+    ia->index = index;
+    return node;
+}
+

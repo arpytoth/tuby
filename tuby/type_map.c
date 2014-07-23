@@ -66,7 +66,8 @@ ValueType *typemap_get_array(ValueType *primitive)
     {
         type = (ValueType*)malloc(sizeof(ValueType));
         type->name = arrayname;
-        type->type = vtArray;
+        type->uval_type = primitive;
+        type->is_array = 1;
         type_map_put(type);
         return type;
     }

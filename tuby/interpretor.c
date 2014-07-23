@@ -82,7 +82,11 @@ Value *eval(AstNode *node)
         Var *var = varmap_get(var_val->name);
         if (var == NULL)
             error("Variable %s not defined yet, var_val->name");
-       
+        if (var->val == NULL) 
+        {
+            var->val =  alloc_get_val(NULL);
+            var->val->value_type = var->val_type;
+        }
         return alloc_get_val(var->val);
     }
     else
@@ -192,11 +196,11 @@ void interpret_node(AstNode *node)
     else if (node->type == antAssign)
     {
         Assign *assign = &node->content.assign;
-        Var *var = varmap_get(assign->name);
-        if (var == NULL)
-            error("Variable %s not defined", assign->name);
-
-        var->val = eval(assign->expr);
+        Value *lvalue = eval(assign->lvalue);
+        Value *rvalue = eval(assign->expr);
+        lvalue->data = rvalue->data;
+        alloc_free_val(lvalue);
+        alloc_free_val(rvalue);
     }
     else
     {

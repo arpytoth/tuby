@@ -94,6 +94,27 @@ AstNode *parse_for()
     return ast_for(init, cond, incr, body);
 }
 
+AstNode *parse_assign(AstNode *lvalue)
+{
+    AstNode *rvalue = NULL;
+    
+    rvalue = parse_expr();
+    if (rvalue == NULL)
+        parse_error("Assign value expected.");
+
+    if (rvalue->value_type != lvalue->value_type)
+    {
+        parse_error("Could not assign expression of type %s to "
+                    "type %s", rvalue->value_type->name, 
+                    lvalue->value_type->name);
+    }
+
+    if (g_token.type != ttSemilcon)
+        parse_error("; expected.");
+    next_token();
+    return ast_assign(lvalue, rvalue);
+
+}
 
 AstNode *parse_stmt()
 {
@@ -184,11 +205,14 @@ AstNode *parse_stmt()
         
         next_token();
        
-        // Variable declaration.
+        /*
+         * Variable declaration.
+         * If it starts with a type name, it is clearly a declaration:
+         * variable or function.
+         */
         val_type = type_map_get(identifier);
         if (val_type != NULL)
         {
-            val_type = parse_valuetype(val_type);
             AstNode *var_decl = NULL;
             AstNode *init = NULL;
             char *varname = NULL;
@@ -201,6 +225,8 @@ AstNode *parse_stmt()
 
             varname = get_token_repr();
             next_token();
+            val_type = parse_valuetype(val_type);
+
             if (g_token.type == ttAssign)
             {
                 next_token();
@@ -229,7 +255,34 @@ AstNode *parse_stmt()
             free(varname);
             return var_decl;
         }
-        
+
+        /*
+         * It is an identifier with array mark. Well this probably
+         * means array left value.
+         */
+        if (g_token.type == ttOpenSquare)
+        {
+            Var *var = NULL;
+            AstNode *left_value = NULL;
+            AstNode *index = NULL;
+            
+            next_token();
+            index = parse_expr();
+            if (index == NULL)
+                parse_error("Index or key expected");
+
+            if (g_token.type != ttCloseSquare)
+                parse_error("] expected");
+            next_token();
+            
+            var = varmap_get(identifier);
+            if (var == NULL)
+                parse_error("Variable %s not defined yet", identifier);
+            
+            left_value = ast_varval(var);
+            parse_error("Not implemented yet");
+        }
+
         // Unary Operator
         if (g_token.type == ttInc)
         {
@@ -252,42 +305,22 @@ AstNode *parse_stmt()
             if (g_token.type != ttSemilcon)
                 parse_error("; expected");
             next_token();
-            assign = ast_assign(var, unary_node);
+            assign = ast_assign(varval, unary_node);
             return assign;
         }
 
-        // Assignment.
+        // Simple Assignment
         if (g_token.type == ttAssign)
         {
-            AstNode *assign_node = NULL;
-            Assign *assign = NULL;
             Var *var = NULL;
-
+            AstNode *lvalue = NULL;
+            
             var = varmap_get(identifier);
             if (var == NULL)
                 parse_error("Variable %s not defined yet", identifier);
-
             next_token();
-            assign_node = (AstNode*)malloc(sizeof(AstNode));
-            assign_node->type = antAssign;
-            assign_node->value_type = NULL;
-            assign = &assign_node->content.assign;
-
-            assign->name  = identifier;
-            assign->expr = parse_expr();
-
-            if (assign->expr->value_type != var->val_type)
-            {
-                parse_error("Could not assign expression of type %s to "
-                            "variable %s of type %s", 
-                             assign->expr->value_type->name, identifier,
-                             var->val_type->name);
-            }
-
-            if (g_token.type != ttSemilcon)
-                parse_error("; expected.");
-            next_token();
-            return assign_node;
+            lvalue = ast_varval(var);
+            return parse_assign(lvalue);
         }
 
         // Function Call

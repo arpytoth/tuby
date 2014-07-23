@@ -24,31 +24,16 @@
 #include "vector.h"
 #include "list.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// Types
-////////////////////////////////////////////////////////////////////////////////
 
 struct AstNodeT;
 typedef struct AstNodeT AstNode;
 
-/*
- * There can be derived types from a value type. Primitive means the actual
- * value type but for example vtArray means an array of that type.
- */
-typedef enum
-{
-    vtPrimitive,
-    vtArray
-} ValueTypeType;
 
-/*
- * Strong type in Tuby. Such as int, bool or anything else.
- */
-typedef struct
+typedef struct ValueType
 {
-    /* Name of this value type. For example: int, bool ...*/
     char *name;
-    ValueTypeType type;    
+    struct ValueType *uval_type;
+    int is_array;
 } ValueType;
 
 
@@ -76,7 +61,7 @@ typedef struct
     /* The data of this value. */
     AllValues data;
 
-    /* Number of actual variables  that are currently using this value. */
+    /* Number of actual variables that are currently using this value. */
     int ref_count;
 } Value;
 
@@ -134,6 +119,7 @@ enum AstNodeType
     antIf,
     antFor,
     antWhile,
+    antIndexAccess,
     antStmtList
 };
 
@@ -183,21 +169,10 @@ typedef struct
 } VarVal;
 
 
-/*
- * Instruction that will cause the variable with the specified name to
- * be assigned with the specified expression.
- */
 typedef struct
 {
-    /* Name of the variable.*/
-    char *name;
-    
-    /* Index where to assign value, in case of array.*/
-    AstNode *index;
-
-    /* Expression that will be evaluated and then assigned.*/
+    AstNode *lvalue; 
     AstNode *expr;
-    
 } Assign;
 
 
@@ -244,6 +219,17 @@ typedef struct
 } For;
 
 /*
+ * Instruction used to access a value from an index. Both the
+ * value and index are evaluated at runtime and are totally
+ * dynamic.
+ */
+typedef struct
+{
+    AstNode *index;
+    AstNode *val;
+} IndexAccess;
+
+/*
  * Instruction that causes a subprogram to exit and also sets the return
  * value in the stack frame.
  */
@@ -267,6 +253,7 @@ union AllNodeContent
     If if_;
     While while_;
     For for_;
+    IndexAccess index_access;
 };
 
 
@@ -296,6 +283,6 @@ AstNode *ast_if(AstNode *cond, AstNode *then, AstNode *els);
 AstNode *ast_while(AstNode *cond, AstNode *body);
 AstNode *ast_for(AstNode *init, AstNode *cond, AstNode *inc, AstNode *body);
 AstNode *ast_varval(Var *var);
-AstNode *ast_assign(Var *ref, AstNode *val);
-
+AstNode *ast_assign(AstNode *lvalue, AstNode *val);
+AstNode *ast_index_access(AstNode *value, AstNode *index);
 #endif // _AST_H_ 
