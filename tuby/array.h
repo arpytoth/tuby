@@ -17,26 +17,13 @@
  *    
  *   Toth Arpad (arpytoth@yahoo.com)
  */
-
-#ifndef _ALLOCATOR_H_
-#define _ALLOCATOR_H_
+#ifndef _TUBY_ARRAY_H_
+#define _TUBY_ARRAY_H_
 
 #include "ast.h"
 
-/*
- * Allocate a new value of the specified value type.
- */
-Value *alloc_val(ValueType *type);
 
-/*
- * Allocate a new value on the Heap.
- */
-Value *alloc_get_val(Value *val);
+Value *array_get_val(Value *a, int index);
 
-/*
- * Free value from the Heap, but only if ref_count is zero. 
- */
-void alloc_free_val(Value *val);
 
-#endif // _ALLOCATOR_H_
-
+#endif // _TUBY_ARRAY_H_

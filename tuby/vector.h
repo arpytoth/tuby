@@ -42,11 +42,15 @@ void vector_release(vector *vector);
 /* Get element at specified index. */
 void *vector_at(vector *v, int index);
 
+void *vector_set_at(vector *v, int index, void *elem);
+
 /* Get the size of this vector.*/
 int vector_length(vector *v);
 
 /* Reserve x size in advance. */
 void vector_reserve(vector *v, int size);
+
+void vector_resize(vector *v, int newsize);
 
 /* Push a new element at the end of this vector. */
 void vector_push(vector *v, void *elem);

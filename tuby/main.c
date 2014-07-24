@@ -28,6 +28,8 @@
 #include "type_map.h"
 #include "var_map.h"
 #include "string.h"
+#include "array.h"
+#include "allocator.h"
 
 int main()
 {

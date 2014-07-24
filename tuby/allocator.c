@@ -21,8 +21,25 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+
+#include "vector.h"
 #include "allocator.h"
 #include "log.h"
+
+
+Value *alloc_val(ValueType *val_type)
+{
+    Value *val = (Value*)malloc(sizeof(Value));
+    val->value_type = val_type;
+    val->ref_count = 1;
+    if (val_type->is_array)
+    {
+        vector_init(&val->data.vector_val);
+    }
+    LOG(llDebug, "Allocated new value: %d", (int)(uintptr_t)val);
+    return val;
+}
+
 
 Value *alloc_get_val(Value *val)
 {
