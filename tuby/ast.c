@@ -175,7 +175,7 @@ AstNode *ast_index_access(AstNode *value, AstNode *index)
 
     node = (AstNode*)malloc(sizeof(AstNode));
     node->type = antIndexAccess;
-    node->value_type = NULL;
+    node->value_type = value->value_type->uval_type;
     ia = &node->content.index_access;
     ia->val = value;
     ia->index = index;

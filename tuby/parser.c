@@ -280,7 +280,8 @@ AstNode *parse_stmt()
                 parse_error("Variable %s not defined yet", identifier);
             
             left_value = ast_varval(var);
-            parse_error("Not implemented yet");
+            left_value = ast_index_access(left_value, index);
+            return parse_assign(left_value);
         }
 
         // Unary Operator
