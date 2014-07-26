@@ -49,6 +49,39 @@ ValueType *parse_valuetype(ValueType *underlying)
     }
 }
 
+AstNode *parse_left_value() 
+{
+        if (g_token.type == ttOpenSquare)
+        {
+            Var *var = NULL;
+            AstNode *left_value = NULL;
+            AstNode *index = NULL;
+            
+            next_token();
+            index = parse_expr();
+            if (index == NULL)
+                parse_error("Index or key expected");
+
+            if (g_token.type != ttCloseSquare)
+                parse_error("] expected");
+            next_token();
+            
+            var = varmap_get(identifier);
+            if (var == NULL)
+                parse_error("Variable %s not defined yet", identifier);
+            
+            if (g_token.type != ttAssign)
+                parse_error("= expected. ");
+             
+            next_token(); 
+            left_value = ast_varval(var);
+            left_value = ast_index_access(left_value, index);
+            return parse_assign(left_value);
+        }
+
+
+}
+
 AstNode *parse_for()
 {
     varmap_push();
@@ -279,6 +312,10 @@ AstNode *parse_stmt()
             if (var == NULL)
                 parse_error("Variable %s not defined yet", identifier);
             
+            if (g_token.type != ttAssign)
+                parse_error("= expected. ");
+             
+            next_token(); 
             left_value = ast_varval(var);
             left_value = ast_index_access(left_value, index);
             return parse_assign(left_value);
@@ -525,5 +562,3 @@ void parse()
     g_root.content.stmt_list = stmt_list;
     varmap_purge();
 }
-
-

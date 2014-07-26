@@ -1,4 +1,4 @@
 int a[];
 a[0] = 1;
-print(a);
+print(a[0]);
 
