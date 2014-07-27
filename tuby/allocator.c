@@ -68,6 +68,7 @@ void alloc_free_val(Value *val)
     if (val->ref_count == 0)
     {
         LOG(llDebug, "Freeing value %d", (int)(uintptr_t)val);
+        if (val
         free(val);
     }
 }
