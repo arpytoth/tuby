@@ -28,8 +28,8 @@
 #include "list.h"
 #include "allocator.h"
 #include "type_map.h"
+#include "array.h"
 
-//------------------------------------------------------------------------------
 
 Value *eval(AstNode *node)
 {
@@ -75,6 +75,19 @@ Value *eval(AstNode *node)
         val->value_type = IntType;
         val->data.int_val = node->content.int_val.value;
         return val;
+    }
+    else if (node->type == antIndexAccess)
+    {
+        IndexAccess *ia = &node->content.index_access;
+        AstNode *index = ia->index;
+        AstNode *val = ia->val;
+        Value *index_val = eval(index);
+        int int_index = index_val->data.int_val;
+        Value *array_val = eval(val);
+        Value *ret_val = array_get_val(array_val, int_index);
+        alloc_free_val(index_val);
+        alloc_free_val(array_val);
+        return alloc_get_val(ret_val);
     }
     else if (node->type == antVarVal)
     {

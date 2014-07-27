@@ -49,38 +49,6 @@ ValueType *parse_valuetype(ValueType *underlying)
     }
 }
 
-AstNode *parse_left_value() 
-{
-        if (g_token.type == ttOpenSquare)
-        {
-            Var *var = NULL;
-            AstNode *left_value = NULL;
-            AstNode *index = NULL;
-            
-            next_token();
-            index = parse_expr();
-            if (index == NULL)
-                parse_error("Index or key expected");
-
-            if (g_token.type != ttCloseSquare)
-                parse_error("] expected");
-            next_token();
-            
-            var = varmap_get(identifier);
-            if (var == NULL)
-                parse_error("Variable %s not defined yet", identifier);
-            
-            if (g_token.type != ttAssign)
-                parse_error("= expected. ");
-             
-            next_token(); 
-            left_value = ast_varval(var);
-            left_value = ast_index_access(left_value, index);
-            return parse_assign(left_value);
-        }
-
-
-}
 
 AstNode *parse_for()
 {
@@ -443,13 +411,32 @@ AstNode *parse_term()
 
         if (var == NULL)
             parse_error("Variable %s is not defined yet.", identifier);
-
-
-        term = (AstNode*)malloc(sizeof(AstNode));
-        term->content.var_val.name = identifier;
-        term->type = antVarVal;
-        term->value_type = var->val_type;
+    
         next_token();
+        if (g_token.type == ttOpenSquare)
+        {
+            AstNode *left_value = NULL;
+            AstNode *index = NULL;
+            
+            next_token();
+            index = parse_expr();
+            if (index == NULL)
+                parse_error("Index or key expected");
+
+            if (g_token.type != ttCloseSquare)
+                parse_error("] expected");
+            next_token();
+            left_value = ast_varval(var);
+            term = ast_index_access(left_value, index);
+        }
+        else
+        {
+            term = (AstNode*)malloc(sizeof(AstNode));
+            term->content.var_val.name = identifier;
+            term->type = antVarVal;
+            term->value_type = var->val_type;
+            next_token();
+        }
     }
     else
     {
