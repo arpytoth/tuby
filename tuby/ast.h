@@ -28,7 +28,6 @@
 struct AstNodeT;
 typedef struct AstNodeT AstNode;
 
-
 typedef struct ValueType
 {
     char *name;
@@ -36,10 +35,6 @@ typedef struct ValueType
     int is_array;
 } ValueType;
 
-
-/*
- * An union of all possible values in the Tuby language.
- */
 typedef union
 {
     int int_val;
@@ -113,6 +108,7 @@ enum AstNodeType
 {
     antFuncCall,
     antIntVal,
+    antStringVal,
     antBoolVal,
     antVarDecl,
     antAssign,

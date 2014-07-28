@@ -5,11 +5,10 @@
 #ifndef _TOKENIZER_H_
 #define _TOKENIZER_H_
 
-/* 
- * Enumeration of all possible token types.
- */
+
 enum TokenType
 {
+    ttString,
     ttNumber,
     ttSemilcon,
     ttIdentifier,
@@ -81,7 +80,7 @@ int next_token();
 int token_peek(int pos);
 
 int read_number();
-
+int token_read_string();
 int read_open_bracket();
 
 int read_closed_bracket();

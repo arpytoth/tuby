@@ -124,6 +124,10 @@ int next_token()
     {
         return read_number();
     }
+    else if (g_source.current == '"')
+    {
+        return token_read_string();
+    }
     else if (g_source.current == '(')
     {
         return read_open_bracket();
@@ -245,6 +249,32 @@ int read_number()
     g_token.type = ttNumber;
     return 1;
 }
+
+int token_read_string()
+{
+    int start = g_source.pos;
+    int end = start;
+    int size = 0;
+    next_char();
+    while (g_source.current != '"')
+    {
+        if (next_char() < 0) 
+        {
+            error("EOF reached!");
+            return 0;
+        }
+    }
+
+    end = g_source.pos - 1;
+    size = end - start + 2;
+    strncpy(g_token.repr, g_source.buffer + start, size - 1);
+    g_token.repr[size - 1] = '\0';
+    g_token.type = ttString;
+    return 1;
+
+}
+
+
 
 /* Read the next identifier token from the source file.*/
 int read_identifier()

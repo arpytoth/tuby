@@ -16,6 +16,7 @@ OBJ += tuby/allocator.o
 OBJ += tuby/type_map.o
 OBJ += tuby/string.o
 OBJ += tuby/array.o
+OBJ += tuby/tuby_string.o
 
 %.o: %.c
 	@echo Building: "$<"
