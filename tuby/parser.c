@@ -33,15 +33,22 @@
 /* Root node of the syntax tree. */
 AstNode g_root;
 
-ValueType *parse_valuetype(ValueType *underlying)
+ValueType *parse_value_type(ValueType *underlying)
 {
     if (g_token.type == ttOpenSquare)
     {
+        ValueType *type = NULL;
+
         next_token();
         if (g_token.type != ttCloseSquare)
             parse_error("] expected");
         next_token();
-        return typemap_get_array(underlying);
+        type = typemap_get_array(underlying);
+        
+        if (g_token.type == ttOpenSquare)
+            return parse_value_type(type);
+        else
+            return type;
     }
     else
     {
@@ -49,6 +56,36 @@ ValueType *parse_valuetype(ValueType *underlying)
     }
 }
 
+
+AstNode *parse_index_access(AstNode *var_val)
+{
+    
+    /*
+     * When this function is called we already parsed the variable
+     * and we reached a '[' token.
+     */
+    AstNode *index_access = NULL;
+    AstNode *index = NULL;
+
+    next_token();
+    index = parse_expr();
+    if (index == NULL)
+        parse_error("Index or key expected");
+
+    if (index->value_type != IntType)
+        parse_error("Only index of type int accepted for now");
+
+    if (g_token.type != ttCloseSquare)
+        parse_error("] expected");
+    next_token();
+
+    index_access = ast_index_access(var_val, index); 
+
+    if (g_token.type == ttOpenSquare)
+        return parse_index_access(index_access);
+    else
+        return index_access;
+}
 
 AstNode *parse_for()
 {
@@ -226,7 +263,7 @@ AstNode *parse_stmt()
 
             varname = get_token_repr();
             next_token();
-            val_type = parse_valuetype(val_type);
+            val_type = parse_value_type(val_type);
 
             if (g_token.type == ttAssign)
             {
@@ -259,34 +296,26 @@ AstNode *parse_stmt()
 
         /*
          * It is an identifier with array mark. Well this probably
-         * means array left value.
+         * means index access left value.
          */
         if (g_token.type == ttOpenSquare)
         {
             Var *var = NULL;
-            AstNode *left_value = NULL;
-            AstNode *index = NULL;
-            
-            next_token();
-            index = parse_expr();
-            if (index == NULL)
-                parse_error("Index or key expected");
-
-            if (g_token.type != ttCloseSquare)
-                parse_error("] expected");
-            next_token();
+            AstNode *var_val = NULL;
+            AstNode *index_access = NULL;
             
             var = varmap_get(identifier);
             if (var == NULL)
                 parse_error("Variable %s not defined yet", identifier);
             
+            var_val = ast_varval(var);
+            index_access = parse_index_access(var_val);
+
             if (g_token.type != ttAssign)
                 parse_error("= expected. ");
              
             next_token(); 
-            left_value = ast_varval(var);
-            left_value = ast_index_access(left_value, index);
-            return parse_assign(left_value);
+            return parse_assign(index_access);
         }
 
         // Unary Operator
@@ -415,19 +444,13 @@ AstNode *parse_term()
         next_token();
         if (g_token.type == ttOpenSquare)
         {
-            AstNode *left_value = NULL;
-            AstNode *index = NULL;
-            
-            next_token();
-            index = parse_expr();
-            if (index == NULL)
-                parse_error("Index or key expected");
+            AstNode *var_val = NULL;
+            AstNode *index_access = NULL;
 
-            if (g_token.type != ttCloseSquare)
-                parse_error("] expected");
-            next_token();
-            left_value = ast_varval(var);
-            term = ast_index_access(left_value, index);
+            var_val = ast_varval(var);
+            index_access = parse_index_access(var_val);
+
+            term = index_access;
         }
         else
         {
