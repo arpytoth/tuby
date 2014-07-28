@@ -28,7 +28,6 @@ struct String
     char *buffer;
 };
 
-
 void string_init_module();
 void string_init(struct String *str);
 int string_len(struct String *str);

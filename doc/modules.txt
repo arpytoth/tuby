@@ -1,0 +1,28 @@
+
+
+
+
+                               TUBY MODULES
+
+
+Tuby Modules are pieces of C code that extends the Tuby Language. For 
+example the string type is implemented using the string module. Anyway,
+there are some rules on how these modules should be implemented:
+
+1. Each module should be defined in one .h and one .c file named:
+   tuby_module_name.h and tuby_module_name.c. For example:
+   tuby_string.h and tuby_string.c.
+
+
+2. Each module should have an initialize function. THis function will
+   be called by the runtime, before parsing the source code and it will
+   initialize the custom type introduced by the module if any, and
+   all the functions.
+
+3. Module functions should be named as follows: 
+        module_prefix_function_name();   
+
+   For example:
+        string_strlen();
+
+                            
