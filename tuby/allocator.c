@@ -26,6 +26,7 @@
 #include "allocator.h"
 #include "log.h"
 
+int g_alloc_count = 0;
 
 Value *alloc_val(ValueType *val_type)
 {
@@ -37,6 +38,7 @@ Value *alloc_val(ValueType *val_type)
         vector_init(&val->data.vector_val);
     }
     LOG(llDebug, "Allocated new value: %d", (int)(uintptr_t)val);
+    g_alloc_count++;
     return val;
 }
 
@@ -48,6 +50,7 @@ Value *alloc_get_val(Value *val)
         val = (Value*)malloc(sizeof(Value));
         val->ref_count = 1;
         LOG(llDebug, "Allocated new value: %d", (int)(uintptr_t)val);
+        g_alloc_count++;
     }
     else
     {
@@ -67,9 +70,21 @@ void alloc_free_val(Value *val)
 
     if (val->ref_count == 0)
     {
+        if (val->value_type->is_array)
+        {
+            int i;
+            int length = vector_length(&val->data.vector_val);
+            for (i = 0; i < length; i++)
+            {
+                Value *elem = (Value*)vector_at(&val->data.vector_val, i);
+                if (elem != 0)
+                    alloc_free_val(elem);
+            }
+        }
+
         LOG(llDebug, "Freeing value %d", (int)(uintptr_t)val);
-        if (val
         free(val);
+        g_alloc_count--;
     }
 }
 

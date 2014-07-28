@@ -435,7 +435,6 @@ AstNode *parse_term()
             term->content.var_val.name = identifier;
             term->type = antVarVal;
             term->value_type = var->val_type;
-            next_token();
         }
     }
     else

@@ -97,7 +97,7 @@ Value *eval(AstNode *node)
             error("Variable %s not defined yet, var_val->name");
         if (var->val == NULL) 
         {
-            var->val =  alloc_get_val(NULL);
+            var->val = alloc_val(var->val_type);
             var->val->value_type = var->val_type;
         }
         return alloc_get_val(var->val);

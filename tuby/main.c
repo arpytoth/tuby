@@ -41,5 +41,7 @@ int main()
     parse();
     varmap_release();
     interpret();
+
+    printf("Number of alloc: %d\n", g_alloc_count);
     return 1;
 }
