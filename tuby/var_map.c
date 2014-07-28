@@ -86,7 +86,7 @@ Var *varmap_def(const char *name, ValueType *val_type)
         e->var.name = strdup(name);
         e->next = NULL;
         e->var.val_type = val_type;
-        e->var.val = NULL;
+        e->var.val = alloc_val(val_type);
 
         if (g_varmap->last != NULL)
         {

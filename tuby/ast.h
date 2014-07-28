@@ -63,6 +63,8 @@ typedef struct
 
     /* Number of actual variables that are currently using this value. */
     int ref_count;
+
+    int is_null;
 } Value;
 
 

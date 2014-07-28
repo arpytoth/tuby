@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "type_map.h"
 #include "vector.h"
 #include "allocator.h"
 #include "log.h"
@@ -32,7 +33,12 @@ Value *alloc_val(ValueType *val_type)
 {
     Value *val = (Value*)malloc(sizeof(Value));
     val->value_type = val_type;
+    val->is_null = 1; 
     val->ref_count = 1;
+    if (val_type == IntType)
+    {
+        val->data.int_val = 0;
+    }
     if (val_type->is_array)
     {
         vector_init(&val->data.vector_val);
@@ -43,21 +49,14 @@ Value *alloc_val(ValueType *val_type)
 }
 
 
-Value *alloc_get_val(Value *val)
+Value *alloc_use_val(Value *val)
 {
     if (val == NULL)
-    {
-        val = (Value*)malloc(sizeof(Value));
-        val->ref_count = 1;
-        LOG(llDebug, "Allocated new value: %d", (int)(uintptr_t)val);
-        g_alloc_count++;
-    }
-    else
-    {
-        val->ref_count++;
-        LOG(llDebug, "Increased count to value: %i to %i", 
+        return NULL;
+
+    val->ref_count++;
+    LOG(llDebug, "Increased count to value: %i to %i", 
             (int)(uintptr_t)val, val->ref_count);
-    }
     return val;
 }
 

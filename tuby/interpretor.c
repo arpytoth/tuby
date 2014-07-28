@@ -63,16 +63,14 @@ Value *eval(AstNode *node)
     else if (node->type == antBoolVal)
     {
         Value *val = NULL;
-        val = alloc_get_val(val);
+        val = alloc_val(BoolType);
         val->data.bool_val = node->content.bool_val;
-        val->value_type = BoolType;
         return val;
     }
     else if (node->type == antIntVal)
     {
         Value *val = NULL;
-        val = alloc_get_val(val);
-        val->value_type = IntType;
+        val = alloc_val(IntType);
         val->data.int_val = node->content.int_val.value;
         return val;
     }
@@ -87,7 +85,7 @@ Value *eval(AstNode *node)
         Value *ret_val = array_get_val(array_val, int_index);
         alloc_free_val(index_val);
         alloc_free_val(array_val);
-        return alloc_get_val(ret_val);
+        return alloc_use_val(ret_val);
     }
     else if (node->type == antVarVal)
     {
@@ -100,7 +98,7 @@ Value *eval(AstNode *node)
             var->val = alloc_val(var->val_type);
             var->val->value_type = var->val_type;
         }
-        return alloc_get_val(var->val);
+        return alloc_use_val(var->val);
     }
     else
     {
@@ -212,6 +210,7 @@ void interpret_node(AstNode *node)
         Value *lvalue = eval(assign->lvalue);
         Value *rvalue = eval(assign->expr);
         lvalue->data = rvalue->data;
+        lvalue->is_null = rvalue->is_null;
         alloc_free_val(lvalue);
         alloc_free_val(rvalue);
     }
