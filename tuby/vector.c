@@ -58,11 +58,10 @@ void vector_reserve(vector *v, int size)
     {
         int i;
         int size_of_pointer = sizeof(void*);
-        int new_size = v->reserved == 0 ? 1 : v->reserved * 2;
-        v->data = (void**)realloc(v->data, new_size * size_of_pointer);
-        for (i = v->reserved; i < new_size; i++)
+        v->data = (void**)realloc(v->data, size * size_of_pointer);
+        for (i = v->reserved; i < size; i++)
             v->data[i] = NULL;
-        v->reserved = new_size;
+        v->reserved = size;
     }
 }
 

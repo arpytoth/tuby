@@ -62,7 +62,7 @@ Value *eval(AstNode *node)
     }
     else if (node->type == antBoolVal)
     {
-        Value *val = NULLn::;
+        Value *val = NULL;
         val = alloc_get_val(val);
         val->data.bool_val = node->content.bool_val;
         val->value_type = BoolType;
