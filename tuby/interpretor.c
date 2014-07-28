@@ -199,9 +199,13 @@ void interpret_node(AstNode *node)
     {
         VarDecl *var_decl = &node->content.var_decl;
         Var *var =varmap_def(var_decl->name, var_decl->val_type);
+
         if (var_decl->init != NULL)
         {
-            var->val = eval(var_decl->init);
+            Value *init_val = eval(var_decl->init);
+            var->val->data = init_val->data;
+            var->val->is_null = init_val->is_null;
+            alloc_free_val(init_val); 
         }
     }
     else if (node->type == antAssign)

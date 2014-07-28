@@ -487,9 +487,29 @@ AstNode *parse_mul()
     }
 }
 
-AstNode *parse_add()
+
+AstNode *parse_sub()
 {
     AstNode *term1 = parse_mul();
+    if (g_token.type == ttSub)
+    {
+        AstNode *term2 = NULL;
+        AstNode *sub = NULL;
+        next_token();
+        term2 = parse_sub();
+        sub = ast_binary("-", term1, term2);
+        return sub;
+    }
+    else
+    {
+        return term1;
+    }
+}
+
+
+AstNode *parse_add()
+{
+    AstNode *term1 = parse_sub();
     if (g_token.type == ttAdd)
     {
         AstNode *term2 = NULL;
