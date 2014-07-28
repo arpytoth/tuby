@@ -21,12 +21,15 @@
 #ifndef _TUBY_STRING_H_
 #define _TUBY_STRING_H_
 
+
 struct String
 {
     int len;
     char *buffer;
 };
 
+
+void string_init_module();
 void string_init(struct String *str);
 int string_len(struct String *str);
 void string_set(struct String *str, const char *val);

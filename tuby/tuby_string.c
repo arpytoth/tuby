@@ -22,6 +22,12 @@
 #include <stdlib.h>
 #include "tuby_string.h"
 
+
+void string_init_module()
+{
+}
+
+
 void string_init(struct String *str)
 {
     str->len = 0;
