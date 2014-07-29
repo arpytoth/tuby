@@ -23,23 +23,18 @@
 
 #include "vector.h"
 #include "list.h"
-
+#include "tuby_string.h"
+#include "type_map.h"
 
 struct AstNodeT;
 typedef struct AstNodeT AstNode;
-
-typedef struct ValueType
-{
-    char *name;
-    struct ValueType *uval_type;
-    int is_array;
-} ValueType;
 
 typedef union
 {
     int int_val;
     int bool_val;
     vector vector_val;
+    struct String str_val;
 } AllValues;
 
 
@@ -108,7 +103,7 @@ enum AstNodeType
 {
     antFuncCall,
     antIntVal,
-    antStringVal,
+    antStrVal,
     antBoolVal,
     antVarDecl,
     antAssign,
@@ -130,12 +125,11 @@ typedef struct FuncCallT
 } FuncCall;
 
 
-/* An integer literal value in a Tuby Program.*/
 typedef struct
 {
-    /* The actual int value. */
     int value;
 } IntVal;
+
 
 
 /*
@@ -243,6 +237,7 @@ union AllNodeContent
     FuncCall func_call;
     list stmt_list;
     IntVal int_val;
+    struct String str_val;
     Assign assign;
     VarDecl var_decl;
     VarVal var_val;
@@ -283,4 +278,5 @@ AstNode *ast_for(AstNode *init, AstNode *cond, AstNode *inc, AstNode *body);
 AstNode *ast_varval(Var *var);
 AstNode *ast_assign(AstNode *lvalue, AstNode *val);
 AstNode *ast_index_access(AstNode *value, AstNode *index);
+AstNode *ast_str_val(char *value);
 #endif // _AST_H_ 

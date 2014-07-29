@@ -433,6 +433,12 @@ AstNode *parse_term()
         term = ast_bool_val(val);
         next_token();
     }
+    else if (g_token.type == ttString)
+    {
+        AstNode *str_val = ast_str_val(g_token.repr);
+        next_token();
+        return str_val;
+    }
     else if (g_token.type == ttIdentifier)
     {
         char *identifier = get_token_repr();

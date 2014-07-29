@@ -182,3 +182,12 @@ AstNode *ast_index_access(AstNode *value, AstNode *index)
     return node;
 }
 
+
+AstNode *ast_str_val(char *value)
+{
+    AstNode *node = (AstNode*)malloc(sizeof(AstNode));
+    node->type = antStrVal;
+    node->value_type = StrType;
+    string_set(&node->content.str_val, value);
+    return node;
+}

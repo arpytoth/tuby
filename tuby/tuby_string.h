@@ -21,6 +21,7 @@
 #ifndef _TUBY_STRING_H_
 #define _TUBY_STRING_H_
 
+#include "type_map.h"
 
 struct String
 {
@@ -28,10 +29,13 @@ struct String
     char *buffer;
 };
 
+extern ValueType *StrType;
+
 void string_init_module();
 void string_init(struct String *str);
 int string_len(struct String *str);
 void string_set(struct String *str, const char *val);
+void string_dup(struct String *dest, struct String *src);
 void string_free(struct String *str);
 
 #endif // _TUBY_STRING_H_

@@ -1,20 +1,4 @@
-int fibo[];
-
-int i;
-int n = 10;
-
-for (i = 1; i != n; i++;)
-{
-    if (i == 1)
-        fibo[i] = 1;
-    else if (i == 2)
-        fibo[i] = 1;
-    else
-        fibo[i] = fibo[i-1] + fibo[i-2];
-}
-
-for (i = 1; i !=n; i++;)
-{
-    print(fibo[i]);
-}
+string var;
+var = "Hello World";
+print(var);
 

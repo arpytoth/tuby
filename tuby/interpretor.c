@@ -60,6 +60,13 @@ Value *eval(AstNode *node)
         return 0;
 
     }
+    else if (node->type == antStrVal)
+    {
+        Value *val = NULL;
+        val = alloc_val(StrType);
+        string_dup(&val->data.str_val, &node->content.str_val);
+        return val;
+    }
     else if (node->type == antBoolVal)
     {
         Value *val = NULL;
@@ -213,8 +220,16 @@ void interpret_node(AstNode *node)
         Assign *assign = &node->content.assign;
         Value *lvalue = eval(assign->lvalue);
         Value *rvalue = eval(assign->expr);
-        lvalue->data = rvalue->data;
-        lvalue->is_null = rvalue->is_null;
+        if (lvalue->value_type == StrType)
+        {
+            string_dup(&lvalue->data.str_val, &rvalue->data.str_val);
+            lvalue->is_null = rvalue->is_null;
+        }
+        else
+        {
+            lvalue->data = rvalue->data;
+            lvalue->is_null = rvalue->is_null;
+        }
         alloc_free_val(lvalue);
         alloc_free_val(rvalue);
     }

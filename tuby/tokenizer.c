@@ -252,7 +252,7 @@ int read_number()
 
 int token_read_string()
 {
-    int start = g_source.pos;
+    int start = g_source.pos + 1;
     int end = start;
     int size = 0;
     next_char();
@@ -270,6 +270,7 @@ int token_read_string()
     strncpy(g_token.repr, g_source.buffer + start, size - 1);
     g_token.repr[size - 1] = '\0';
     g_token.type = ttString;
+    next_char();
     return 1;
 
 }

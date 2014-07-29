@@ -21,11 +21,18 @@
 #ifndef _TYPE_MAP_H_
 #define _TYPE_MAP_H_
 
-#include "ast.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Type Map Structures.
 ////////////////////////////////////////////////////////////////////////////////
+
+typedef struct ValueType
+{
+    char *name;
+    struct ValueType *uval_type;
+    int is_array;
+} ValueType;
+
 
 /*
  * An entry from the Type Map.

@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "tuby_string.h"
 #include "type_map.h"
 #include "vector.h"
 #include "allocator.h"
@@ -38,6 +39,10 @@ Value *alloc_val(ValueType *val_type)
     if (val_type == IntType)
     {
         val->data.int_val = 0;
+    }
+    if (val_type == StrType)
+    {
+        string_init(&val->data.str_val);
     }
     if (val_type->is_array)
     {
@@ -69,7 +74,11 @@ void alloc_free_val(Value *val)
 
     if (val->ref_count == 0)
     {
-        if (val->value_type->is_array)
+        if (val->value_type == StrType)
+        {
+            string_free(&val->data.str_val);
+        }
+        else if (val->value_type->is_array)
         {
             int i;
             int length = vector_length(&val->data.vector_val);

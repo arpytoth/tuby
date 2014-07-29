@@ -20,11 +20,51 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "tuby_string.h"
+#include "func_table.h"
+#include "utils.h"
+#include "stack.h"
+
+ValueType *StrType;
+
+void string_print_func()
+{
+    Value *param1 = stack_function_param(0);
+    if (param1->value_type == StrType)
+    {
+        struct String val = param1->data.str_val;
+        printf("%s\n", val.buffer);
+    }    
+    else
+    {
+       error("Not A String! FIX THIS!\n");
+    }
+}
+
 
 
 void string_init_module()
 {
+    FuncDef *func = NULL;
+
+    StrType = (ValueType*)malloc(sizeof(ValueType));
+    StrType->name = strdup("string");
+    StrType->uval_type = NULL;
+    type_map_put(StrType);
+
+    // Built In Functions
+    // print(string);
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("print");
+    func->native = string_print_func;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = NULL;
+    vector_init(func->params);
+    vector_push(func->params, StrType);
+    func_def(func);
+
+
 }
 
 
@@ -48,6 +88,11 @@ void string_set(struct String *str, const char *val)
    str->len = len;
 }
 
+void string_dup(struct String *dest, struct String *src)
+{
+    dest->buffer = strdup(src->buffer);
+    dest->len = src->len;
+}
 
 void string_free(struct String *str)
 {
