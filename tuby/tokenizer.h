@@ -5,39 +5,13 @@
 #ifndef _TOKENIZER_H_
 #define _TOKENIZER_H_
 
-
 enum TokenType
 {
-    ttString,
-    ttNumber,
-    ttSemilcon,
-    ttIdentifier,
-    ttOpenBracket,
-    ttCloseBracket,
-    ttOpenCurly,
-    ttCloseCurly,
-    ttOpenSquare,
-    ttCloseSquare,
-    ttAssign,
-    ttAdd,
-    ttSub,
-    ttMul,
-    ttDiv,
-    ttMod,
-    ttEquals,
-    ttNotEquals,
-    ttInc,
-    ttDec,
-    ttLess,
-    ttGreater,
-    ttTrue,
-    ttFalse,
-    ttIF,
-    ttElse,
-    ttWhile,
-    ttFor,
-    ttDo,
-    ttEOF
+    ttString, ttNumber, ttChar, ttSemilcon, ttIdentifier, ttOpenBracket,
+    ttCloseBracket, ttOpenCurly, ttCloseCurly, ttOpenSquare, ttCloseSquare,
+    ttAssign, ttAdd, ttSub, ttMul, ttDiv, ttMod, ttEquals, ttNotEquals,
+    ttInc, ttDec, ttLess, ttGreater, ttTrue, ttFalse, ttIF, ttElse,
+    ttWhile, ttFor, ttDo, ttEOF
 };
 
 /* 

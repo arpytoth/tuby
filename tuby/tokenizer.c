@@ -105,6 +105,31 @@ int next_nonwhite()
     return 1;
 }
 
+
+int token_read_char()
+{
+    next_char();
+    if 
+    while (g_source.current != '\'')
+    {
+        if (next_char() < 0) 
+        {
+            error("EOF reached!");
+            return 0;
+        }
+    }
+
+    end = g_source.pos - 1;
+    size = end - start + 2;
+    strncpy(g_token.repr, g_source.buffer + start, size - 1);
+    g_token.repr[size - 1] = '\0';
+    g_token.type = ttString;
+    next_char();
+    return 1;
+
+
+}
+
 /*
  * Read the next token from file. Return 1 in case of success, 0 in case EOF
  * reached.
