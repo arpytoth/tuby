@@ -30,7 +30,7 @@
 #include "list.h"
 #include "allocator.h"
 #include "type_map.h"
-#include "array.h"
+#include "tuby_array.h"
 #include "tuby_char.h"
 
 

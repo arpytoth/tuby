@@ -3,7 +3,6 @@ int a[];
 a[0] = 11;
 a[1] = 22;
 
-{
     int b[];
 
     b = a;
@@ -14,7 +13,6 @@ a[1] = 22;
     print(b[0]);
     print(b[1]);
 
-}
 
 print("a:");
 print(a[0]);

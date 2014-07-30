@@ -28,7 +28,7 @@
 #include "type_map.h"
 #include "var_map.h"
 #include "string.h"
-#include "array.h"
+#include "tuby_array.h"
 #include "allocator.h"
 #include "tuby_char.h"
 #include "tuby_string.h"

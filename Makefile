@@ -15,7 +15,7 @@ OBJ += tuby/var_map.o
 OBJ += tuby/allocator.o
 OBJ += tuby/type_map.o
 OBJ += tuby/string.o
-OBJ += tuby/array.o
+OBJ += tuby/tuby_array.o
 OBJ += tuby/tuby_string.o
 OBJ += tuby/tuby_char.o
 

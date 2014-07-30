@@ -25,53 +25,10 @@
 #include "list.h"
 #include "tuby_string.h"
 #include "type_map.h"
+#include "allocator.h"
 
 struct AstNodeT;
 typedef struct AstNodeT AstNode;
-
-typedef union
-{
-    int int_val;
-    int bool_val;
-    char char_val;
-    vector vector_val;
-    struct String str_val;
-} AllValues;
-
-
-/*
- * A value in the Tuby program, basically a meaningfull chunk of memory such as
- * an integer value or a string. Expressions are evaluated into values and 
- * stored into the memory.
- */
-typedef struct
-{
-    /* Type of this value. */
-    ValueType *value_type;
-
-    /* The data of this value. */
-    AllValues data;
-
-    /* Number of actual variables that are currently using this value. */
-    int ref_count;
-
-    int is_null;
-} Value;
-
-
-/* 
- * A variable from the Tuby program. 
- */
-typedef struct
-{
-    char *name;
-
-    /* Type of this variable. */
-    ValueType *val_type;
-
-    /* Value assigned to this variable. */
-    Value *val;
-} Var;
 
 
 /* 

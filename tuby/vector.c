@@ -26,6 +26,7 @@ void vector_init(vector *v)
     v->data = 0;
     v->reserved = 0;
     v->size = 0;
+    v->ref_count = 0; 
 }
 
 

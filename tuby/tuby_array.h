@@ -21,9 +21,15 @@
 #define _TUBY_ARRAY_H_
 
 #include "ast.h"
+#include "vector.h"
 
+
+struct Array
+{
+    vector *data;
+};
 
 Value *array_get_val(Value *a, int index);
-
+Value *array_set_val(Value *a, int index, Value *val_to_set);
 
 #endif // _TUBY_ARRAY_H_

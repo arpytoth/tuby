@@ -28,9 +28,10 @@
 
 typedef struct ValueType
 {
-    char *name;
-    struct ValueType *uval_type;
-    int is_array;
+    char *name; // name of this type
+    struct ValueType *uval_type; // underlying value type.
+    int is_array; // this is an array of uval_type;
+    int is_ref; // this is a pointer to the uval_type;
 } ValueType;
 
 
@@ -84,6 +85,8 @@ void type_map_init();
 ValueType *type_map_get(const char *name);
 
 ValueType *typemap_get_array(ValueType *primitive);
+ValueType *typemap_get_ref(ValueType *underlying);
+
 
 /*
  * Put a new type into the type map.

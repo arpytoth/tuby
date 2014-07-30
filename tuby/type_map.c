@@ -69,6 +69,7 @@ ValueType *typemap_get_array(ValueType *primitive)
         type->name = arrayname;
         type->uval_type = primitive;
         type->is_array = 1;
+        type->is_ref = 0;
         type_map_put(type);
         return type;
     }
@@ -78,6 +79,30 @@ ValueType *typemap_get_array(ValueType *primitive)
         return type;
     }
 }
+
+
+ValueType *typemap_get_ref(ValueType *underlying)
+{
+    char *arrayname = str_concat(underlying->name, "&");
+    ValueType *type = type_map_get(arrayname);
+
+    if (type == NULL)
+    {
+        type = (ValueType*)malloc(sizeof(ValueType));
+        type->name = arrayname;
+        type->uval_type = underlying;
+        type->is_array = 0;
+        type->is_ref = 1;
+        type_map_put(type);
+        return type;
+    }
+    else
+    {
+        free(arrayname);
+        return type;
+    }
+}
+
 
 
 void type_map_put(ValueType *value_type)
