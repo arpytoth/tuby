@@ -1,3 +1,8 @@
-char c;
-c = '1';
-print(c);
+string str;
+str = "Hello World";
+str[0] = 'M';
+string strr;
+strr = str;
+strr[1] = 'J';
+print(str);
+print(strr);

@@ -21,6 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "tuby_char.h"
 #include "tuby_string.h"
 #include "func_table.h"
 #include "utils.h"
@@ -50,7 +51,7 @@ void string_init_module()
 
     StrType = (ValueType*)malloc(sizeof(ValueType));
     StrType->name = strdup("string");
-    StrType->uval_type = NULL;
+    StrType->uval_type = CharType;
     type_map_put(StrType);
 
     // Built In Functions
@@ -100,4 +101,8 @@ void string_free(struct String *str)
 }
 
 
+char string_at(struct String *str, int index)
+{
+    return str->buffer[index];
+}
 

@@ -20,6 +20,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
+
 #include "interpretor.h"
 #include "parser.h"
 #include "utils.h"
@@ -30,6 +32,19 @@
 #include "type_map.h"
 #include "array.h"
 #include "tuby_char.h"
+
+
+void interpret_error(const char *format, ...)
+{
+     va_list arguments;  
+     va_start(arguments, format);
+     printf("Runtime Error: ");
+     vprintf(format, arguments);
+     printf("\n");
+     va_end(arguments);
+     exit(1);
+}
+
 
 Value *eval(AstNode *node)
 {
@@ -93,13 +108,36 @@ Value *eval(AstNode *node)
         IndexAccess *ia = &node->content.index_access;
         AstNode *index = ia->index;
         AstNode *val = ia->val;
+        
+        Value *under_val = eval(val);
         Value *index_val = eval(index);
-        int int_index = index_val->data.int_val;
-        Value *array_val = eval(val);
-        Value *ret_val = array_get_val(array_val, int_index);
-        alloc_free_val(index_val);
-        alloc_free_val(array_val);
-        return alloc_use_val(ret_val);
+        
+        if (under_val->value_type == StrType)
+        {
+            int int_index;
+            Value *char_at_index = NULL;
+            struct String *str_val = NULL;
+
+            if (index_val->value_type != IntType)
+                interpret_error("String index must be of type int.");
+
+            int_index = index_val->data.int_val;
+            str_val = &under_val->data.str_val;
+            char_at_index = alloc_val(CharType);
+            char_at_index->data.char_val = string_at(str_val, int_index);
+            
+            alloc_free_val(index_val);
+            alloc_free_val(under_val);
+            return char_at_index;
+        }
+        else
+        {
+            int int_index = index_val->data.int_val;
+            Value *ret_val = array_get_val(under_val, int_index);
+            alloc_free_val(index_val);
+            alloc_free_val(under_val);
+            return alloc_use_val(ret_val);
+        }
     }
     else if (node->type == antVarVal)
     {
@@ -225,20 +263,56 @@ void interpret_node(AstNode *node)
     else if (node->type == antAssign)
     {
         Assign *assign = &node->content.assign;
-        Value *lvalue = eval(assign->lvalue);
-        Value *rvalue = eval(assign->expr);
-        if (lvalue->value_type == StrType)
+     
+        /*
+         * The string index access is a special case because the string is
+         * not implemented as an array but a a direct char[] C style. This
+         * is because that way is more efficient.
+         */
+        if (assign->lvalue->type == antIndexAccess &&
+            assign->lvalue->content.index_access.val->value_type == StrType)
         {
-            string_dup(&lvalue->data.str_val, &rvalue->data.str_val);
-            lvalue->is_null = rvalue->is_null;
+            struct String *str = NULL;
+            Value *str_val = NULL;
+            Value *rvalue = NULL;
+            Value *index = NULL;
+            int int_index;
+
+            str_val = eval(assign->lvalue->content.index_access.val);
+            str = &str_val->data.str_val;
+            index = eval(assign->lvalue->content.index_access.index);
+            
+            if (index->value_type != IntType)
+                interpret_error("String index must be of type int");
+
+            int_index = index->data.int_val;
+            rvalue = eval(assign->expr);
+
+            if (rvalue->value_type != CharType)
+                interpret_error("Only char can be assigned to string[]");
+
+            str->buffer[int_index] = rvalue->data.char_val;
+            alloc_free_val(str_val);
+            alloc_free_val(index);
+            alloc_free_val(rvalue);
         }
         else
         {
-            lvalue->data = rvalue->data;
-            lvalue->is_null = rvalue->is_null;
+            Value *lvalue = eval(assign->lvalue);
+            Value *rvalue = eval(assign->expr);
+            if (lvalue->value_type == StrType)
+            {
+                string_dup(&lvalue->data.str_val, &rvalue->data.str_val);
+                lvalue->is_null = rvalue->is_null;
+            }
+            else
+            {
+                lvalue->data = rvalue->data;
+                lvalue->is_null = rvalue->is_null;
+            }
+            alloc_free_val(lvalue);
+            alloc_free_val(rvalue);
         }
-        alloc_free_val(lvalue);
-        alloc_free_val(rvalue);
     }
     else
     {
