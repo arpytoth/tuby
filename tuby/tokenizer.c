@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "utils.h"
 #include "tokenizer.h"
@@ -16,6 +17,21 @@ struct SourceFile g_source;
  * tokenizer. So we can store all tokens in one token.
  */
 struct Token g_token;
+
+
+void token_error(const char *format, ...)
+{
+     va_list arguments;  
+     va_start(arguments, format);
+     printf("Syntax Error:  at Line %i, Col %i: ", 
+            g_source.line, g_source.row);
+     
+     vprintf(format, arguments);
+     printf("\n");
+     va_end(arguments);
+     exit(1);
+}
+
 
 /* Check if the provided character is a letter or not. */
 int is_letter(const char c)
@@ -108,26 +124,18 @@ int next_nonwhite()
 
 int token_read_char()
 {
+    char chr;
+    
     next_char();
-    if 
-    while (g_source.current != '\'')
-    {
-        if (next_char() < 0) 
-        {
-            error("EOF reached!");
-            return 0;
-        }
-    }
+    chr = g_source.current;
+    next_char();
+    if (g_source.current != '\'')
+        token_error("Expected ' to close the char constant.");
 
-    end = g_source.pos - 1;
-    size = end - start + 2;
-    strncpy(g_token.repr, g_source.buffer + start, size - 1);
-    g_token.repr[size - 1] = '\0';
-    g_token.type = ttString;
-    next_char();
+    g_token.repr[0] = chr;
+    g_token.repr[1] = '\0';
+    g_token.type = ttChar;
     return 1;
-
-
 }
 
 /*
@@ -148,6 +156,10 @@ int next_token()
     if (is_digit(g_source.current))
     {
         return read_number();
+    }
+    else if (g_source.current == '\'')
+    {
+        return token_read_char();
     }
     else if (g_source.current == '"')
     {
