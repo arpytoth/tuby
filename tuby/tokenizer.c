@@ -129,9 +129,11 @@ int token_read_char()
     next_char();
     chr = g_source.current;
     next_char();
+    
     if (g_source.current != '\'')
         token_error("Expected ' to close the char constant.");
-
+   
+    next_char();
     g_token.repr[0] = chr;
     g_token.repr[1] = '\0';
     g_token.type = ttChar;

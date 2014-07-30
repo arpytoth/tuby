@@ -29,7 +29,7 @@
 #include "allocator.h"
 #include "type_map.h"
 #include "array.h"
-
+#include "tuby_char.h"
 
 Value *eval(AstNode *node)
 {
@@ -59,6 +59,13 @@ Value *eval(AstNode *node)
         error("Function Definition Not Found.. Only Native supported!!!");
         return 0;
 
+    }
+    else if (node->type == antCharVal)
+    {
+        Value *val = NULL;
+        val = alloc_val(CharType);
+        val->data.char_val = node->content.char_val;
+        return val;
     }
     else if (node->type == antStrVal)
     {

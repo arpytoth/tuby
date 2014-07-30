@@ -33,6 +33,7 @@ typedef union
 {
     int int_val;
     int bool_val;
+    char char_val;
     vector vector_val;
     struct String str_val;
 } AllValues;
@@ -103,6 +104,7 @@ enum AstNodeType
 {
     antFuncCall,
     antIntVal,
+    antCharVal,
     antStrVal,
     antBoolVal,
     antVarDecl,
@@ -242,6 +244,7 @@ union AllNodeContent
     VarDecl var_decl;
     VarVal var_val;
     int bool_val;
+    char char_val;
     Return ret;
     If if_;
     While while_;
@@ -279,4 +282,5 @@ AstNode *ast_varval(Var *var);
 AstNode *ast_assign(AstNode *lvalue, AstNode *val);
 AstNode *ast_index_access(AstNode *value, AstNode *index);
 AstNode *ast_str_val(char *value);
+AstNode *ast_char_val(char value);
 #endif // _AST_H_ 

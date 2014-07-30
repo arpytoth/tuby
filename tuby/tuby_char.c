@@ -17,8 +17,52 @@
  *    
  *   Toth Arpad (arpytoth@yahoo.com)
  */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "tuby_char.h"
+#include "func_table.h"
+#include "ast.h"
+#include "stack.h"
+#include "utils.h"
+
+ValueType *CharType;
+
+void char_print_func()
+{
+    Value *param1 = stack_function_param(0);
+    if (param1->value_type == CharType)
+    {
+        printf("%c\n", param1->data.char_val);
+    }    
+    else
+    {
+       error("Not A Char! FIX THIS!\n");
+    }
+}
+
 
 void char_init_module()
 {
+    FuncDef *func = NULL;
+
+    CharType = (ValueType*)malloc(sizeof(ValueType));
+    CharType->uval_type = NULL;
+    CharType->name = strdup("char");
+    type_map_put(CharType);
+
+    
+    // Built In Functions
+    
+    // print(char);
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("print");
+    func->native = char_print_func;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = NULL;
+    vector_init(func->params);
+    vector_push(func->params, CharType);
+    func_def(func);
 }

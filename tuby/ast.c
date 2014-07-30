@@ -24,6 +24,7 @@
 #include "type_map.h"
 #include "func_table.h"
 #include "utils.h"
+#include "tuby_char.h"
 
 AstNode *ast_binary(const char *symbol, AstNode *t1, AstNode *t2)
 {
@@ -189,5 +190,15 @@ AstNode *ast_str_val(char *value)
     node->type = antStrVal;
     node->value_type = StrType;
     string_set(&node->content.str_val, value);
+    return node;
+}
+
+
+AstNode *ast_char_val(char value)
+{
+    AstNode *node = (AstNode*)malloc(sizeof(AstNode));
+    node->type = antCharVal;
+    node->value_type = CharType;
+    node->content.char_val = value;
     return node;
 }

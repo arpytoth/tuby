@@ -20,7 +20,10 @@
 #ifndef _TUBY_CHAR_H_
 #define _TUBY_CHAR_H_
 
+#include "type_map.h"
 
+
+extern ValueType *CharType;
 
 void char_init_module();
 

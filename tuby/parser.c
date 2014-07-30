@@ -414,7 +414,12 @@ AstNode *parse_term()
             error("Missing ) ");
         next_token();
     }
-    else  if (g_token.type == ttNumber)
+    else if (g_token.type == ttChar)
+    {
+        term = ast_char_val(g_token.repr[0]); 
+        next_token();
+    }
+    else if (g_token.type == ttNumber)
     {
         term = (AstNode*)malloc(sizeof(AstNode));
         term->content.int_val.value = atoi(g_token.repr);

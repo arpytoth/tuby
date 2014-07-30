@@ -1,4 +1,3 @@
-string var;
-var = "Hello World";
-print(var);
-
+char c;
+c = '1';
+print(c);

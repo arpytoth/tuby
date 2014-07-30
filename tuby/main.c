@@ -30,6 +30,7 @@
 #include "string.h"
 #include "array.h"
 #include "allocator.h"
+#include "tuby_char.h"
 #include "tuby_string.h"
 
 int main()
@@ -38,7 +39,8 @@ int main()
     stack_init();
     type_map_init();
     func_init();
-    
+ 
+    char_init_module();
     string_init_module();
 
     load_from_file("program.txt");
