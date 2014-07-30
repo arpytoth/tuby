@@ -27,3 +27,34 @@ Value *array_set_val(Value *a, int index, Value *val_to_set)
     return val;
 }
 
+void array_free(struct Array *arr)
+{
+    if (arr != NULL && arr->data != NULL)
+    {
+        arr->data->ref_count--;
+        if (arr->data->ref_count == 0)
+        {
+            int i;
+            int length = vector_length(&val->data.vector_val);
+            for (i = 0; i < length; i++)
+            {
+                Value *elem = (Value*)vector_at(&val->data.vector_val, i);
+                if (elem != NULL)
+                    alloc_free_val(elem);
+            }
+            free(arr->data);
+            arr->data = NULL;
+        }              
+    }
+}
+
+void array_use(struct Array *arr)
+{
+    arr->data->ref_count++;
+}
+
+
+void array_copy(struct Array *dest, struct Array *src)
+{
+    
+}

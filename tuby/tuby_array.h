@@ -31,5 +31,8 @@ struct Array
 
 Value *array_get_val(Value *a, int index);
 Value *array_set_val(Value *a, int index, Value *val_to_set);
+void array_free(struct Array *arr);
+void array_use(struct Array *arr);
+void array_copy(struct Array *dest, struct Array *src);
 
 #endif // _TUBY_ARRAY_H_
