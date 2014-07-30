@@ -1,8 +1,23 @@
-string str;
-str = "Hello World";
-str[0] = 'M';
-string strr;
-strr = str;
-strr[1] = 'J';
-print(str);
-print(strr);
+int a[];
+
+a[0] = 11;
+a[1] = 22;
+
+{
+    int b[];
+
+    b = a;
+
+    b[0] = 111;
+
+    print("b:");
+    print(b[0]);
+    print(b[1]);
+
+}
+
+print("a:");
+print(a[0]);
+print(a[1]);
+
+
