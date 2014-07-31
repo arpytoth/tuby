@@ -30,7 +30,6 @@
 struct AstNodeT;
 typedef struct AstNodeT AstNode;
 
-
 /* 
  * Definition of a function.
  */

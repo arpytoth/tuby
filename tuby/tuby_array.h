@@ -20,17 +20,14 @@
 #ifndef _TUBY_ARRAY_H_
 #define _TUBY_ARRAY_H_
 
-#include "ast.h"
 #include "vector.h"
-
 
 struct Array
 {
     vector *data;
 };
 
-Value *array_get_val(Value *a, int index);
-Value *array_set_val(Value *a, int index, Value *val_to_set);
+void array_init(struct Array *arr);
 void array_free(struct Array *arr);
 void array_use(struct Array *arr);
 void array_copy(struct Array *dest, struct Array *src);

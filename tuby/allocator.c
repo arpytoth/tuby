@@ -27,6 +27,7 @@
 #include "vector.h"
 #include "allocator.h"
 #include "log.h"
+#include "tuby_array.h"
 
 int g_alloc_count = 0;
 
@@ -46,7 +47,7 @@ Value *alloc_val(ValueType *val_type)
     }
     if (val_type->is_array)
     {
-        vector_init(&val->data.vector_val);
+        array_init(&val->data.array_val);
     }
     LOG(llDebug, "Allocated new value: %d", (int)(uintptr_t)val);
     g_alloc_count++;
@@ -80,20 +81,27 @@ void alloc_free_val(Value *val)
         }
         else if (val->value_type->is_array)
         {
-            int i;
-            int length = vector_length(&val->data.vector_val);
-            for (i = 0; i < length; i++)
-            {
-                Value *elem = (Value*)vector_at(&val->data.vector_val, i);
-                if (elem != 0)
-                    alloc_free_val(elem);
-            }
+            array_free(&val->data.array_val);
         }
 
         LOG(llDebug, "Freeing value %d", (int)(uintptr_t)val);
         free(val);
         g_alloc_count--;
     }
+}
+
+Value *alloc_array_get(Value *a, int index)
+{
+    Value *val = NULL;
+    vector_resize(a->data.array_val.data, index + 1);
+    
+    val = vector_at(a->data.array_val.data, index);
+    if (val == NULL)
+    {
+        val = alloc_val(a->value_type->uval_type);
+        vector_set_at(a->data.array_val.data, index, val);
+    }
+    return val;
 }
 
 

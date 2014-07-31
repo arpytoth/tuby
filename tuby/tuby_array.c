@@ -3,28 +3,11 @@
 #include "vector.h"
 #include "allocator.h"
 
-Value *array_get_val(Value *a, int index)
+void array_init(struct Array *arr)
 {
-    Value *val = NULL;
-    vector_resize(&a->data.vector_val, index + 1);
-    
-    val = vector_at(&a->data.vector_val, index);
-    if (val == NULL)
-    {
-        val = alloc_val(a->value_type->uval_type);
-        vector_set_at(&a->data.vector_val, index, val);
-    }
-    return val;
-}
-
-Value *array_set_val(Value *a, int index, Value *val_to_set)
-{
-    Value *val = NULL;
-    vector_resize(&a->data.vector_val, index + 1);
-
-    val = vector_at(&a->data.vector_val, index);
-    vector_set_at(&a->data.vector_val, index, val_to_set);
-    return val;
+    arr->data = (vector*)malloc(sizeof(vector));
+    vector_init(arr->data);
+    arr->data->ref_count = 1;
 }
 
 void array_free(struct Array *arr)
@@ -35,10 +18,10 @@ void array_free(struct Array *arr)
         if (arr->data->ref_count == 0)
         {
             int i;
-            int length = vector_length(&val->data.vector_val);
+            int length = vector_length(arr->data);
             for (i = 0; i < length; i++)
             {
-                Value *elem = (Value*)vector_at(&val->data.vector_val, i);
+                Value *elem = (Value*)vector_at(arr->data, i);
                 if (elem != NULL)
                     alloc_free_val(elem);
             }
@@ -56,5 +39,7 @@ void array_use(struct Array *arr)
 
 void array_copy(struct Array *dest, struct Array *src)
 {
-    
+    array_free(dest);
+    array_use(src);
+    dest->data = src->data;
 }

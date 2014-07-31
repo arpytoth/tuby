@@ -22,7 +22,8 @@
 #define _ALLOCATOR_H_
 
 #include "type_map.h"
-
+#include "tuby_array.h"
+#include "tuby_string.h"
 
 struct Value;
 typedef struct Value Value;
@@ -32,7 +33,7 @@ union AllValues
     int int_val;
     int bool_val;
     char char_val;
-    vector vector_val;
+    struct Array array_val;
     struct String str_val;
 };
 
@@ -67,6 +68,7 @@ typedef struct
 
 
 
+
 /* Used to count how many objects where allocated and dealocted.*/
 extern int g_alloc_count;
 
@@ -84,7 +86,6 @@ Value *alloc_use_val(Value *val);
  * Free value from the Heap, but only if ref_count is zero. 
  */
 void alloc_free_val(Value *val);
-
-
+Value *alloc_array_get(Value *a, int index);
 #endif // _ALLOCATOR_H_
 

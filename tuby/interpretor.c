@@ -133,7 +133,7 @@ Value *eval(AstNode *node)
         else
         {
             int int_index = index_val->data.int_val;
-            Value *ret_val = array_get_val(under_val, int_index);
+            Value *ret_val = alloc_array_get(under_val, int_index);
             alloc_free_val(index_val);
             alloc_free_val(under_val);
             return alloc_use_val(ret_val);
@@ -303,6 +303,11 @@ void interpret_node(AstNode *node)
             if (lvalue->value_type == StrType)
             {
                 string_dup(&lvalue->data.str_val, &rvalue->data.str_val);
+                lvalue->is_null = rvalue->is_null;
+            }
+            else if (lvalue->value_type->is_array)
+            {
+                array_copy(&lvalue->data.array_val, &rvalue->data.array_val);
                 lvalue->is_null = rvalue->is_null;
             }
             else
