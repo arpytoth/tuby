@@ -140,6 +140,15 @@ int token_read_char()
     return 1;
 }
 
+int token_read_comma()
+{
+    g_token.type = ttComma;
+    g_token.repr[0] = ',';
+    g_token.repr[1] = '\0'
+    next_char();
+    return 1;
+}
+
 /*
  * Read the next token from file. Return 1 in case of success, 0 in case EOF
  * reached.
@@ -158,6 +167,10 @@ int next_token()
     if (is_digit(g_source.current))
     {
         return read_number();
+    }
+    else if (g_source.current == ',')
+    {
+        return token_read_comma();
     }
     else if (g_source.current == '\'')
     {

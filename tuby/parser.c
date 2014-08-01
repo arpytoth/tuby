@@ -169,7 +169,10 @@ AstNode *parse_assign(AstNode *lvalue)
  */
 void parse_function_def()
 {
+    list stmt_list;
     next_token();
+    
+    AstNode *stmt = NULL;
     while (g_token.type != ttCloseBracket)
     {
         ValueType value_type = NULL;
@@ -183,9 +186,42 @@ void parse_function_def()
         if (g_token.type != ttIdentifier)
             parse_error("Identifier expected");
 
-            
+        next_token();
+        if (g_token.type != ttComma)
+        {
+            next_token();
+        }
+        else if (g_token.type == ttCloseBracket)
+        {
+            next_token();
+            break;
+        }
+        else
+        {
+            parse_error(", or ) expected);
+        }
+    }
+    
+    if (g_token.type != ttOpenCurly)
+        parse_error("Expected function body between {}");
+    varmap_push();
+    list_init(&stmt_list);
+    stmt = parse_stmt();
+    while (1)
+    {
+        list_push(&stmt_list, stmt); 
+        stmt = parse_stmt();
+        if (g_token.type == ttCloseCurly)
+        {
+            next_token();
+            break;
+        }
     }
 
+    g_root.type = antStmtList;
+    g_root.content.stmt_list = stmt_list;
+    varmap_purge();
+   
 }
 
 
