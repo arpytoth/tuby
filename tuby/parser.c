@@ -170,7 +170,22 @@ AstNode *parse_assign(AstNode *lvalue)
 void parse_function_def()
 {
     next_token();
-    
+    while (g_token.type != ttCloseBracket)
+    {
+        ValueType value_type = NULL;
+
+        next_token();
+        value_type = type_map_get(g_token.repr);
+        if (value_type == NULL)
+            parse_error("Type name expected");
+
+        next_token();
+        if (g_token.type != ttIdentifier)
+            parse_error("Identifier expected");
+
+            
+    }
+
 }
 
 
