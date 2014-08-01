@@ -154,6 +154,26 @@ AstNode *parse_assign(AstNode *lvalue)
 
 }
 
+
+/*
+ * Parse a function definition code and add it to the 
+ * function table. So this method won't generate an actual
+ * statement. Yes the function declaration is threated as a
+ * statement but it is executed at compile time and not at
+ * runtime.
+ * When we call this function we assumen that type indentifier
+ * were readed and the next token is (.
+ *
+ * So basically we are in the : int main( state, we need to read
+ * the list of parameters and the statement list. 
+ */
+void parse_function_def()
+{
+    next_token();
+    
+}
+
+
 AstNode *parse_stmt()
 {
     if (g_token.type == ttEOF)
