@@ -169,13 +169,15 @@ AstNode *parse_assign(AstNode *lvalue)
  */
 void parse_function_def()
 {
+    AstNode *body = NULL;
+    FuncDef *func = NULL;
     list stmt_list;
-    next_token();
-    
     AstNode *stmt = NULL;
+    
+    next_token();
     while (g_token.type != ttCloseBracket)
     {
-        ValueType value_type = NULL;
+        ValueType *value_type = NULL;
 
         next_token();
         value_type = type_map_get(g_token.repr);
@@ -193,42 +195,57 @@ void parse_function_def()
         }
         else if (g_token.type == ttCloseBracket)
         {
-            next_token();
             break;
         }
         else
         {
-            parse_error(", or ) expected);
+            parse_error(", or ) expected");
         }
     }
     
+    next_token();
     if (g_token.type != ttOpenCurly)
         parse_error("Expected function body between {}");
+    next_token();
     varmap_push();
     list_init(&stmt_list);
     stmt = parse_stmt();
     while (1)
     {
         list_push(&stmt_list, stmt); 
-        stmt = parse_stmt();
-        if (g_token.type == ttCloseCurly)
+        if (g_token.type == ttEOF)
+        {
+            parse_error("End of file reached but } not found.");
+        }
+        else if (g_token.type == ttCloseCurly)
         {
             next_token();
             break;
         }
+        
+        stmt = parse_stmt();
     }
 
-    g_root.type = antStmtList;
-    g_root.content.stmt_list = stmt_list;
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    body = (AstNode*)malloc(sizeof(AstNode));
+    
+    body->type = antStmtList;
+    body->content.stmt_list = stmt_list;
+    func->name = strdup("myfunc");
+    func->native = NULL;
+    func->value_type = NULL;
+    func->params = (vector*)malloc(sizeof(vector));
+    vector_init(func->params);
+    func->body = body; 
+    func_def(func);
     varmap_purge();
-   
 }
 
 
 AstNode *parse_stmt()
 {
     if (g_token.type == ttEOF)
-        return 0;
+        return NULL;
     
     if (g_token.type == ttOpenCurly)
     {
@@ -315,7 +332,6 @@ AstNode *parse_stmt()
         next_token();
        
         /*
-         * Variable declaration.
          * If it starts with a type name, it is clearly a declaration:
          * variable or function.
          */
@@ -335,8 +351,13 @@ AstNode *parse_stmt()
             varname = get_token_repr();
             next_token();
             val_type = parse_value_type(val_type);
-
-            if (g_token.type == ttAssign)
+            
+            if (g_token.type == ttOpenBracket)
+            {
+                parse_function_def(); 
+                return NULL;
+            }
+            else if (g_token.type == ttAssign)
             {
                 next_token();
                 init = parse_expr();
@@ -663,12 +684,12 @@ void parse()
     
     list_init(&stmt_list);
     stmt = parse_stmt();
-    while (stmt != NULL)
+    while (g_token.type != ttEOF || stmt != NULL)
     {
-        list_push(&stmt_list, stmt); 
+        if (stmt != NULL)
+            list_push(&stmt_list, stmt); 
         stmt = parse_stmt();
     }
-
     g_root.type = antStmtList;
     g_root.content.stmt_list = stmt_list;
     varmap_purge();

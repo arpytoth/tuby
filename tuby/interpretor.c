@@ -228,24 +228,28 @@ void interpret_node(AstNode *node)
     else if (node->type == antFuncCall)
     {
         FuncCall *fc = &node->content.func_call;
-        if (fc->func->native != 0)
+        int i = 0;
+        StackFrame *frame = stack_push();
+        vector_init(&frame->params);
+        for (i = 0; i < vector_length(&fc->params); i++)
         {
-            int i = 0;
-            StackFrame *frame = stack_push();
-            vector_init(&frame->params);
-            for (i = 0; i < vector_length(&fc->params); i++)
-            {
-                AstNode *param = (AstNode*)vector_at(&fc->params, i);
-                vector_push(&frame->params, eval(param)); 
-            }
-            fc->func->native();
-            for (i = 0; i < vector_length(&frame->params); i++)
-            {
-                Value *val = (Value*)vector_at(&frame->params, i);
-                alloc_free_val(val);
-            }
-            stack_pop();
+            AstNode *param = (AstNode*)vector_at(&fc->params, i);
+            vector_push(&frame->params, eval(param)); 
         }
+        if (fc->func->native != NULL)
+        {
+            fc->func->native();
+        }
+        else
+        {
+            interpret_node(fc->func->body);
+        }
+        for (i = 0; i < vector_length(&frame->params); i++)
+        {
+            Value *val = (Value*)vector_at(&frame->params, i);
+            alloc_free_val(val);
+        }
+        stack_pop();
     }
     else if (node->type == antVarDecl)
     {

@@ -35,20 +35,16 @@ typedef struct AstNodeT AstNode;
  */
 typedef struct
 {
-    /* List of parameter types. */    
     vector *params; 
-
-    /* The name of the function. */
     char *name; 
-   
-    /* The return value of this function. */
     ValueType *value_type;
-
     /*
      * Callback to the native implementation of the function. If NULL it 
      * means we don't have a native imlpementation of this function.
      */
-    void (*native)(); /* Native function definition. */
+    void (*native)();
+
+    AstNode *body;
 } FuncDef;
 
 

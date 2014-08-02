@@ -144,7 +144,7 @@ int token_read_comma()
 {
     g_token.type = ttComma;
     g_token.repr[0] = ',';
-    g_token.repr[1] = '\0'
+    g_token.repr[1] = '\0';
     next_char();
     return 1;
 }
