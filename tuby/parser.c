@@ -79,8 +79,6 @@ int  func_params_search(const char *name)
 }
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // Parse Functions
 ///////////////////////////////////////////////////////////////////////////////
@@ -113,6 +111,8 @@ AstNode *parse_var_val(const char *name)
     }
     return NULL;
 }
+
+
 
 
 ValueType *parse_value_type(ValueType *underlying)
@@ -254,30 +254,40 @@ void parse_function_def(const char *name)
     AstNode *body = NULL;
     FuncDef *func = NULL;
     list stmt_list;
+    vector *params;
     AstNode *stmt = NULL;
-    
+ 
+    func_params_init();
+    params = (vector *)malloc(sizeof(vector));   
+    vector_init(params);
     next_token();
     while (g_token.type != ttCloseBracket)
     {
+        Var *var = NULL;   
         ValueType *value_type = NULL;
 
-        next_token();
         value_type = type_map_get(g_token.repr);
         if (value_type == NULL)
             parse_error("Type name expected");
-
+    
+        vector_push(params, value_type);
         next_token();
         if (g_token.type != ttIdentifier)
             parse_error("Identifier expected");
 
+        var = (Var *)malloc(sizeof(Var));
+        var->val_type = value_type;
+        var->name = strdup(g_token.repr);
+        func_params_add(var);
+        
         next_token();
-        if (g_token.type != ttComma)
-        {
-            next_token();
-        }
-        else if (g_token.type == ttCloseBracket)
+        if (g_token.type == ttCloseBracket)
         {
             break;
+        }
+        else if (g_token.type != ttComma)
+        {
+            next_token();
         }
         else
         {
@@ -316,10 +326,10 @@ void parse_function_def(const char *name)
     func->name = strdup(name);
     func->native = NULL;
     func->value_type = NULL;
-    func->params = (vector*)malloc(sizeof(vector));
-    vector_init(func->params);
+    func->params = params;
     func->body = body; 
     func_def(func);
+    func_params_free();
     varmap_purge();
 }
 
@@ -465,15 +475,13 @@ AstNode *parse_stmt()
          */
         if (g_token.type == ttOpenSquare)
         {
-            Var *var = NULL;
             AstNode *var_val = NULL;
             AstNode *index_access = NULL;
             
-            var = varmap_get(identifier);
-            if (var == NULL)
+            var_val = parse_var_val(identifier);
+            if (var_val == NULL)
                 parse_error("Variable %s not defined yet", identifier);
             
-            var_val = ast_varval(var);
             index_access = parse_index_access(var_val);
 
             if (g_token.type != ttAssign)
@@ -512,14 +520,12 @@ AstNode *parse_stmt()
         // Simple Assignment
         if (g_token.type == ttAssign)
         {
-            Var *var = NULL;
             AstNode *lvalue = NULL;
             
-            var = varmap_get(identifier);
-            if (var == NULL)
+            lvalue = parse_var_val(identifier);
+            if (lvalue == NULL)
                 parse_error("Variable %s not defined yet", identifier);
             next_token();
-            lvalue = ast_varval(var);
             return parse_assign(lvalue);
         }
 
@@ -612,7 +618,7 @@ AstNode *parse_term()
     else if (g_token.type == ttIdentifier)
     {
         char *identifier = get_token_repr();
-        Var *var = varmap_get(identifier);
+        AstNode *var = parse_var_val(identifier);
 
         if (var == NULL)
             parse_error("Variable %s is not defined yet.", identifier);
@@ -620,20 +626,15 @@ AstNode *parse_term()
         next_token();
         if (g_token.type == ttOpenSquare)
         {
-            AstNode *var_val = NULL;
             AstNode *index_access = NULL;
 
-            var_val = ast_varval(var);
-            index_access = parse_index_access(var_val);
+            index_access = parse_index_access(var);
 
             term = index_access;
         }
         else
         {
-            term = (AstNode*)malloc(sizeof(AstNode));
-            term->content.var_val.name = identifier;
-            term->type = antVarVal;
-            term->value_type = var->val_type;
+            term = var;
         }
     }
     else

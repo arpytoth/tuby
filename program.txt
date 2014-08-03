@@ -1,11 +1,9 @@
 string msg;
 msg = "A brand new string";
 
-int hello()
+int hello(int i)
 {
-    print(msg);
-    print("Executed myfunc");
 }
 
 
-hello();
+hello(1);

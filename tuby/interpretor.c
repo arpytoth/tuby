@@ -46,6 +46,13 @@ void interpret_error(const char *format, ...)
 }
 
 
+Value *interpret_func_var_val(AstNode *node)
+{
+    Value *value = stack_function_param(0);
+    return value;
+}
+
+
 Value *eval(AstNode *node)
 {
     
@@ -74,6 +81,10 @@ Value *eval(AstNode *node)
         error("Function Definition Not Found.. Only Native supported!!!");
         return 0;
 
+    }
+    else if (node->type == antFuncVarVal)
+    {
+        return interpret_func_var_val(node);
     }
     else if (node->type == antCharVal)
     {
