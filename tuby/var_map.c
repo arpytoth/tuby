@@ -185,3 +185,10 @@ void varmap_purge()
         free(map);
     }
 }
+
+void varmap_free_var(struct Var *var)
+{
+    free(var->name);
+    if (var->val != NULL)
+        alloc_free_val(var->val);
+}

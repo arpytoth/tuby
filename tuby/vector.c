@@ -89,5 +89,3 @@ void vector_push(vector *v, void *elem)
     v->size++;
     v->data[v->size - 1] = elem;
 }
-
-#

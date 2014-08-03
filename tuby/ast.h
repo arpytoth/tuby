@@ -26,6 +26,7 @@
 #include "tuby_string.h"
 #include "type_map.h"
 #include "allocator.h"
+#include "var_map.h"
 
 struct AstNodeT;
 typedef struct AstNodeT AstNode;
@@ -48,26 +49,11 @@ typedef struct
 } FuncDef;
 
 
-////////////////////////////////////////////////////////////////////////////////
-// AST
-////////////////////////////////////////////////////////////////////////////////
-/* Enumeration of all possible node types.*/
 enum AstNodeType
 {
-    antFuncCall,
-    antIntVal,
-    antCharVal,
-    antStrVal,
-    antBoolVal,
-    antVarDecl,
-    antAssign,
-    antVarVal,
-    antReturn,
-    antIf,
-    antFor,
-    antWhile,
-    antIndexAccess,
-    antStmtList
+    antFuncCall, antIntVal, antCharVal, antStrVal, antBoolVal,
+    antVarDecl, antAssign, antVarVal, antFuncVarVal, antReturn, 
+    antIf, antFor, antWhile, antIndexAccess, antStmtList
 };
 
 
@@ -114,6 +100,10 @@ typedef struct
 
 } VarVal;
 
+struct FuncVarVal
+{
+    int index;
+};
 
 typedef struct
 {
@@ -195,6 +185,7 @@ union AllNodeContent
     Assign assign;
     VarDecl var_decl;
     VarVal var_val;
+    struct FuncVarVal func_var_val;
     int bool_val;
     char char_val;
     Return ret;
@@ -231,6 +222,7 @@ AstNode *ast_if(AstNode *cond, AstNode *then, AstNode *els);
 AstNode *ast_while(AstNode *cond, AstNode *body);
 AstNode *ast_for(AstNode *init, AstNode *cond, AstNode *inc, AstNode *body);
 AstNode *ast_varval(Var *var);
+AstNode *ast_func_var_val(int index, struct ValueType* val_type);
 AstNode *ast_assign(AstNode *lvalue, AstNode *val);
 AstNode *ast_index_access(AstNode *value, AstNode *index);
 AstNode *ast_str_val(char *value);

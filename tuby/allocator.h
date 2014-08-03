@@ -52,21 +52,6 @@ struct Value
 };
 
 
-/* 
- * A variable from the Tuby program. 
- */
-typedef struct
-{
-    char *name;
-
-    /* Type of this variable. */
-    ValueType *val_type;
-
-    /* Value assigned to this variable. */
-    Value *val;
-} Var;
-
-
 
 
 /* Used to count how many objects where allocated and dealocted.*/

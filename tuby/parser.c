@@ -34,7 +34,7 @@ AstNode g_root;
 vector *func_params;
 
 ///////////////////////////////////////////////////////////////////////////////
-// Function Parameters
+// Parse Function Parameters
 ///////////////////////////////////////////////////////////////////////////////
 
 void func_params_init()
@@ -46,8 +46,67 @@ void func_params_init()
 void func_params_free()
 {
     int i;
+    for (i = 0; i < vector_length(func_params); i++)
+    {
+        struct Var *var;
+        var  = (struct Var*)vector_at(func_params, i);
+        varmap_free_var(var);
+    }
+    vector_release(func_params);
+    func_params = NULL;
 }
 
+void func_params_add(Var *var)
+{
+    vector_push(func_params, var);
+}
+
+
+int  func_params_search(const char *name)
+{
+    if (func_params != NULL)
+    {
+        int i;
+        for (i = 0; i < vector_length(func_params); i++)
+        {
+            struct Var *var;
+            var  = (struct Var*)vector_at(func_params, i);
+            if (strcmp(var->name, name) == 0)
+                return i;
+        }
+    }
+    return -1;
+}
+
+
+/*
+ * This will search for the var with the specified name, first inf
+ * function params, and then in varmap. If var not found NULL is
+ * returned, if var found this will return the AstNode needed to
+ * access the value of that specified var.
+ */
+AstNode *parse_var(const char *name)
+{
+    int i;
+    i = func_params_search(name);
+    if (i >= 0)
+    {
+        AstNode *node;
+        Var *var;
+
+        var = (Var*)vector_at(func_params, i);
+        node = ast_func_var_val(i, var->val_type);
+        return node;
+    }
+    else 
+    {
+        Var *var;
+        var = varmap_get(name);
+        if (var != NULL)
+            return ast_varval(var);
+    }
+    return NULL;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Parse Functions

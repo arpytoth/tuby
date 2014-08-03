@@ -154,6 +154,18 @@ AstNode *ast_varval(Var *var)
 }
 
 
+AstNode *ast_func_var_val(int index, struct ValueType* val_type)
+{
+    AstNode *node = NULL;
+    node = (AstNode*)malloc(sizeof(AstNode));
+    node->content.func_var_val.index = index;
+    node->type = antFuncVarVal;
+    node->value_type = val_type;
+    return node;
+
+}
+
+
 AstNode *ast_assign(AstNode *lvalue, AstNode *val)
 {
     AstNode *assign_node = NULL;

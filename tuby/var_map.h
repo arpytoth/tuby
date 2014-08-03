@@ -21,7 +21,16 @@
 #ifndef _VAR_MAP_H_
 #define _VAR_MAP_H_
 
-#include "ast.h"
+#include "type_map.h"
+#include "allocator.h"
+
+typedef struct Var
+{
+    char *name;
+    ValueType *val_type;
+    Value *val;
+} Var;
+
 
 /*
  * An entry from the variables map.
@@ -86,4 +95,5 @@ VarMap *varmap_pop();
  */
 void varmap_purge();
 
+void varmap_free_var(struct Var *var);
 #endif // _VAR_MAP_H_
