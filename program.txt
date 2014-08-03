@@ -1,5 +1,9 @@
+string msg;
+msg = "A brand new string";
+
 int myfunc()
 {
+    print(msg);
     print("Executed myfunc");
 }
 
