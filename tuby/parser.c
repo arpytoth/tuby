@@ -30,9 +30,28 @@
 #include "var_map.h"
 #include "type_map.h"
  
-/* Root node of the syntax tree. */
 AstNode g_root;
+vector *func_params;
 
+///////////////////////////////////////////////////////////////////////////////
+// Function Parameters
+///////////////////////////////////////////////////////////////////////////////
+
+void func_params_init()
+{
+    func_params = (vector*)malloc(sizeof(vector));
+    vector_init(func_params);
+}
+
+void func_params_free()
+{
+    int i;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Parse Functions
+///////////////////////////////////////////////////////////////////////////////
 ValueType *parse_value_type(ValueType *underlying)
 {
     if (g_token.type == ttOpenSquare)
@@ -167,7 +186,7 @@ AstNode *parse_assign(AstNode *lvalue)
  * So basically we are in the : int main( state, we need to read
  * the list of parameters and the statement list. 
  */
-void parse_function_def()
+void parse_function_def(const char *name)
 {
     AstNode *body = NULL;
     FuncDef *func = NULL;
@@ -231,7 +250,7 @@ void parse_function_def()
     
     body->type = antStmtList;
     body->content.stmt_list = stmt_list;
-    func->name = strdup("myfunc");
+    func->name = strdup(name);
     func->native = NULL;
     func->value_type = NULL;
     func->params = (vector*)malloc(sizeof(vector));
@@ -354,7 +373,7 @@ AstNode *parse_stmt()
             
             if (g_token.type == ttOpenBracket)
             {
-                parse_function_def(); 
+                parse_function_def(varname); 
                 return NULL;
             }
             else if (g_token.type == ttAssign)
