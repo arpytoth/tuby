@@ -79,13 +79,19 @@ int  func_params_search(const char *name)
 }
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Parse Functions
+///////////////////////////////////////////////////////////////////////////////
+
 /*
  * This will search for the var with the specified name, first inf
  * function params, and then in varmap. If var not found NULL is
  * returned, if var found this will return the AstNode needed to
  * access the value of that specified var.
  */
-AstNode *parse_var(const char *name)
+AstNode *parse_var_val(const char *name)
 {
     int i;
     i = func_params_search(name);
@@ -108,9 +114,7 @@ AstNode *parse_var(const char *name)
     return NULL;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Parse Functions
-///////////////////////////////////////////////////////////////////////////////
+
 ValueType *parse_value_type(ValueType *underlying)
 {
     if (g_token.type == ttOpenSquare)
@@ -408,7 +412,7 @@ AstNode *parse_stmt()
         char *identifier = get_token_repr();
         
         next_token();
-       
+        
         /*
          * If it starts with a type name, it is clearly a declaration:
          * variable or function.
@@ -418,21 +422,18 @@ AstNode *parse_stmt()
         {
             AstNode *var_decl = NULL;
             AstNode *init = NULL;
-            char *varname = NULL;
 
+            free(identifier);
             if (g_token.type != ttIdentifier)
-            {
-                free(identifier);
                 parse_error("Identifier expected");
-            }
 
-            varname = get_token_repr();
+            identifier = get_token_repr();
             next_token();
             val_type = parse_value_type(val_type);
             
             if (g_token.type == ttOpenBracket)
             {
-                parse_function_def(varname); 
+                parse_function_def(identifier); 
                 return NULL;
             }
             else if (g_token.type == ttAssign)
@@ -441,26 +442,20 @@ AstNode *parse_stmt()
                 init = parse_expr();
                 if (init->value_type != val_type)
                 {
-                    free(identifier);
-                    free(varname);
                     parse_error("Could not assign expression of type %s to "
                                 "variable %s of type %s", 
                                  init->value_type->name, identifier,
                                  var_decl->value_type->name);
                 }
             }
-            var_decl = ast_var_decl(varname, val_type, init); 
-            varmap_def(varname, val_type);
+            var_decl = ast_var_decl(identifier, val_type, init); 
+            varmap_def(identifier, val_type);
 
             if (g_token.type != ttSemilcon)
-            {
-                free(varname);
-                free(identifier);
                 parse_error("; expected.");
-            }
+            
             next_token();
             free(identifier);
-            free(varname);
             return var_decl;
         }
 
