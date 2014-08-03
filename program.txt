@@ -1,9 +1,9 @@
-string msg;
-msg = "A brand new string";
-
 int hello(int i)
 {
+    print(i);
 }
 
-
-hello(1);
+int k;
+k = 1000;
+hello(k);
+print(k);

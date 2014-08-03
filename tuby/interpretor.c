@@ -240,13 +240,17 @@ void interpret_node(AstNode *node)
     {
         FuncCall *fc = &node->content.func_call;
         int i = 0;
-        StackFrame *frame = stack_push();
-        vector_init(&frame->params);
+        StackFrame *frame = NULL; 
+        vector params;
+         
+        vector_init(&params);
         for (i = 0; i < vector_length(&fc->params); i++)
         {
             AstNode *param = (AstNode*)vector_at(&fc->params, i);
-            vector_push(&frame->params, eval(param)); 
+            vector_push(&params, eval(param)); 
         }
+        frame = stack_push();
+        frame->params = params;
         if (fc->func->native != NULL)
         {
             fc->func->native();
