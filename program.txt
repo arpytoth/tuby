@@ -1,9 +1,9 @@
 int hello(int i)
 {
+    i = 10;
     print(i);
 }
 
 int k;
-k = 1000;
 hello(k);
 print(k);

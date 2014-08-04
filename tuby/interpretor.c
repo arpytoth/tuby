@@ -49,7 +49,7 @@ void interpret_error(const char *format, ...)
 Value *interpret_func_var_val(AstNode *node)
 {
     Value *value = stack_function_param(0);
-    return value;
+    return alloc_use_val(value);
 }
 
 
