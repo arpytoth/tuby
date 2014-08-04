@@ -18,7 +18,8 @@ OBJ += tuby/string.o
 OBJ += tuby/tuby_array.o
 OBJ += tuby/tuby_string.o
 OBJ += tuby/tuby_char.o
-
+OBJ += tuby/tuby_int.o
+ 
 %.o: %.c
 	@echo Building: "$<"
 	@gcc  $(INCLUDE) $(FLAGS) -o "$@" "$<"

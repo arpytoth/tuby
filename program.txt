@@ -3,7 +3,8 @@ int hello(int i)
     i = 10;
     print(i);
 }
-
+string str;
+str = "daasd";
 int k;
 hello(k);
 print(k);

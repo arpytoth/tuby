@@ -52,7 +52,6 @@ Value *interpret_func_var_val(AstNode *node)
     return alloc_use_val(value);
 }
 
-
 Value *eval(AstNode *node)
 {
     

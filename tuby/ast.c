@@ -44,9 +44,10 @@ AstNode *ast_binary(const char *symbol, AstNode *t1, AstNode *t2)
 
     if (func_call_node->content.func_call.func == NULL) 
     {
-        parse_error("Operator + not defined for arguments of type %s "
-                    "and %s", t1->value_type == 0 ? "void":t1->value_type->name,
-                    t2->value_type == 0 ? "void" : t2->value_type->name);
+        parse_error("Operator %s  not defined for arguments of type %s "
+                    "and %s", symbol, t1->value_type == 0 ? 
+                    "void":t1->value_type->name, t2->value_type == 0 ? 
+                    "void" : t2->value_type->name);
     }
 
     ret_type = func_call_node->content.func_call.func->value_type;
@@ -168,6 +169,8 @@ AstNode *ast_func_var_val(int index, struct ValueType* val_type)
 
 AstNode *ast_assign(AstNode *lvalue, AstNode *val)
 {
+    return ast_binary("=", lvalue, val);
+    /*
     AstNode *assign_node = NULL;
     Assign *assign = NULL;
 
@@ -178,6 +181,7 @@ AstNode *ast_assign(AstNode *lvalue, AstNode *val)
     assign->lvalue  = lvalue;
     assign->expr = val;
     return assign_node;
+    */
 }
 
 

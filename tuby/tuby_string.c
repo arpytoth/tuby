@@ -29,6 +29,15 @@
 
 ValueType *StrType;
 
+void string_square_operator()
+{
+    struct Value *string = stack_function_param(0);
+    struct Value *index = stack_function_param(1);
+    struct Value *res = alloc_val(CharType);
+    stack_set_ret_val(res); 
+
+}
+
 void string_print_func()
 {
     Value *param1 = stack_function_param(0);
@@ -42,8 +51,6 @@ void string_print_func()
        error("Not A String! FIX THIS!\n");
     }
 }
-
-
 
 void string_init_module()
 {
