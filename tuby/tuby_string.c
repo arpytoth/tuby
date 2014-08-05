@@ -38,6 +38,10 @@ void string_square_operator()
 
 }
 
+void string_assign_operator()
+{
+}
+
 void string_print_func()
 {
     Value *param1 = stack_function_param(0);
