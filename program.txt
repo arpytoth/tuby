@@ -5,6 +5,11 @@ int hello(int i)
 }
 string str;
 str = "daasd";
+string bstr;
+bstr = str;
+bstr = "Hello World";
 int k;
 hello(k);
 print(k);
+print(str);
+print(bstr);

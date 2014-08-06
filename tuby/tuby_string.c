@@ -31,15 +31,21 @@ ValueType *StrType;
 
 void string_square_operator()
 {
-    struct Value *string = stack_function_param(0);
-    struct Value *index = stack_function_param(1);
-    struct Value *res = alloc_val(CharType);
-    stack_set_ret_val(res); 
+    //struct Value *string = stack_function_param(0);
+    //struct Value *index = stack_function_param(1);
+    //struct Value *res = alloc_val(CharType);
+    //stack_set_ret_val(res); 
 
 }
 
 void string_assign_operator()
 {
+    struct Value *lvalue= stack_function_param(0);
+    struct Value *rvalue= stack_function_param(1);
+
+    string_dup(&lvalue->data.str_val, &rvalue->data.str_val);
+    lvalue->is_null = rvalue->is_null;
+    stack_set_ret_val(NULL); 
 }
 
 void string_print_func()
@@ -76,7 +82,16 @@ void string_init_module()
     vector_push(func->params, StrType);
     func_def(func);
 
-
+    // string = string;
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("=");
+    func->native = string_assign_operator;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = NULL;
+    vector_init(func->params);
+    vector_push(func->params, StrType);
+    vector_push(func->params, StrType);
+    func_def(func);
 }
 
 
