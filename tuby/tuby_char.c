@@ -43,6 +43,15 @@ void char_print_func()
     }
 }
 
+void char_assign_operator()
+{
+    struct Value *lvalue= stack_function_param(0);
+    struct Value *rvalue= stack_function_param(1);
+
+    lvalue->data.char_val = rvalue->data.char_val;
+    lvalue->is_null = rvalue->is_null;
+    stack_set_ret_val(NULL); 
+}
 
 void char_init_module()
 {
@@ -63,6 +72,17 @@ void char_init_module()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = NULL;
     vector_init(func->params);
+    vector_push(func->params, CharType);
+    func_def(func);
+
+    // char = char
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("=");
+    func->native = char_assign_operator;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = NULL;
+    vector_init(func->params);
+    vector_push(func->params, CharType);
     vector_push(func->params, CharType);
     func_def(func);
 }
