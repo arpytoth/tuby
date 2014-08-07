@@ -7,6 +7,7 @@
 #include "allocator.h"
 #include "stack.h"
 
+
 void array_square_operator()
 {
     struct Value *under_val = stack_function_param(0);
@@ -18,9 +19,30 @@ void array_square_operator()
     stack_set_ret_val(ret_val); 
 }
 
+void array_assign_operator()
+{
+    struct Value *lvalue= stack_function_param(0);
+    struct Value *rvalue= stack_function_param(1);
+    
+    array_copy(&lvalue->data.array_val, &rvalue->data.array_val);
+    lvalue->is_null = rvalue->is_null;
+    stack_set_ret_val(NULL); 
+}
+
 void array_type_init(struct ValueType *type)
 {
     FuncDef *func;
+  
+    // array = array 
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("=");
+    func->native = array_assign_operator;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = NULL;
+    vector_init(func->params);
+    vector_push(func->params, type);
+    vector_push(func->params, type);
+    func_def(func);
 
     // array[int]
     func = (FuncDef*)malloc(sizeof(FuncDef));
