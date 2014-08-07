@@ -1,4 +1,11 @@
-string str;
-str = "Hello World";
-str[0] = 'Y';
-print(str);
+int a[];
+
+a[0] = 1;
+a[1] = 2;
+a[2] = 3;
+
+int b[];
+b = a;
+print(a[1]);
+print(b[1]);
+
