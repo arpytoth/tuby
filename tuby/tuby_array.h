@@ -21,12 +21,14 @@
 #define _TUBY_ARRAY_H_
 
 #include "vector.h"
+#include "type_map.h"
 
 struct Array
 {
     vector *data;
 };
 
+void array_type_init(struct ValueType *type);
 void array_init(struct Array *arr);
 void array_free(struct Array *arr);
 void array_use(struct Array *arr);

@@ -1,7 +1,38 @@
 #include <stdlib.h>
+#include <string.h>
+
+#include "func_table.h"
 #include "tuby_array.h"
 #include "vector.h"
 #include "allocator.h"
+#include "stack.h"
+
+void array_square_operator()
+{
+    struct Value *under_val = stack_function_param(0);
+    struct Value *index_val = stack_function_param(1);
+
+    int int_index = index_val->data.int_val;
+    Value *ret_val = alloc_array_get(under_val, int_index);
+    alloc_use_val(ret_val);
+    stack_set_ret_val(ret_val); 
+}
+
+void array_type_init(struct ValueType *type)
+{
+    FuncDef *func;
+
+    // array[int]
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("[]");
+    func->native = array_square_operator;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = type->uval_type;
+    vector_init(func->params);
+    vector_push(func->params, type);
+    vector_push(func->params, IntType);
+    func_def(func);
+}
 
 void array_init(struct Array *arr)
 {
@@ -9,6 +40,7 @@ void array_init(struct Array *arr)
     vector_init(arr->data);
     arr->data->ref_count = 1;
 }
+
 
 void array_free(struct Array *arr)
 {

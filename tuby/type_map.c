@@ -20,9 +20,10 @@
 
 #include <stdlib.h>
 #include <string.h>
+
 #include "type_map.h"
 #include "string.h"
-
+#include "tuby_array.h"
 
 ValueType *IntType;
 ValueType *BoolType;
@@ -71,6 +72,7 @@ ValueType *typemap_get_array(ValueType *primitive)
         type->is_array = 1;
         type->is_ref = 0;
         type_map_put(type);
+        array_type_init(type);
         return type;
     }
     else
