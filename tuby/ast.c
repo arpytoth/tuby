@@ -187,6 +187,8 @@ AstNode *ast_assign(AstNode *lvalue, AstNode *val)
 
 AstNode *ast_index_access(AstNode *value, AstNode *index)
 {
+    return ast_binary("[]",value, index);
+    /*
     AstNode *node = NULL;
     IndexAccess *ia = NULL;
 
@@ -196,7 +198,7 @@ AstNode *ast_index_access(AstNode *value, AstNode *index)
     ia = &node->content.index_access;
     ia->val = value;
     ia->index = index;
-    return node;
+    return node;*/
 }
 
 

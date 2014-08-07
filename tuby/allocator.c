@@ -37,6 +37,7 @@ Value *alloc_val(ValueType *val_type)
     val->value_type = val_type;
     val->is_null = 1; 
     val->ref_count = 1;
+    val->parent = NULL;
     if (val_type == IntType)
     {
         val->data.int_val = 0;

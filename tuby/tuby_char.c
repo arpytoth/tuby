@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "tuby_string.h"
 #include "tuby_char.h"
 #include "func_table.h"
 #include "ast.h"
@@ -47,9 +48,17 @@ void char_assign_operator()
 {
     struct Value *lvalue= stack_function_param(0);
     struct Value *rvalue= stack_function_param(1);
-
-    lvalue->data.char_val = rvalue->data.char_val;
-    lvalue->is_null = rvalue->is_null;
+    if (lvalue->parent != NULL &&
+        lvalue->parent->value_type == StrType)
+    {
+        struct String  *str = &lvalue->parent->data.str_val;
+        str->buffer[int_index] = rvalue->data.char_val;
+    }
+    else
+    {
+        lvalue->data.char_val = rvalue->data.char_val;
+        lvalue->is_null = rvalue->is_null;
+    }
     stack_set_ret_val(NULL); 
 }
 

@@ -49,13 +49,14 @@ struct Value
     union AllValues data;
     int ref_count;
     int is_null;
-
+    
     /*
      * The value this value is part of. For example if this value is
      * part of an array or a string, the parent_value will be the
      * array or string value.
      */
-    struct Value *parent_value;
+    struct Value *parent;
+    int index;
 };
 
 

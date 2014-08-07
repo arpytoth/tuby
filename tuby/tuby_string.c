@@ -31,11 +31,16 @@ ValueType *StrType;
 
 void string_square_operator()
 {
-    //struct Value *string = stack_function_param(0);
-    //struct Value *index = stack_function_param(1);
-    //struct Value *res = alloc_val(CharType);
-    //stack_set_ret_val(res); 
+    struct Value *string = stack_function_param(0);
+    struct Value *index = stack_function_param(1);
+    int int_index = index->data.int_val;
+    struct Value *char_at_index = NULL;
+    struct String *str_val = &string->data.str_val;
 
+    char_at_index = alloc_val(CharType);
+    char_at_index->data.char_val = string_at(str_val, int_index);
+    char_at_index->parent = string;
+    stack_set_ret_val(char_at_index); 
 }
 
 void string_assign_operator()
@@ -92,6 +97,18 @@ void string_init_module()
     vector_push(func->params, StrType);
     vector_push(func->params, StrType);
     func_def(func);
+    
+    // string[int];
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("[]");
+    func->native = string_square_operator;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = CharType;
+    vector_init(func->params);
+    vector_push(func->params, StrType);
+    vector_push(func->params, IntType);
+    func_def(func);
+
 }
 
 
