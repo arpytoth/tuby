@@ -70,6 +70,7 @@ extern int g_alloc_count;
  */
 Value *alloc_val(ValueType *type);
 
+struct Value *alloc_by_value(struct Value *orig);
 /*
  * Allocate a new value on the Heap.
  */

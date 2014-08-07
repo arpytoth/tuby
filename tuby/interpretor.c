@@ -246,7 +246,10 @@ void interpret_node(AstNode *node)
         for (i = 0; i < vector_length(&fc->params); i++)
         {
             AstNode *param = (AstNode*)vector_at(&fc->params, i);
-            vector_push(&params, eval(param)); 
+            struct Value *val = eval(param);
+            struct Value *val_by_val = alloc_by_value(val);
+            vector_push(&params, val_by_val);
+            alloc_free_val(val);
         }
         frame = stack_push();
         frame->params = params;

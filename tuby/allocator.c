@@ -55,6 +55,13 @@ Value *alloc_val(ValueType *val_type)
     return val;
 }
 
+struct Value *alloc_by_value(struct Value *orig)
+{
+    struct Value *clone = alloc_val(orig->value_type);
+    clone->data = orig->data;
+    clone->is_null = orig->is_null;
+    return clone;
+}
 
 Value *alloc_use_val(Value *val)
 {
