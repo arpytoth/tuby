@@ -52,6 +52,7 @@ void char_assign_operator()
         lvalue->parent->value_type == StrType)
     {
         struct String  *str = &lvalue->parent->data.str_val;
+        int int_index = lvalue->index;
         str->buffer[int_index] = rvalue->data.char_val;
     }
     else

@@ -40,6 +40,7 @@ void string_square_operator()
     char_at_index = alloc_val(CharType);
     char_at_index->data.char_val = string_at(str_val, int_index);
     char_at_index->parent = string;
+    char_at_index->index = int_index;
     stack_set_ret_val(char_at_index); 
 }
 
