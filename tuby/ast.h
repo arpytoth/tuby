@@ -104,6 +104,11 @@ typedef struct
 
 } VarVal;
 
+/*
+ * Instruction used to get the value of the function
+ * variable at the specified index. This value is held
+ * on the stack frame
+ */
 struct FuncVarVal
 {
     int index;

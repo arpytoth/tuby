@@ -242,7 +242,12 @@ void interpret_node(AstNode *node)
         int i = 0;
         StackFrame *frame = NULL; 
         vector params;
-         
+        
+        if (strcmp(func_def->name, "func") == 0)
+        {
+            int brk = 0;
+        }
+
         vector_init(&params);
         for (i = 0; i < vector_length(&fc->params); i++)
         {
