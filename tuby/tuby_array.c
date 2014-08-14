@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -61,6 +62,7 @@ void array_init(struct Array *arr)
     arr->data = (vector*)malloc(sizeof(vector));
     vector_init(arr->data);
     arr->data->ref_count = 1;
+    printf("Array init %d\n", (int)arr);
 }
 
 
@@ -69,6 +71,7 @@ void array_free(struct Array *arr)
     if (arr != NULL && arr->data != NULL)
     {
         arr->data->ref_count--;
+        printf("Array free: %d\n", (int)arr);
         if (arr->data->ref_count == 0)
         {
             int i;
@@ -80,6 +83,7 @@ void array_free(struct Array *arr)
                     alloc_free_val(elem);
             }
             free(arr->data);
+            printf("Array destroy %d\n", (int)arr);
             arr->data = NULL;
         }              
     }
@@ -87,6 +91,7 @@ void array_free(struct Array *arr)
 
 void array_use(struct Array *arr)
 {
+    printf("Array use: %d\n", (int)arr);
     arr->data->ref_count++;
 }
 

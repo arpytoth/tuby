@@ -69,8 +69,6 @@ Value *alloc_use_val(Value *val)
         return NULL;
 
     val->ref_count++;
-    LOG(llDebug, "Increased count to value: %i to %i", 
-            (int)(uintptr_t)val, val->ref_count);
     return val;
 }
 

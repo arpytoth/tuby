@@ -269,18 +269,21 @@ void parse_function_def(const char *name)
         value_type = type_map_get(g_token.repr);
         if (value_type == NULL)
             parse_error("Type name expected");
-    
-        vector_push(params, new_param_info(value_type, 0));
+
         next_token();
         if (g_token.type != ttIdentifier)
             parse_error("Identifier expected");
+        
+        char *identifier = get_token_repr();
 
+        next_token();
+        value_type = parse_value_type(value_type);    
+        vector_push(params, new_param_info(value_type, 0));
         var = (Var *)malloc(sizeof(Var));
         var->val_type = value_type;
-        var->name = strdup(g_token.repr);
+        var->name = identifier;
         func_params_add(var);
         
-        next_token();
         if (g_token.type == ttCloseBracket)
         {
             break;

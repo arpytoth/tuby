@@ -89,7 +89,7 @@ int next_char()
         if (g_source.current == '\n')
         {
             g_source.line++;
-            g_source.row = 0;
+            g_source.row = 1;
         }
         else
         {
@@ -525,8 +525,8 @@ void load_from_file(const char *file_name)
         fclose(fp);
     }
     g_source.pos = -1;
-    g_source.line = 0;
-    g_source.row = 0;
+    g_source.line = 1;
+    g_source.row = 1;
     g_source.buffer = source;
     next_nonwhite();
 }
