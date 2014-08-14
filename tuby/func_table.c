@@ -26,6 +26,7 @@
 #include "func_table.h"
 #include "stack.h"
 #include "allocator.h"
+#include "ast.h"
 
 /* An entry in the function table. */
 struct FuncTableEntry
@@ -162,7 +163,7 @@ void func_init()
     g_tuby_print_int.native = print;
     g_tuby_print_int.params = (vector*)malloc(sizeof(vector));
     vector_init(g_tuby_print_int.params);
-    vector_push(g_tuby_print_int.params, IntType);
+    vector_push(g_tuby_print_int.params, new_param_info(IntType, 0));
     func_def(&g_tuby_print_int);
 
     // print(boolean);
@@ -172,7 +173,7 @@ void func_init()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = NULL;
     vector_init(func->params);
-    vector_push(func->params, BoolType);
+    vector_push(func->params, new_param_info(BoolType, 0));
     func_def(func);
 
     // int + int;
@@ -182,8 +183,8 @@ void func_init()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = IntType;
     vector_init(func->params);
-    vector_push(func->params, IntType);
-    vector_push(func->params, IntType);
+    vector_push(func->params, new_param_info(IntType, 0));
+    vector_push(func->params, new_param_info(IntType, 0));
     func_def(func);
 
     // int - int;
@@ -193,8 +194,8 @@ void func_init()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = IntType;
     vector_init(func->params);
-    vector_push(func->params, IntType);
-    vector_push(func->params, IntType);
+    vector_push(func->params, new_param_info(IntType, 0));
+    vector_push(func->params, new_param_info(IntType, 0));
     func_def(func);
 
 
@@ -205,8 +206,8 @@ void func_init()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = IntType;
     vector_init(func->params);
-    vector_push(func->params, IntType);
-    vector_push(func->params, IntType);
+    vector_push(func->params, new_param_info(IntType, 0));
+    vector_push(func->params, new_param_info(IntType, 0));
     func_def(func);
 
 
@@ -217,8 +218,8 @@ void func_init()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = BoolType;
     vector_init(func->params);
-    vector_push(func->params, IntType);
-    vector_push(func->params, IntType);
+    vector_push(func->params, new_param_info(IntType, 0));
+    vector_push(func->params, new_param_info(IntType, 0));
     func_def(func);
 
     // int != int;
@@ -228,8 +229,8 @@ void func_init()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = BoolType;
     vector_init(func->params);
-    vector_push(func->params, IntType);
-    vector_push(func->params, IntType);
+    vector_push(func->params, new_param_info(IntType, 0));
+    vector_push(func->params, new_param_info(IntType, 0));
     func_def(func);
 
     // int++;
@@ -239,7 +240,7 @@ void func_init()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = IntType;
     vector_init(func->params);
-    vector_push(func->params, IntType);
+    vector_push(func->params, new_param_info(IntType, 0));
     func_def(func);
 
 
@@ -284,10 +285,10 @@ FuncDef *func_get(const char *name, vector *params)
                 
                 for (i = 0; i < length; i++)
                 {
-                     ValueType *t1 = vector_at(e->function->params, i);
+                     struct ParamInfo *t1 = vector_at(e->function->params, i);
                      AstNode *expr = vector_at(params, i);
                      ValueType *t2 = expr->value_type;  
-                     if (t1 != t2)
+                     if (t1->value_type != t2)
                      {
                         ok = 0;
                         break;
@@ -303,3 +304,15 @@ FuncDef *func_get(const char *name, vector *params)
     }
     return 0;
 }
+
+struct ParamInfo *new_param_info(struct ValueType *value_type, 
+    char is_reference)
+{
+    struct ParamInfo *param_info = NULL;
+    param_info = (struct ParamInfo*)malloc(sizeof(struct ParamInfo));
+    param_info->value_type = value_type;
+    param_info->is_reference = is_reference;
+    return param_info;
+}
+
+

@@ -26,7 +26,7 @@ void int_init_module()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = NULL;
     vector_init(func->params);
-    vector_push(func->params, IntType);
-    vector_push(func->params, IntType);
+    vector_push(func->params, new_param_info(IntType, 1));
+    vector_push(func->params, new_param_info(IntType, 0));
     func_def(func);
 }

@@ -270,7 +270,7 @@ void parse_function_def(const char *name)
         if (value_type == NULL)
             parse_error("Type name expected");
     
-        vector_push(params, value_type);
+        vector_push(params, new_param_info(value_type, 0));
         next_token();
         if (g_token.type != ttIdentifier)
             parse_error("Identifier expected");

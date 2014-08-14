@@ -31,10 +31,14 @@
 struct AstNodeT;
 typedef struct AstNodeT AstNode;
 
-/* 
- * Definition of a function.
- */
-typedef struct
+
+struct ParamInfo
+{
+    struct ValueType *value_type;
+    char is_reference;
+};
+
+typedef struct FuncDef
 {
     vector *params; 
     char *name; 
