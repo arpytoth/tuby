@@ -40,8 +40,8 @@ void array_type_init(struct ValueType *type)
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = NULL;
     vector_init(func->params);
-    vector_push(func->params, type);
-    vector_push(func->params, type);
+    vector_push(func->params, new_param_info(type, 1));
+    vector_push(func->params, new_param_info(type, 0));
     func_def(func);
 
     // array[int]
@@ -51,8 +51,8 @@ void array_type_init(struct ValueType *type)
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = type->uval_type;
     vector_init(func->params);
-    vector_push(func->params, type);
-    vector_push(func->params, IntType);
+    vector_push(func->params, new_param_info(type, 0));
+    vector_push(func->params, new_param_info(IntType, 1));
     func_def(func);
 }
 
