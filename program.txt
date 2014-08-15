@@ -5,3 +5,4 @@ int func(int k[])
 }
 
 func(a);
+print(a[1]);

@@ -52,34 +52,62 @@ Value *interpret_func_var_val(AstNode *node)
     return alloc_use_val(value);
 }
 
+
+Value *interpret_function_call(AstNode* node)
+{
+    FuncCall *fc = &node->content.func_call;
+    struct FuncDef *func_def = fc->func;
+    int i = 0;
+    StackFrame *frame = NULL; 
+    vector params;
+
+    vector_init(&params);
+    for (i = 0; i < vector_length(&fc->params); i++)
+    {
+        struct ParamInfo *param_info = NULL;
+        AstNode *param = NULL;
+        struct Value *value = NULL;
+        param_info = (struct ParamInfo *)vector_at(func_def->params, i);
+        param = (AstNode*)vector_at(&fc->params, i);
+        value = eval(param);
+
+        if (param_info->is_reference == 0)
+        {
+            struct Value *val_by_val = alloc_by_value(value);
+            vector_push(&params, val_by_val);
+            alloc_free_val(value);
+        }
+        else
+        {
+            vector_push(&params, value);
+        }
+    }
+    frame = stack_push();
+    frame->params = params;
+    if (fc->func->native != NULL)
+    {
+        fc->func->native();
+    }
+    else
+    {
+        interpret_node(fc->func->body);
+    }
+    for (i = 0; i < vector_length(&frame->params); i++)
+    {
+        Value *val = (Value*)vector_at(&frame->params, i);
+        alloc_free_val(val);
+    }
+    stack_pop();
+    return frame->ret_val;
+}
+
+
 Value *eval(AstNode *node)
 {
     
     if (node->type == antFuncCall)
     {
-        FuncCall *fc = &node->content.func_call;
-        if (fc->func->native != 0)
-        {
-            int i = 0;
-            StackFrame *frame = stack_push();
-            vector_init(&frame->params);
-            for (i = 0; i < vector_length(&fc->params); i++)
-            {
-                AstNode *param = (AstNode*)vector_at(&fc->params, i);
-                vector_push(&frame->params, eval(param)); 
-            }
-            fc->func->native();
-            for (i = 0; i < vector_length(&frame->params); i++)
-            {
-                Value *val = (Value*)vector_at(&frame->params, i);
-                alloc_free_val(val);
-            }
-            stack_pop();
-            return frame->ret_val;
-        }
-        error("Function Definition Not Found.. Only Native supported!!!");
-        return 0;
-
+        return interpret_function_call(node);
     }
     else if (node->type == antFuncVarVal)
     {
