@@ -17,10 +17,8 @@
  *    
  *   Toth Arpad (arpytoth@yahoo.com)
  */
-
 #ifndef _TYPE_MAP_H_
 #define _TYPE_MAP_H_
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Type Map Structures.

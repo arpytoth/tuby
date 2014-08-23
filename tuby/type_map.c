@@ -17,7 +17,6 @@
  *    
  *   Toth Arpad (arpytoth@yahoo.com)
  */
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -25,6 +24,7 @@
 #include "string.h"
 #include "tuby_array.h"
 
+ValueType *VoidType;
 ValueType *IntType;
 ValueType *BoolType;
 type_map g_type_map;
@@ -41,8 +41,12 @@ void type_map_init()
     BoolType = (ValueType*)malloc(sizeof(ValueType));
     BoolType->name = strdup("boolean");
 
+    VoidType = (ValueType*)malloc(sizeof(ValueType));
+    VoidType->name = strdup("void");
+
     type_map_put(IntType);
     type_map_put(BoolType);
+    type_map_put(VoidType);
 }
 
 
