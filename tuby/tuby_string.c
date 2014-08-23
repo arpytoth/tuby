@@ -85,7 +85,7 @@ void string_init_module()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = NULL;
     vector_init(func->params);
-    vector_push(func->params, StrType);
+    vector_push(func->params, new_param_info(StrType, 0));
     func_def(func);
 
     // string = string;
@@ -95,8 +95,8 @@ void string_init_module()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = NULL;
     vector_init(func->params);
-    vector_push(func->params, StrType);
-    vector_push(func->params, StrType);
+    vector_push(func->params, new_param_info(StrType, 1));
+    vector_push(func->params, new_param_info(StrType, 0));
     func_def(func);
     
     // string[int];
@@ -106,8 +106,8 @@ void string_init_module()
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = CharType;
     vector_init(func->params);
-    vector_push(func->params, StrType);
-    vector_push(func->params, IntType);
+    vector_push(func->params, new_param_info(StrType, 0));
+    vector_push(func->params, new_param_info(IntType, 1));
     func_def(func);
 
 }

@@ -62,6 +62,10 @@ struct Value *alloc_by_value(struct Value *orig)
     {
         array_copy(&clone->data.array_val, &orig->data.array_val);
     }
+    else if (orig->value_type == StrType)
+    {
+        string_dup(&clone->data.str_val, &orig->data.str_val);
+    }
     else
     {
         clone->data = orig->data;
