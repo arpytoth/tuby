@@ -58,7 +58,14 @@ Value *alloc_val(ValueType *val_type)
 struct Value *alloc_by_value(struct Value *orig)
 {
     struct Value *clone = alloc_val(orig->value_type);
-    clone->data = orig->data;
+    if (orig->value_type->is_array)
+    {
+        array_copy(&clone->data.array_val, &orig->data.array_val);
+    }
+    else
+    {
+        clone->data = orig->data;
+    }
     clone->is_null = orig->is_null;
     return clone;
 }
