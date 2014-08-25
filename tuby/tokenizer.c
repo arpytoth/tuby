@@ -165,6 +165,28 @@ int token_read_comma()
     return 1;
 }
 
+int read_or()
+{
+    g_token.type = ttOr;
+    g_token.repr[0] = '|';
+    g_token.repr[1] = '|';
+    g_token.repr[2] = '\0';
+    next_char();
+    next_char();
+    return 1;
+}
+
+int read_and()
+{
+    g_token.type = ttAdd;
+    g_token.repr[0] = '&';
+    g_token.repr[1] = '&';
+    g_token.repr[2] = '\0';
+    next_char();
+    next_char();
+    return 1;
+}
+
 /*
  * Read the next token from file. Return 1 in case of success, 0 in case EOF
  * reached.
@@ -227,6 +249,14 @@ int next_token()
         g_token.type = ttCloseSquare;
         next_char();
         return 1;
+    }
+    else if (g_source.current == '|' && token_peek(1) == '|')
+    {
+        return read_or();
+    }
+    else if (g_source.current == '&' && token_peek(1) == '&')
+    {
+        return read_and();
     }
     else if (g_source.current == '=' && token_peek(1) == '=')
     {
@@ -342,6 +372,13 @@ int token_read_string()
     return 1;
 
 }
+
+
+
+
+
+
+
 
 int read_identifier()
 {

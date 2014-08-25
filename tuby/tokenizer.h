@@ -25,7 +25,7 @@ enum TokenType
     ttString, ttNumber, ttChar, ttSemilcon, ttComma, ttIdentifier, 
     ttOpenBracket, ttCloseBracket, ttOpenCurly, ttCloseCurly, 
     ttOpenSquare, ttCloseSquare, ttAssign, ttAdd, ttSub, ttMul, 
-    ttDiv, ttMod, ttEquals, ttNotEquals, ttInc, ttDec, ttLess, 
+    ttDiv, ttMod, ttEquals, ttNotEquals, ttAnd, ttOr, ttInc, ttDec, ttLess, 
     ttGreater, ttTrue, ttFalse, ttIF, ttElse, ttWhile, ttFor,
     ttDo, ttEOF, ttInclude
 };
