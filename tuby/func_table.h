@@ -26,7 +26,9 @@
 #include "ast.h"
 
 void func_init();
+
 void func_def(FuncDef *func);
+
 FuncDef *func_get(const char *name, vector *params);
 
 struct ParamInfo *new_param_info(struct ValueType *type, 

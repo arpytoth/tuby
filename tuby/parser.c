@@ -43,6 +43,7 @@ void func_params_init()
     vector_init(func_params);
 }
 
+
 void func_params_free()
 {
     int i;
@@ -55,6 +56,7 @@ void func_params_free()
     vector_release(func_params);
     func_params = NULL;
 }
+
 
 void func_params_add(Var *var)
 {
@@ -705,6 +707,7 @@ AstNode *parse_add()
     }
 }
 
+
 AstNode *parse_not_equals()
 {
     AstNode *term1 = parse_add();
@@ -742,10 +745,48 @@ AstNode *parse_equals()
 
 }
 
+AstNode *parse_and()
+{
+    AstNode *term1 = parse_equals();
+    if (g_token.type == ttAnd)
+    {
+        AstNode *term2 = NULL;
+        AstNode *and = NULL;
+
+        next_token();
+        term2 = parse_and();
+        and = ast_binary("&&", term1, term2);
+        return and;
+    }
+    else
+    {
+        return term1;
+    }
+}
+
+AstNode *parse_or()
+{
+    AstNode *term1 = parse_and();
+    if (g_token.type == ttOr)
+    {
+        AstNode *term2 = NULL;
+        AstNode *or = NULL;
+
+        next_token();
+        term2 = parse_or();
+        or = ast_binary("||", term1, term2);
+        return or;
+    }
+    else
+    {
+        return term1;
+    }
+}
+
 AstNode *parse_expr()
 {
     AstNode *expr = NULL;
-    expr = parse_equals();
+    expr = parse_or();
     return expr;
 }
 
