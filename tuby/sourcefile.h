@@ -7,16 +7,15 @@
  */
 typedef struct SourceFile
 {
-    const char *buffer; /* Stream of chars. The file content.*/
-    int pos;     /* Current position in stream.*/
-    int line;    /* Current line*/
-    int row;     /* Current row.*/
-    int length;  /* Lenght of this file*/
-    int current; /* The current character. If -1 it means EOF reached. */
+    char *data; 
+    int pos;     
+    int line;  
+    int col;
+    int size;
+    int current;
 } SourceFile;
 
 
-extern SourceFile g_source;
 
 
 #endif // _TUBY_SOURCEFILE_H_

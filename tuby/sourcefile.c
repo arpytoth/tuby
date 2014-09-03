@@ -6,7 +6,7 @@
 
 SourceFile g_source;
 
-void preproc_error(const char *format, ...)
+void src_error(const char *format, ...)
 {
      va_list arguments;  
      va_start(arguments, format);
@@ -15,6 +15,21 @@ void preproc_error(const char *format, ...)
      printf("\n");
      va_end(arguments);
      exit(1);
+}
+
+
+void src_reset(SourceFile *file)
+{
+    file->current = -1;
+    file->pos = -1;
+    file->line = 0;
+    file->col = 0;
+}
+
+void src_free(SourceFile *file)
+{
+    free(file->data);
+    free(file);
 }
 
 /*
@@ -26,10 +41,9 @@ void preproc_error(const char *format, ...)
  * #include - load the filename after include and append it to the current
  *            stream.
  */
-char *load_file(const char *file_name)
+SourceFile *src_load(const char *file_name)
 {
-    char *content = NULL;
-    int length;
+    SourceFile *file = NULL;
     
     FILE *fp = fopen(file_name, "r");
     if (fp != NULL) 
@@ -38,68 +52,138 @@ char *load_file(const char *file_name)
         {
             long bufsize = ftell(fp);
             if (bufsize == -1) 
-                return;
+                src_error("Error reading file %s", file_name);
 
-            content = (char *)malloc(sizeof(char) * (bufsize + 1));
+            file = (SourceFile *)malloc(sizeof(SourceFile));
+            file->data = (char *)malloc(sizeof(char) * (bufsize + 1));
 
             if (fseek(fp, 0L, SEEK_SET) != 0)
-                return;
+                src_error("Error reading file");
 
-            length = fread(content, sizeof(char), bufsize, fp);
-            if (length == 0) 
-            {
-                preproc_error("Error reading file %s", file_name);
-            } 
+            file->size = fread(file->data, sizeof(char), bufsize, fp);
+            if (file->size == 0) 
+                src_error("Error reading file %s", file_name);
             else 
-            {
-                content[length] = '\0'; /* Just to be safe. */
-            }
+                file->data[file->size] = '\0'; /* Just to be safe. */
+
+            src_reset(file);
         }
         fclose(fp);
     }
     else
     {
-        preproc_error("Could not open file: %s", file_name);
+        src_error("Could not open file: %s", file_name);
     }
-    return content;
+    return file;
 }
 
-char preproc_char_at(char *content, int index, int length)
+int src_at(SourceFile *file, int index)
 {
-    if (index < length && index >= 0)
-        return content[index];
+    int i = file->pos + index;
+    if (i >=0 && i < file->size)
+        return file->data[i];
     else
-        return '\0';
+        return  -1;
 }
 
-char *preproc_file(char *content)
+int src_next(SourceFile *file)
 {
-    int length = strlen(content);
-    int i;
-    for (i = 0; i < length; i++)
+    if (file->pos < file->size)
     {
-        char c = preproc_char_at(content, i, length);
+        file->pos++;
+        if (file->pos < file->size)
+            file->current = file->data[file->pos];
+        else 
+            file->current = -1;
+    }
+    return file->current;
+}
+
+int src_next_n(SourceFile *file, int n)
+{
+    int i;
+    for (i = 0; i < n; i++)
+        src_next(file);
+    return file->current;
+}
+
+int src_is_whitespace(SourceFile *file)
+{
+    int c = file->current;
+    return c == ' ' || c == '\n' ||  c == '\t' || c == '\r';
+}
+
+int src_is_eof(SourceFile *file)
+{
+    return file->pos == file->size;
+}
+
+int src_next_nonwhite(SourceFile *file)
+{
+    while (!src_is_eof(file) && src_is_whitespace(file))
+        src_next(file);
+    return file->current;
+}
+
+int src_next_until(SourceFile *file, char expected)
+{
+    while (!src_is_eof(file) && file->current != expected)
+        src_next(file);
+    return file->current;
+}
+
+char *src_chunk(SourceFile *file, int start, int end)
+{
+    static char chunk[255];
+    int size = end - start;
+    strncpy(chunk, file->data + start, size);
+    chunk[size + 1] = '\0';
+    return chunk;
+}
+
+void src_preproc(SourceFile *file)
+{
+    int c = src_next(file);
+    
+    while (!src_is_eof(file))
+    {
         if (c == '#')
         {
-            if (preproc_char_at(content, i+1, length) == 'i' &&
-                preproc_char_at(content, i+2, length) == 'n' &&
-                preproc_char_at(content, i+3, length) == 'c' &&
-                preproc_char_at(content, i+4, length) == 'l' &&
-                preproc_char_at(content, i+5, length) == 'u' &&
-                preproc_char_at(content, i+6, length) == 'd' &&
-                preproc_char_at(content, i+7, length) == 'e') 
+            if (src_at(file, 1) == 'i' &&
+                src_at(file, 2) == 'n' &&
+                src_at(file, 3) == 'c' &&
+                src_at(file, 4) == 'l' &&
+                src_at(file, 5) == 'u' &&
+                src_at(file, 6) == 'd' &&
+                src_at(file, 7) == 'e')
             {
-                printf("Include found");
+                char *path;
+                int start;
+                
+                src_next_n(file, 8);
+                src_next_nonwhite(file);
+                 
+                if (file->current != '"')
+                    src_error("Expected a file name between \" characters");
+                else
+                    src_next(file);
+
+                start = file->pos;
+                src_next_until(file, '"');
+                
+                path = src_chunk(file, start, file->pos);
+                printf("Found include path %s\n", path);
             }
         }
-    }  
-    return NULL;
+        c = src_next(file);
+    }
 }
 
 int main()
 {
-    char *content = load_file("program.txt");
-    preproc_file(content); 
+    SourceFile *file;
+    file = src_load("program.txt");
+    src_preproc(file);
     return 0;
 }
 
