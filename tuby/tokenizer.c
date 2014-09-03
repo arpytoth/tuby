@@ -548,42 +548,6 @@ void load_from_string(const char *string)
     next_nonwhite();
 }
 
-void load_from_file(const char *file_name)
-{
-    char *source = NULL;
-    FILE *fp = fopen(file_name, "r");
-
-    if (fp != NULL) 
-    {
-        if (fseek(fp, 0L, SEEK_END) == 0) 
-        {
-            long bufsize = ftell(fp);
-            if (bufsize == -1) 
-                return;
-
-            /* Allocate our buffer to that size. */
-            source = (char *)malloc(sizeof(char) * (bufsize + 1));
-
-            /* Go back to the start of the file. */
-            if (fseek(fp, 0L, SEEK_SET) != 0)
-                return;
-
-            /* Read the entire file into memory. */
-            g_source.length = fread(source, sizeof(char), bufsize, fp);
-            if (g_source.length == 0) {
-                fputs("Error reading file", stderr);
-            } else {
-                source[g_source.length] = '\0'; /* Just to be safe. */
-            }
-        }
-        fclose(fp);
-    }
-    g_source.pos = -1;
-    g_source.line = 1;
-    g_source.row = 1;
-    g_source.buffer = source;
-    next_nonwhite();
-}
 
 
 char *get_token_repr()
