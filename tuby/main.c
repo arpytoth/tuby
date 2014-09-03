@@ -32,7 +32,8 @@
 #include "allocator.h"
 #include "tuby_char.h"
 #include "tuby_string.h"
-#include "tuby_int.h"
+#include "int_type.h"
+#include "bool_type.h"
 
 int main()
 {
@@ -41,6 +42,7 @@ int main()
     type_map_init();
     func_init();
     
+    bool_init_module();
     int_init_module();
     char_init_module();
     string_init_module();

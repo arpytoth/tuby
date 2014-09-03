@@ -114,9 +114,6 @@ AstNode *parse_var_val(const char *name)
     return NULL;
 }
 
-
-
-
 ValueType *parse_value_type(ValueType *underlying)
 {
     if (g_token.type == ttOpenSquare)

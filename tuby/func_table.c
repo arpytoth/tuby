@@ -22,253 +22,101 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "utils.h"
+#include "redblack.h"
 #include "type_map.h"
 #include "func_table.h"
 #include "stack.h"
 #include "allocator.h"
 #include "ast.h"
 
-/* An entry in the function table. */
 struct FuncTableEntry
 {
-    FuncDef *function; /* Function implementation. */
-    struct FuncTableEntry *next; /* Next element in the function table. */
+    FuncDef *function;
+    struct FuncTableEntry *next;
 };
 
-/* The function table data. For not the function table is a linked list.*/
 struct FuncTable
 {
     struct FuncTableEntry *first;
     struct FuncTableEntry *last;
 };
 
-/* Global function table, the place where all function will be stored.*/
 struct FuncTable g_func_table;
-FuncDef g_tuby_func;
-
-void tuby()
-{
-    printf("Tuby!!!");
-}
-
-FuncDef g_tuby_print_int;
-void print()
-{
-    Value *param1 = stack_function_param(0);
-    if (param1->value_type == IntType)
-    {
-        int int_val = param1->data.int_val;
-        printf("%d\n", int_val);
-    }    
-    else if (param1->value_type == BoolType)
-    {
-        int bool_val = param1->data.bool_val;
-        if (bool_val == 0)
-            printf("false\n");
-        else
-            printf("true\n");
-    }
-    else
-    {
-        printf("NULL\n");
-    }
-}
-
-
-void inc()
-{
-    Value *param1 = stack_function_param(0);
-    int int_val1 = param1->data.int_val;
-    Value *ret_val = alloc_val(IntType);
-    ret_val->data.int_val = int_val1 + 1;
-    stack_set_ret_val(ret_val);
-}
-
-void add_int()
-{
-    Value *param1 = stack_function_param(0);
-    Value *param2 = stack_function_param(1);
-    int int_val1 = param1->data.int_val;
-    int int_val2 = param2->data.int_val;
-    Value *ret_val = alloc_val(IntType);
-    ret_val->data.int_val = int_val1 + int_val2;
-    stack_set_ret_val(ret_val); 
-}
-
-
-void sub()
-{
-    Value *param1 = stack_function_param(0);
-    Value *param2 = stack_function_param(1);
-    int int_val1 = param1->data.int_val;
-    int int_val2 = param2->data.int_val;
-    Value *ret_val = alloc_val(IntType);
-    ret_val->data.int_val = int_val1 - int_val2;
-    stack_set_ret_val(ret_val); 
-}
-
-void equals_int()
-{
-    Value *param1 = stack_function_param(0);
-    Value *param2 = stack_function_param(1);
-    int int_val1 = param1->data.int_val;
-    int int_val2 = param2->data.int_val;
-    Value *ret_val = alloc_val(BoolType);
-    ret_val->data.bool_val = int_val1 == int_val2;
-    stack_set_ret_val(ret_val); 
-
-}
-
-void int_not_equals()
-{
-    Value *param1 = stack_function_param(0);
-    Value *param2 = stack_function_param(1);
-    int int_val1 = param1->data.int_val;
-    int int_val2 = param2->data.int_val;
-    Value *ret_val = alloc_val(BoolType);
-    ret_val->data.bool_val = int_val1 != int_val2;
-    stack_set_ret_val(ret_val); 
-}
-
-
-void mul_int()
-{
-    Value *param1 = stack_function_param(0);
-    Value *param2 = stack_function_param(1);
-    int int_val1 = param1->data.int_val;
-    int int_val2 = param2->data.int_val;
-    Value *ret_val = alloc_val(IntType);
-    ret_val->data.int_val = int_val1 * int_val2;
-    stack_set_ret_val(ret_val); 
-}
-
-
-// TEST FUNCTIONS ^^
 
 void func_init()
 {
-    FuncDef *func = NULL;
-
     g_func_table.first = NULL;
     g_func_table.last = NULL;
-
-    // tuby function
-    g_tuby_func.name = "tuby";
-    g_tuby_func.native = tuby;
-    g_tuby_func.params = 0;
-    func_def(&g_tuby_func);
-
-    // print function
-    g_tuby_print_int.name = "print";
-    g_tuby_print_int.native = print;
-    g_tuby_print_int.params = (vector*)malloc(sizeof(vector));
-    vector_init(g_tuby_print_int.params);
-    vector_push(g_tuby_print_int.params, new_param_info(IntType, 0));
-    func_def(&g_tuby_print_int);
-
-    // print(boolean);
-    func = (FuncDef*)malloc(sizeof(FuncDef));
-    func->name = strdup("print");
-    func->native = print;
-    func->params = (vector*)malloc(sizeof(vector));
-    func->value_type = NULL;
-    vector_init(func->params);
-    vector_push(func->params, new_param_info(BoolType, 0));
-    func_def(func);
-
-    // int + int;
-    func = (FuncDef*)malloc(sizeof(FuncDef));
-    func->name = strdup("+");
-    func->native = add_int;
-    func->params = (vector*)malloc(sizeof(vector));
-    func->value_type = IntType;
-    vector_init(func->params);
-    vector_push(func->params, new_param_info(IntType, 0));
-    vector_push(func->params, new_param_info(IntType, 0));
-    func_def(func);
-
-    // int - int;
-    func = (FuncDef*)malloc(sizeof(FuncDef));
-    func->name = strdup("-");
-    func->native = sub;
-    func->params = (vector*)malloc(sizeof(vector));
-    func->value_type = IntType;
-    vector_init(func->params);
-    vector_push(func->params, new_param_info(IntType, 0));
-    vector_push(func->params, new_param_info(IntType, 0));
-    func_def(func);
-
-
-     // int * int;
-    func = (FuncDef*)malloc(sizeof(FuncDef));
-    func->name = strdup("*");
-    func->native = mul_int;
-    func->params = (vector*)malloc(sizeof(vector));
-    func->value_type = IntType;
-    vector_init(func->params);
-    vector_push(func->params, new_param_info(IntType, 0));
-    vector_push(func->params, new_param_info(IntType, 0));
-    func_def(func);
-
-
-    // int == int;
-    func = (FuncDef*)malloc(sizeof(FuncDef));
-    func->name = strdup("==");
-    func->native = equals_int;
-    func->params = (vector*)malloc(sizeof(vector));
-    func->value_type = BoolType;
-    vector_init(func->params);
-    vector_push(func->params, new_param_info(IntType, 0));
-    vector_push(func->params, new_param_info(IntType, 0));
-    func_def(func);
-
-    // int != int;
-    func = (FuncDef*)malloc(sizeof(FuncDef));
-    func->name = strdup("!=");
-    func->native = int_not_equals;
-    func->params = (vector*)malloc(sizeof(vector));
-    func->value_type = BoolType;
-    vector_init(func->params);
-    vector_push(func->params, new_param_info(IntType, 0));
-    vector_push(func->params, new_param_info(IntType, 0));
-    func_def(func);
-
-    // int++;
-    func = (FuncDef*)malloc(sizeof(FuncDef));
-    func->name = strdup("++");
-    func->native = inc;
-    func->params = (vector*)malloc(sizeof(vector));
-    func->value_type = IntType;
-    vector_init(func->params);
-    vector_push(func->params, new_param_info(IntType, 0));
-    func_def(func);
-
-
 }
 
-//-----------------------------------------------------------------------------
+
+FuncDef *func_search(FuncDef *f)
+{
+    struct FuncTableEntry *e = g_func_table.first;
+    while (e != 0)
+    {
+        if (strcmp(f->name, e->function->name) == 0)
+        {
+            if (vector_length(f->params) == vector_length(e->function->params))
+            {   
+                char ok = 1;
+                int length = vector_length(f->params);
+                int i;
+                
+                for (i = 0; i < length; i++)
+                {
+                     struct ParamInfo *t1 = vector_at(e->function->params, i);
+                     struct ParamInfo *t2 = vector_at(f->params, i);
+                     if (t1->value_type != t2->value_type)
+                     {
+                        ok = 0;
+                        break;
+                     }     
+                }
+                
+                if (ok == 1)
+                    return e->function;
+            }
+        }
+
+        e = e->next;
+    }
+    return 0;
+}
+
 
 void func_def(FuncDef *func)
 {
-    struct FuncTableEntry *entry;
-
-    entry = (struct FuncTableEntry*)malloc(sizeof(struct FuncTableEntry));
-
-    entry->function = func;
-    entry->next = 0;
-    if (g_func_table.last == 0)
+    FuncDef *f = func_search(func);
+    if (f == NULL)
     {
-        g_func_table.last = entry;
-        g_func_table.first = entry;
+        struct FuncTableEntry *entry;
+
+        entry = (struct FuncTableEntry*)malloc(sizeof(struct FuncTableEntry));
+
+        entry->function = func;
+        entry->next = 0;
+        if (g_func_table.last == 0)
+        {
+            g_func_table.last = entry;
+            g_func_table.first = entry;
+        }
+        else
+        {
+            g_func_table.last->next = entry;
+            g_func_table.last = entry;
+        }
     }
     else
     {
-        g_func_table.last->next = entry;
-        g_func_table.last = entry;
+        parse_error("Function %s already defined.", func->name);
     }
 }
 
-//-----------------------------------------------------------------------------
+
+
+
 
 FuncDef *func_get(const char *name, vector *params)
 {

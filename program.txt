@@ -1,3 +1,8 @@
+int print(int k)
+{
+    print("Hello World");
+}
+
 void fibo(int k)
 {
     int elem;

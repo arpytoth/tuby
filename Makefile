@@ -1,6 +1,7 @@
 tuby : FLAGS = -O3 -g3 -Wall -c -fmessage-length=0
 d: FLAGS = -O0 -g -Wall -c -fmessage-length=0
 
+OBJ += tuby/redblack.o
 OBJ += tuby/ast.o
 OBJ += tuby/func_table.o
 OBJ += tuby/interpretor.o
@@ -18,8 +19,9 @@ OBJ += tuby/string.o
 OBJ += tuby/tuby_array.o
 OBJ += tuby/tuby_string.o
 OBJ += tuby/tuby_char.o
-OBJ += tuby/tuby_int.o
- 
+OBJ += tuby/int_type.o
+OBJ += tuby/bool_type.o
+
 %.o: %.c
 	@echo Building: "$<"
 	@gcc  $(INCLUDE) $(FLAGS) -o "$@" "$<"
