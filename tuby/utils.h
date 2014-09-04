@@ -23,9 +23,9 @@
 
 #include <stdarg.h>
 
-/* Report an error and exit application. */
+void *alloc(unsigned int size);
+void dealoc(void *p);
 void error(const char *format, ...);
-
 void parse_error(const char *format, ...);
 
 #endif // _UTILS_H_

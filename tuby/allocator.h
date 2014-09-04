@@ -59,11 +59,9 @@ struct Value
     int index;
 };
 
-
-
-
 /* Used to count how many objects where allocated and dealocted.*/
 extern int g_alloc_count;
+
 
 /*
  * Allocate a new value of the specified value type.
@@ -81,5 +79,8 @@ Value *alloc_use_val(Value *val);
  */
 void alloc_free_val(Value *val);
 Value *alloc_array_get(Value *a, int index);
+
+
+
 #endif // _ALLOCATOR_H_
 

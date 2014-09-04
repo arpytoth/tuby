@@ -281,6 +281,7 @@ void parse_function_def(const char *name)
         var = (Var *)malloc(sizeof(Var));
         var->val_type = value_type;
         var->name = identifier;
+        var->val = NULL;
         func_params_add(var);
         
         if (g_token.type == ttCloseBracket)

@@ -18,11 +18,22 @@
  *   Toth Arpad (arpytoth@yahoo.com)
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdio.h>
+
 #include "utils.h"
 #include "tokenizer.h"
 
-#include <stdlib.h>
-#include <stdio.h>
+void *alloc(unsigned int size)
+{
+    return malloc(size);
+}
+
+void dealoc(void *p)
+{
+    free(p);
+}
 
 void error(const char *format, ...)
 {
