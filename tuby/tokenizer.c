@@ -40,7 +40,7 @@ void token_error(const char *format, ...)
      va_list arguments;  
      va_start(arguments, format);
      printf("Syntax Error:  at Line %i, Col %i: ", 
-            g_source.line, g_source.row);
+            g_source.line, g_source.col);
      
      vprintf(format, arguments);
      printf("\n");
@@ -84,9 +84,9 @@ int token_peek(int pos)
 {
     int actual_pos = g_source.pos + pos;
 
-    if (g_source.pos < g_source.length - 1)
+    if (g_source.pos < g_source.size - 1)
     {
-        return g_source.buffer[actual_pos];
+        return g_source.data[actual_pos];
     }
     else
     {
@@ -98,18 +98,18 @@ int token_peek(int pos)
 /* Read the next character in the stream. Return 1 if ok, 0 if EOF reached.*/
 int next_char()
 {
-    if (g_source.pos < g_source.length - 1)
+    if (g_source.pos < g_source.size - 1)
     {
         g_source.pos++;
-        g_source.current = g_source.buffer[g_source.pos];
+        g_source.current = g_source.data[g_source.pos];
         if (g_source.current == '\n')
         {
             g_source.line++;
-            g_source.row = 1;
+            g_source.col= 1;
         }
         else
         {
-            g_source.row++;
+            g_source.col++;
         }
         return 1;
     }
@@ -342,7 +342,7 @@ int read_number()
 
     end = g_source.pos - 1;
     size = end - start+ 2;
-    strncpy(g_token.repr, g_source.buffer + start, size - 1);
+    strncpy(g_token.repr, g_source.data + start, size - 1);
     g_token.repr[size - 1] = '\0';
     g_token.type = ttNumber;
     return 1;
@@ -365,20 +365,13 @@ int token_read_string()
 
     end = g_source.pos - 1;
     size = end - start + 2;
-    strncpy(g_token.repr, g_source.buffer + start, size - 1);
+    strncpy(g_token.repr, g_source.data + start, size - 1);
     g_token.repr[size - 1] = '\0';
     g_token.type = ttString;
     next_char();
     return 1;
 
 }
-
-
-
-
-
-
-
 
 int read_identifier()
 {
@@ -398,7 +391,7 @@ int read_identifier()
     end = g_source.pos - 1;
 
     size = end - start + 2;
-    strncpy(g_token.repr, g_source.buffer + start, size - 1);
+    strncpy(g_token.repr, g_source.data + start, size - 1);
     g_token.repr[size - 1] = '\0';
    
     if (strcmp(g_token.repr, "for") == 0)
@@ -531,24 +524,6 @@ int read_equals()
     next_char();
     return 1;
 }
-
-
-void load_from_string(const char *string)
-{
-    int length = strlen(string);
-    char *buffer = (char*)malloc((length + 1) * sizeof(char));
-    strncpy(buffer, string, length);
-    buffer[length] = '\0';
-
-    g_source.pos = -1;
-    g_source.line = 0;
-    g_source.row = 0;
-    g_source.buffer = buffer;
-    g_source.length = length;
-    next_nonwhite();
-}
-
-
 
 char *get_token_repr()
 {

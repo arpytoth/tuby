@@ -16,6 +16,9 @@ typedef struct SourceFile
 } SourceFile;
 
 
-
+void src_init(SourceFile *file, const char *file_name);
+SourceFile *src_load(const char *file_name);
+void src_preproc(SourceFile *file);
+int src_next(SourceFile *file);
 
 #endif // _TUBY_SOURCEFILE_H_

@@ -88,9 +88,9 @@ FuncDef *func_search(FuncDef *f)
 
 void func_def(FuncDef *func)
 {
-    FuncDef *f = func_search(func);
-    if (f == NULL)
-    {
+    //FuncDef *f = func_search(func);
+    //if (f == NULL)
+    //{
         struct FuncTableEntry *entry;
 
         entry = (struct FuncTableEntry*)malloc(sizeof(struct FuncTableEntry));
@@ -107,11 +107,11 @@ void func_def(FuncDef *func)
             g_func_table.last->next = entry;
             g_func_table.last = entry;
         }
-    }
-    else
-    {
-        parse_error("Function %s already defined.", func->name);
-    }
+   // }
+    //else
+   // {
+    //    parse_error("Function %s already defined.", func->name);
+   // }
 }
 
 

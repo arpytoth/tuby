@@ -1,4 +1,8 @@
-#include "tutorial.txt"
+int printhello()
+{
+    print("Print Hello Called");
+}
+
 
 printhello();
 
@@ -15,6 +19,14 @@ void fibo(int k)
             elem = 1;
             pelem = 1;
             print(1);
+        }
+        else
+        {
+            int newelem;
+            newelem = elem + pelem;
+            print(newelem);
+            pelem = elem;
+            elem = newelem;
         }
     }
 }

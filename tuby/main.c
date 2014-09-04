@@ -34,6 +34,7 @@
 #include "tuby_string.h"
 #include "int_type.h"
 #include "bool_type.h"
+#include "sourcefile.h"
 
 int main()
 {
@@ -47,11 +48,16 @@ int main()
     char_init_module();
     string_init_module();
 
-    load_from_file("program.txt");
+    src_init(&g_source, "program.txt");
+    src_preproc(&g_source);
+    src_next(&g_source);
+    
+    //printf("%s", g_source.data);
     parse();
+    
     varmap_release();
     interpret();
 
-    printf("Number of alloc: %d\n", g_alloc_count);
+    //printf("Number of alloc: %d\n", g_alloc_count);
     return 1;
 }

@@ -20,6 +20,8 @@
 #ifndef _TOKENIZER_H_
 #define _TOKENIZER_H_
 
+#include "sourcefile.h"
+
 enum TokenType
 {
     ttString, ttNumber, ttChar, ttSemilcon, ttComma, ttIdentifier, 
@@ -28,20 +30,6 @@ enum TokenType
     ttDiv, ttMod, ttEquals, ttNotEquals, ttAnd, ttOr, ttInc, ttDec, ttLess, 
     ttGreater, ttTrue, ttFalse, ttIF, ttElse, ttWhile, ttFor,
     ttDo, ttEOF, ttInclude
-};
-
-/* 
- * Definition of a source file. Basically a bounch of characters that will be
- * tokenize and parsed into meaningfull structures.
- */
-struct SourceFile
-{
-    const char *buffer; /* Stream of chars. The file content.*/
-    int pos;     /* Current position in stream.*/
-    int line;    /* Current line*/
-    int row;     /* Current row.*/
-    int length;  /* Lenght of this file*/
-    int current; /* The current character. If -1 it means EOF reached. */
 };
 
 
@@ -54,12 +42,6 @@ struct Token
 
 extern struct SourceFile g_source;
 extern struct Token g_token;
-
-/* Load source file from file.*/
-void load_from_file(const char *file_name);
-
-/* Load source file from string.*/
-void load_from_string(const char *string);
 
 int next_token();
 

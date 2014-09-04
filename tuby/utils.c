@@ -28,7 +28,7 @@ void error(const char *format, ...)
 {
      va_list arguments;  
      va_start(arguments, format);
-     printf("Error at Line %i, Col %i: ", g_source.line, g_source.row);
+     printf("Error at Line %i, Col %i: ", g_source.line, g_source.col);
      vprintf(format, arguments);
      printf("\n");
      va_end(arguments);
@@ -39,7 +39,7 @@ void parse_error(const char *format, ...)
 {
      va_list arguments;  
      va_start(arguments, format);
-     printf("Parse error at Line %i, Col %i: ", g_source.line, g_source.row);
+     printf("Parse error at Line %i, Col %i: ", g_source.line, g_source.col);
      vprintf(format, arguments);
      printf("\n");
      va_end(arguments);

@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-#include "sourcefile.h"
 
-SourceFile g_source;
+#include "list.h"
+#include "sourcefile.h"
 
 void src_error(const char *format, ...)
 {
@@ -16,7 +16,6 @@ void src_error(const char *format, ...)
      va_end(arguments);
      exit(1);
 }
-
 
 void src_reset(SourceFile *file)
 {
@@ -30,6 +29,38 @@ void src_free(SourceFile *file)
 {
     free(file->data);
     free(file);
+}
+
+void src_init(SourceFile *file, const char *file_name)
+{
+    FILE *fp = fopen(file_name, "r");
+    if (fp != NULL) 
+    {
+        if (fseek(fp, 0L, SEEK_END) == 0) 
+        {
+            long bufsize = ftell(fp);
+            if (bufsize == -1) 
+                src_error("Error reading file %s", file_name);
+
+            file->data = (char*)malloc(sizeof(char) * (bufsize + 1));
+
+            if (fseek(fp, 0L, SEEK_SET) != 0)
+                src_error("Error reading file");
+
+            file->size = fread(file->data, sizeof(char), bufsize, fp);
+            if (file->size == 0) 
+                src_error("Error reading file %s", file_name);
+            else 
+                file->data[file->size] = '\0'; 
+
+            src_reset(file);
+        }
+        fclose(fp);
+    }
+    else
+    {
+        src_error("Could not open file: %s", file_name);
+    }
 }
 
 /*
@@ -144,7 +175,15 @@ char *src_chunk(SourceFile *file, int start, int end)
 void src_preproc(SourceFile *file)
 {
     int c = src_next(file);
-    
+    int index = 0;
+    list include_list;
+    list_elem *e;
+    int total = 0;
+    int pos = 0;
+    char *content = NULL;
+
+    list_init(&include_list);
+
     while (!src_is_eof(file))
     {
         if (c == '#')
@@ -157,6 +196,7 @@ void src_preproc(SourceFile *file)
                 src_at(file, 6) == 'd' &&
                 src_at(file, 7) == 'e')
             {
+                SourceFile *f;
                 char *path;
                 int start;
                 
@@ -172,18 +212,45 @@ void src_preproc(SourceFile *file)
                 src_next_until(file, '"');
                 
                 path = src_chunk(file, start, file->pos);
-                printf("Found include path %s\n", path);
+            
+                f = src_load(path);
+                src_preproc(f);
+                total += f->size;
+                list_push(&include_list, f);
             }
+        }
+        else
+        {
+            file->data[index] = c;
+            index++;
         }
         c = src_next(file);
     }
+    
+    file->size = index;
+    file->data[index] = '\0';
+    total += index;
+
+    content = (char*)malloc(sizeof(char) * (total * 100));
+    e = include_list.first;
+    content[0] = '\0'; 
+    while (e != NULL)
+    {
+        SourceFile *f =  (SourceFile*)e->data;
+        strcat(content, f->data);
+        pos = pos + file->size;
+        src_free(f);
+        e = e->next;
+    } 
+
+    strcat(content, file->data);
+    pos = pos + file->size;
+    file->size = pos;
+    
+    free(file->data);
+    file->data = content; 
+    file->data[total] = '\0';
+    src_reset(file);
 }
 
-int main()
-{
-    SourceFile *file;
-    file = src_load("program.txt");
-    src_preproc(file);
-    return 0;
-}
 

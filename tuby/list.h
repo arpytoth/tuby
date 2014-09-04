@@ -21,27 +21,20 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 
-/* An element in the linked list. */
-typedef struct list_elem_t
+typedef struct list_elem
 {
-    void *data; /* Actual data stored in this list. */
-    struct list_elem_t *next; /* Pointer to the next element in the list.*/
+    void *data; 
+    struct list_elem *next;
 } list_elem;
 
-/* Structure that holds the data of a linked list. */
-typedef struct list_t
+typedef struct list
 {
-    struct list_elem_t *first;
-    struct list_elem_t *last;
+    struct list_elem *first;
+    struct list_elem *last;
 } list;
 
-/* Initialize a new Linked List. */
 void list_init(list *l);
-
-/* Release data held by this Linked List. */
 void list_free(list *l);
-
-/* Push a new element at the end of this list. */
 void list_push(list *l, void *e);
 
 
