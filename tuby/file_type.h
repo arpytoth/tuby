@@ -17,23 +17,10 @@
  *    
  *   Toth Arpad (arpytoth@yahoo.com)
  */
+#ifndef _TUBY_FILE_TYPE_H_
+#define _TUBY_FILE_TYPE_H_
 
-#ifndef _LOG_H_
-#define _LOG_H_
+void file_init();
 
-#include <stdarg.h>
+#endif // _TUBY_FILE_TYPE_H_
 
-typedef enum
-{
-    llError,
-    llDebug
-} LogLevel;
-
-
-#define LOG(LEVEL, MSG, args...)\
-if (0)\
-{\
-printf(MSG, ##args);\
-printf("\n");\
-}
-#endif // _LOG_H_

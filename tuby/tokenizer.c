@@ -48,8 +48,6 @@ void token_error(const char *format, ...)
      exit(1);
 }
 
-
-/* Check if the provided character is a letter or not. */
 int is_letter(const char c)
 {
     if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
@@ -58,7 +56,6 @@ int is_letter(const char c)
         return 0;
 }
 
-/* Chec if the specified character is a digit or not. */
 int is_digit(const char c)
 {
     if (c >= '0' && c <= '9') 
@@ -67,13 +64,11 @@ int is_digit(const char c)
         return 0;
 }
 
-/* Check if the specified character is a whitespace or not.*/
 int is_whitespace(const char c)
 {
     return c == ' ' || c == '\n' ||  c == '\t' || c == '\r';
 }
 
-/* Check if EOF reached.*/
 int eof()
 {
     return g_source.current == -1;
@@ -94,8 +89,6 @@ int token_peek(int pos)
     }
 }
 
-
-/* Read the next character in the stream. Return 1 if ok, 0 if EOF reached.*/
 int next_char()
 {
     if (g_source.pos < g_source.size - 1)
@@ -120,10 +113,6 @@ int next_char()
     }
 }
 
-/* 
- * Read the next nonwhite character from the stream. Return 1 in case of 
- * success, 0 in case EOF reached.
- */
 int next_nonwhite()
 {
     if (!next_char())
@@ -187,10 +176,6 @@ int read_and()
     return 1;
 }
 
-/*
- * Read the next token from file. Return 1 in case of success, 0 in case EOF
- * reached.
- */
 int next_token()
 {
     if (g_source.current < 0)
@@ -324,7 +309,6 @@ int next_token()
    }
 }
 
-/* Read the next number token from the stream. */
 int read_number()
 {
     int size = 0;
@@ -473,8 +457,6 @@ int read_closed_bracket()
     return 1;
 }
 
-
-/* Read the ; character from the stream.*/
 int read_semilcon()
 {
     g_token.type = ttSemilcon;

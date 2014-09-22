@@ -17,30 +17,36 @@
  *    
  *   Toth Arpad (arpytoth@yahoo.com)
  */
-
 #include <stdlib.h>
 #include "list.h"
 
-void list_init(list *l)
+List *list_create()
+{
+    List *newlist = (List *)malloc(sizeof(List));
+    list_init(newlist);
+    return newlist;
+}
+
+void list_init(List *l)
 {
     l->first = NULL;
     l->last = NULL;
 }
 
-void list_free(list *l)
+void list_free(List *l)
 {
-    list_elem *first = l->first;
+    ListElem *first = l->first;
     while (first != NULL)
     {
-        list_elem *todel = first;
+        ListElem *todel = first;
         first = first->next;
         free(todel);
     }
 }
 
-void list_push(list *l, void *e)
+void list_push(List *l, void *e)
 {
-    list_elem *le = (list_elem*)malloc(sizeof(list_elem));
+    ListElem *le = (ListElem*)malloc(sizeof(ListElem));
     le->data = e;
     le->next = NULL;
     if (l->last == NULL)

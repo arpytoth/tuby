@@ -252,7 +252,7 @@ void parse_function_def(const char *name)
 {
     AstNode *body = NULL;
     FuncDef *func = NULL;
-    list stmt_list;
+    List stmt_list;
     vector *params;
     AstNode *stmt = NULL;
  
@@ -345,7 +345,7 @@ AstNode *parse_stmt()
     if (g_token.type == ttOpenCurly)
     {
         varmap_push();
-        list stmt_list;
+        List stmt_list;
         AstNode *stmt_list_node = NULL; 
         AstNode *stmt = NULL;
         next_token();
@@ -792,7 +792,7 @@ AstNode *parse_expr()
 
 void parse()
 {
-    list stmt_list;
+    List stmt_list;
     AstNode *stmt = NULL;
 
     varmap_push();

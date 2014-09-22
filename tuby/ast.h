@@ -188,7 +188,7 @@ typedef struct
 union AllNodeContent
 {
     FuncCall func_call;
-    list stmt_list;
+    List stmt_list;
     IntVal int_val;
     struct String str_val;
     Assign assign;

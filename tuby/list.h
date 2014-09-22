@@ -17,25 +17,24 @@
  *    
  *   Toth Arpad (arpytoth@yahoo.com)
  */
-
 #ifndef _LIST_H_
 #define _LIST_H_
 
-typedef struct list_elem
+typedef struct ListElem
 {
     void *data; 
-    struct list_elem *next;
-} list_elem;
+    struct ListElem *next;
+} ListElem;
 
-typedef struct list
+typedef struct List
 {
-    struct list_elem *first;
-    struct list_elem *last;
-} list;
+    struct ListElem *first;
+    struct ListElem *last;
+} List;
 
-void list_init(list *l);
-void list_free(list *l);
-void list_push(list *l, void *e);
-
+List *list_create();
+void  list_init(List *l);
+void  list_free(List *l);
+void  list_push(List *l, void *e);
 
 #endif // _LIST_H_

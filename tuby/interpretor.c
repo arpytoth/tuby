@@ -208,7 +208,7 @@ void interpret_node(AstNode *node)
     if (node->type == antStmtList)
     {
         varmap_push();
-        list *stmt_list = &node->content.stmt_list;
+        List *stmt_list = &node->content.stmt_list;
         list_elem *e = stmt_list->first;
         while (e != NULL)
         {
