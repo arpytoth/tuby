@@ -209,7 +209,7 @@ void interpret_node(AstNode *node)
     {
         varmap_push();
         List *stmt_list = &node->content.stmt_list;
-        list_elem *e = stmt_list->first;
+        ListElem *e = stmt_list->first;
         while (e != NULL)
         {
             AstNode *stmt = (AstNode*)e->data;

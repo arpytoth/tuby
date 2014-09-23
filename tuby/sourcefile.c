@@ -177,7 +177,7 @@ void src_preproc(SourceFile *file)
     int c = src_next(file);
     int index = 0;
     List include_list;
-    list_elem *e;
+    ListElem *e;
     int total = 0;
     int pos = 0;
     char *content = NULL;

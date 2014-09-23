@@ -26,6 +26,10 @@ typedef struct ListElem
     struct ListElem *next;
 } ListElem;
 
+ListElem *list_elem_create();
+void list_elem_free(ListElem *elem);
+
+
 typedef struct List
 {
     struct ListElem *first;
@@ -34,6 +38,7 @@ typedef struct List
 
 List *list_create();
 void  list_init(List *l);
+void  list_clear(List *l);
 void  list_free(List *l);
 void  list_push(List *l, void *e);
 

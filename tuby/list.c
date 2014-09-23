@@ -20,6 +20,20 @@
 #include <stdlib.h>
 #include "list.h"
 
+ListElem *list_elem_create()
+{
+    ListElem *e = (ListElem*)malloc(sizeof(ListElem));
+    e->data = NULL;
+    e->next = NULL;
+    return e;
+}
+
+void list_elem_free(ListElem *e)
+{
+    free(e);
+}
+
+
 List *list_create()
 {
     List *newlist = (List *)malloc(sizeof(List));
@@ -33,22 +47,29 @@ void list_init(List *l)
     l->last = NULL;
 }
 
-void list_free(List *l)
+void list_clear(List *l)
 {
     ListElem *first = l->first;
     while (first != NULL)
     {
         ListElem *todel = first;
         first = first->next;
-        free(todel);
+        list_elem_free(todel);
     }
+
+}
+
+void list_free(List *l)
+{
+    list_clear(l);
+    free(l);
 }
 
 void list_push(List *l, void *e)
 {
-    ListElem *le = (ListElem*)malloc(sizeof(ListElem));
+    ListElem *le = list_elem_create(); 
     le->data = e;
-    le->next = NULL;
+    
     if (l->last == NULL)
     {
         l->first = le;
