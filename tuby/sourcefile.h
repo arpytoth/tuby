@@ -1,15 +1,23 @@
 #ifndef _TUBY_SOURCEFILE_H_
 #define _TUBY_SOURCEFILE_H_
 
-typedef struct SourceFileInfo
-{
-    int startpos;
-    int endpos;
-    char *name;
-} SourceFileInfo;
+#include "list.h"
 
-SourceFileInfo *src_create_info(int start, int end, char *name);
-void src_free_info(SourceFileInfo *info);
+typedef struct FileChunk
+{
+    char *data;
+    int pos;
+    int line;
+    int col;
+    int size;
+    int current;
+    struct FileChunk *next;
+} FileChunk;
+
+FileChunk *chc_create(const char *filename);
+void chc_destroy(FileChunk *chunk);
+
+////////////////////////////////////////////////////////////////////////////////
 
 /* 
  * Definition of a source file. Basically a bounch of characters that will be

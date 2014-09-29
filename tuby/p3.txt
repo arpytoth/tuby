@@ -1,0 +1,7 @@
+a
+#include "p1.txt"
+b
+#include "p2.txt"
+c
+#include "p4.txt"
+d

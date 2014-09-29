@@ -17,6 +17,51 @@ void src_error(const char *format, ...)
      exit(1);
 }
 
+FileChunk *chc_create(const char *filename)
+{
+}
+
+void chc_destroy(FileChunk *chunk)
+{
+}
+
+char *chc_load_from_file(FileChunk *file, char *filename)
+{ 
+    FILE *fp = fopen(filename, "r");
+    if (fp != NULL) 
+    {
+        if (fseek(fp, 0L, SEEK_END) == 0) 
+        {
+            long bufsize = ftell(fp);
+            if (bufsize == -1) 
+                src_error("Error reading file %s", filename);
+
+            file->data = (char*)malloc(sizeof(char) * (bufsize + 1));
+
+            if (fseek(fp, 0L, SEEK_SET) != 0)
+                src_error("Error reading file");
+
+            file->size = fread(file->data, sizeof(char), bufsize, fp);
+            if (file->size == 0) 
+                src_error("Error reading file %s", filename);
+            else 
+                file->data[file->size] = '\0'; 
+
+            src_reset(file);
+        }
+        fclose(fp);
+    }
+    else
+    {
+        src_error("Could not open file: %s", file_name);
+    }
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
 void src_reset(SourceFile *file)
 {
     file->current = -1;
@@ -55,6 +100,7 @@ void src_init(SourceFile *file, const char *file_name)
 
             src_reset(file);
         }
+        list_init(&file->files);
         fclose(fp);
     }
     else
@@ -98,6 +144,7 @@ SourceFile *src_load(const char *file_name)
                 file->data[file->size] = '\0'; /* Just to be safe. */
 
             src_reset(file);
+            list_init(&file->files);
         }
         fclose(fp);
     }
