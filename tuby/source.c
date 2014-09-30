@@ -3,6 +3,10 @@
 #include <stdarg.h>
 #include <string.h>
 
+#include "source.h"
+
+SrcFile *g_source;
+
 void src_error(const char *format, ...)
 {
      va_list arguments;  
@@ -14,15 +18,7 @@ void src_error(const char *format, ...)
      exit(1);
 }
 
-typedef struct SrcFileInfo
-{
-    char *filename;
-    int start;
-    int end;
-    struct SrcFileInfo *next;
-    struct SrcFileInfo *prev;
-} SrcFileInfo;
-
+//------------------------------------------------------------------------------
 
 SrcFileInfo *src_create_info(const char *filename, int start, int end)
 {
@@ -35,6 +31,8 @@ SrcFileInfo *src_create_info(const char *filename, int start, int end)
     return info;
 }
 
+//------------------------------------------------------------------------------
+
 void src_destroy_info(SrcFileInfo *info)
 {
     free(info->filename);
@@ -43,40 +41,23 @@ void src_destroy_info(SrcFileInfo *info)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-typedef struct SrcFile
-{
-    char *name;
-    char *data;
-    int pos;
-    int col;
-    int line;
-    int size;
-    int current;
-    SrcFileInfo *info;
-} SrcFile;
-
 SrcFileInfo *src_last_info(SrcFile *file)
 {
     SrcFileInfo *info = file->info;
     while (info->next != NULL)
-    {
         info = info->next;
-    }
     return info;
 }
 
-void src_append_info(SrcFile *dest, SrcFile *source)
-{
-    SrcFileInfo *info = src_last_info(dest);
-    info->next = source->info; 
-}
+//------------------------------------------------------------------------------
 
 void src_reset(SrcFile *file)
 {
     file->current = -1;
     file->pos = -1;
-    file->line = 0;
+    file->line = 1;
     file->col = 0;
+    file->current_file = file->info;
 }
 
 //------------------------------------------------------------------------------
@@ -121,6 +102,7 @@ SrcFile *src_create(const char *file_name)
     file->name = strdup(file_name);
     src_load_from_file(file, file_name);
     file->info = src_create_info(file_name, 0, file->size - 1);
+    file->current_file = file->info;
     return file;
 }
 
@@ -144,6 +126,8 @@ int src_at(SrcFile *file, int index)
         return  -1;
 }
 
+//------------------------------------------------------------------------------
+
 int src_next(SrcFile *file)
 {
     if (file->pos < file->size)
@@ -153,9 +137,29 @@ int src_next(SrcFile *file)
             file->current = file->data[file->pos];
         else 
             file->current = -1;
+
+        if (file->current == '\n')
+        {
+            file->line++;
+            file->col= 0;
+        }
+        else
+        {
+            file->col++;
+        }
     }
+    if (file->pos > file->current_file->end)
+        if (file->info->next != NULL)
+        {
+            file->current_file = file->info->next;
+            file->line = 1;
+            file->col = 0;
+        }
+    
     return file->current;
 }
+
+//------------------------------------------------------------------------------
 
 int src_next_n(SrcFile *file, int n)
 {
@@ -165,16 +169,22 @@ int src_next_n(SrcFile *file, int n)
     return file->current;
 }
 
+//------------------------------------------------------------------------------
+
 int src_is_whitespace(SrcFile *file)
 {
     int c = file->current;
     return c == ' ' || c == '\n' ||  c == '\t' || c == '\r';
 }
 
+//------------------------------------------------------------------------------
+
 int src_is_eof(SrcFile *file)
 {
     return file->pos == file->size;
 }
+
+//------------------------------------------------------------------------------
 
 int src_next_nonwhite(SrcFile *file)
 {
@@ -183,12 +193,16 @@ int src_next_nonwhite(SrcFile *file)
     return file->current;
 }
 
+//------------------------------------------------------------------------------
+
 int src_next_until(SrcFile *file, char expected)
 {
     while (!src_is_eof(file) && file->current != expected)
         src_next(file);
     return file->current;
 }
+
+//------------------------------------------------------------------------------
 
 char *src_chunk(SrcFile *file, int start, int end)
 {
@@ -199,6 +213,7 @@ char *src_chunk(SrcFile *file, int start, int end)
     return chunk;
 }
 
+//------------------------------------------------------------------------------
 
 void src_correct_indices(SrcFile *file, int start)
 {
@@ -214,7 +229,7 @@ void src_correct_indices(SrcFile *file, int start)
     }
 }
 
-void src_preproc(SrcFile *file);
+//------------------------------------------------------------------------------
 
 void src_process_include(SrcFile *file)
 { 
@@ -237,7 +252,6 @@ void src_process_include(SrcFile *file)
     start = file->pos;
     src_next_until(file, '"');
     path = src_chunk(file, start, file->pos);
-    printf("Include file %s\n", path);
     
     src_next(file);
 
@@ -247,7 +261,6 @@ void src_process_include(SrcFile *file)
     total = end_of_first_part + 1;
     total = total + include_file->size - 1;
     total = total + file->size - file->pos;
-    printf("Total file size is %d\n", total);
 
     content = (char*)malloc(sizeof(char) * (total + 1));
     strncpy(content, file->data, end_of_first_part + 1);
@@ -258,13 +271,10 @@ void src_process_include(SrcFile *file)
     free(file->data);
     file->data = content;
     file->size = total;
-    file->pos = end_of_first_part + include_file->size;
-    file->current = file->data[file->pos];
 
     src_correct_indices(include_file, end_of_first_part);
     last_file_info = src_last_info(file);
     
-        printf("End of first part %d\n", end_of_first_part);
     if (end_of_first_part == 0)
     {
         src_destroy_info(last_file_info);
@@ -298,15 +308,14 @@ void src_process_include(SrcFile *file)
     src_free(include_file);
 
     file->data[total] = '\0';
-    printf("File is:\n");
-    printf("%s\n\n", file->data);
     src_reset(file);
 }
+
+//------------------------------------------------------------------------------
 
 void src_preproc(SrcFile *file)
 {
     int c = src_next(file);
-    char *content = NULL;
 
     while (!src_is_eof(file))
     {
@@ -327,22 +336,4 @@ void src_preproc(SrcFile *file)
     }
 }
 
-int main()
-{
-    int i;
-    SrcFileInfo *info;
-    SrcFile *file = src_create("p3.txt");
-    src_preproc(file);
-    printf("THE FINAL FILE IS:\n");
-    for (i = 0; i < file->size; i++)
-        printf("(%d)%c", file->data[i]);
-
-    info = file->info;
-    while (info != NULL)
-    {
-        printf("INFO: start=%d, stop=%d, file=%s\n", info->start, info->end,
-            info->filename);
-        info = info->next;
-    }
-    return 1;
-}
+//------------------------------------------------------------------------------

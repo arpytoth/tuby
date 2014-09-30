@@ -24,9 +24,7 @@
 
 #include "utils.h"
 #include "tokenizer.h"
-
-/* Global source file used to basically to store the entire source code. */
-struct SourceFile g_source;
+#include "source.h"
 
 /*
  * Globally used token. We read one token at time and we have a single process
@@ -39,14 +37,15 @@ void token_error(const char *format, ...)
 {
      va_list arguments;  
      va_start(arguments, format);
-     printf("Syntax Error:  at Line %i, Col %i: ", 
-            g_source.line, g_source.col);
+     printf("Syntax Error:  %s at Line %i, Col %i: ", 
+        g_source->info->filename, g_source->line, g_source->col);
      
      vprintf(format, arguments);
      printf("\n");
      va_end(arguments);
      exit(1);
 }
+
 
 int is_letter(const char c)
 {
@@ -56,6 +55,7 @@ int is_letter(const char c)
         return 0;
 }
 
+
 int is_digit(const char c)
 {
     if (c >= '0' && c <= '9') 
@@ -64,24 +64,26 @@ int is_digit(const char c)
         return 0;
 }
 
+
 int is_whitespace(const char c)
 {
     return c == ' ' || c == '\n' ||  c == '\t' || c == '\r';
 }
 
+
 int eof()
 {
-    return g_source.current == -1;
+    return g_source->current == -1;
 }
 
 
 int token_peek(int pos)
 {
-    int actual_pos = g_source.pos + pos;
+    int actual_pos = g_source->pos + pos;
 
-    if (g_source.pos < g_source.size - 1)
+    if (g_source->pos < g_source->size - 1)
     {
-        return g_source.data[actual_pos];
+        return g_source->data[actual_pos];
     }
     else
     {
@@ -91,26 +93,7 @@ int token_peek(int pos)
 
 int next_char()
 {
-    if (g_source.pos < g_source.size - 1)
-    {
-        g_source.pos++;
-        g_source.current = g_source.data[g_source.pos];
-        if (g_source.current == '\n')
-        {
-            g_source.line++;
-            g_source.col= 1;
-        }
-        else
-        {
-            g_source.col++;
-        }
-        return 1;
-    }
-    else
-    {
-        g_source.current = -1;
-        return 0;
-    }
+    return src_next(g_source);
 }
 
 int next_nonwhite()
@@ -118,7 +101,7 @@ int next_nonwhite()
     if (!next_char())
         return 0;
 
-    while (is_whitespace(g_source.current))
+    while (is_whitespace(g_source->current))
     {
        if (!next_char())
            return 0;
@@ -132,10 +115,10 @@ int token_read_char()
     char chr;
     
     next_char();
-    chr = g_source.current;
+    chr = g_source->current;
     next_char();
     
-    if (g_source.current != '\'')
+    if (g_source->current != '\'')
         token_error("Expected ' to close the char constant.");
    
     next_char();
@@ -178,127 +161,127 @@ int read_and()
 
 int next_token()
 {
-    if (g_source.current < 0)
+    if (g_source->current < 0)
     {
         g_token.type =  ttEOF;
         return 0;
     }
     
-    if (is_whitespace(g_source.current))
+    if (is_whitespace(g_source->current))
         next_nonwhite();
 
-    if (is_digit(g_source.current))
+    if (is_digit(g_source->current))
     {
         return read_number();
     }
-    else if (g_source.current == ',')
+    else if (g_source->current == ',')
     {
         return token_read_comma();
     }
-    else if (g_source.current == '\'')
+    else if (g_source->current == '\'')
     {
         return token_read_char();
     }
-    else if (g_source.current == '"')
+    else if (g_source->current == '"')
     {
         return token_read_string();
     }
-    else if (g_source.current == '(')
+    else if (g_source->current == '(')
     {
         return read_open_bracket();
     }
-    else if (g_source.current == ')')
+    else if (g_source->current == ')')
     {
         return read_closed_bracket();
     }
-    else if (g_source.current == ';')
+    else if (g_source->current == ';')
     {
         return read_semilcon();
     }
-    else if (g_source.current == '{')
+    else if (g_source->current == '{')
     {
         return read_open_curly();
     }
-    else if (g_source.current == '}')
+    else if (g_source->current == '}')
     {
         return read_close_curly();
     }
-    else if (g_source.current == '[')
+    else if (g_source->current == '[')
     {
         g_token.type = ttOpenSquare;
         next_char();
         return 1;
     }
-    else if (g_source.current == ']')
+    else if (g_source->current == ']')
     {
         g_token.type = ttCloseSquare;
         next_char();
         return 1;
     }
-    else if (g_source.current == '|' && token_peek(1) == '|')
+    else if (g_source->current == '|' && token_peek(1) == '|')
     {
         return read_or();
     }
-    else if (g_source.current == '&' && token_peek(1) == '&')
+    else if (g_source->current == '&' && token_peek(1) == '&')
     {
         return read_and();
     }
-    else if (g_source.current == '=' && token_peek(1) == '=')
+    else if (g_source->current == '=' && token_peek(1) == '=')
     {
         return read_equals();        
     }
-    else if (g_source.current == '!' && token_peek(1) == '=')
+    else if (g_source->current == '!' && token_peek(1) == '=')
     {
         g_token.type = ttNotEquals;
         next_char();
         next_char();
         return 1;     
     }
-    else if (g_source.current == '+' && token_peek(1) == '+')
+    else if (g_source->current == '+' && token_peek(1) == '+')
     {
         g_token.type = ttInc;
         next_char();
         next_char();
         return 1;     
     }
-    else if (g_source.current == '-' && token_peek(1) == '-')
+    else if (g_source->current == '-' && token_peek(1) == '-')
     {
         g_token.type = ttDec;
         next_char();
         next_char();
         return 1;     
     }
-    else if (g_source.current == '=')
+    else if (g_source->current == '=')
     {
         return read_assign();
     }
-    else if (g_source.current == '-')
+    else if (g_source->current == '-')
     {
         g_token.type = ttSub;
         next_char();
         return 1;
     }
-    else if (g_source.current == '+')
+    else if (g_source->current == '+')
     {
         return read_add();
     }
-    else if (g_source.current == '*')
+    else if (g_source->current == '*')
     {
         return read_mul();
     }
-    else if (g_source.current == '/')
+    else if (g_source->current == '/')
     {
         g_token.type = ttDiv;
         next_char();
         return 1;
     }
-    else if (g_source.current == '%')
+    else if (g_source->current == '%')
     {
         g_token.type = ttMod;
         next_char();
         return 1;
     }
-    else if (is_letter(g_source.current))
+    else if (is_letter(g_source->current))
     {
         return read_identifier();
     }
@@ -312,21 +295,21 @@ int next_token()
 int read_number()
 {
     int size = 0;
-    int start = g_source.pos;
+    int start = g_source->pos;
     int end = start;
 
-    while (is_digit(g_source.current))
+    while (is_digit(g_source->current))
     {
         if (next_char() < 0) 
         {
-            end = g_source.pos;
+            end = g_source->pos;
             return 0;
         }
     }
 
-    end = g_source.pos - 1;
+    end = g_source->pos - 1;
     size = end - start+ 2;
-    strncpy(g_token.repr, g_source.data + start, size - 1);
+    strncpy(g_token.repr, g_source->data + start, size - 1);
     g_token.repr[size - 1] = '\0';
     g_token.type = ttNumber;
     return 1;
@@ -334,11 +317,11 @@ int read_number()
 
 int token_read_string()
 {
-    int start = g_source.pos + 1;
+    int start = g_source->pos + 1;
     int end = start;
     int size = 0;
     next_char();
-    while (g_source.current != '"')
+    while (g_source->current != '"')
     {
         if (next_char() < 0) 
         {
@@ -347,9 +330,9 @@ int token_read_string()
         }
     }
 
-    end = g_source.pos - 1;
+    end = g_source->pos - 1;
     size = end - start + 2;
-    strncpy(g_token.repr, g_source.data + start, size - 1);
+    strncpy(g_token.repr, g_source->data + start, size - 1);
     g_token.repr[size - 1] = '\0';
     g_token.type = ttString;
     next_char();
@@ -359,11 +342,11 @@ int token_read_string()
 
 int read_identifier()
 {
-    int start = g_source.pos;
+    int start = g_source->pos;
     int end = start;
     int size = 0;
 
-    while (is_letter(g_source.current))
+    while (is_letter(g_source->current))
     {
         if (next_char() < 0) 
         {
@@ -372,10 +355,10 @@ int read_identifier()
         }
     }
 
-    end = g_source.pos - 1;
+    end = g_source->pos - 1;
 
     size = end - start + 2;
-    strncpy(g_token.repr, g_source.data + start, size - 1);
+    strncpy(g_token.repr, g_source->data + start, size - 1);
     g_token.repr[size - 1] = '\0';
    
     if (strcmp(g_token.repr, "for") == 0)

@@ -4,7 +4,7 @@ void fibo(int a)
     int prevprev;
     int i;
 
-    for (i = 1; i < a; i++;)
+    for (i = 1; i != aa; i++;)
     {
         if (i == 1 || i == 2)
         {

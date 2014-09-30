@@ -20,7 +20,7 @@
 #ifndef _TOKENIZER_H_
 #define _TOKENIZER_H_
 
-#include "sourcefile.h"
+#include "source.h"
 
 enum TokenType
 {
@@ -40,7 +40,6 @@ struct Token
     char repr[255]; /* Token representation. */
 };
 
-extern struct SourceFile g_source;
 extern struct Token g_token;
 
 int next_token();
@@ -54,38 +53,17 @@ int token_peek(int pos);
 int read_number();
 int token_read_string();
 int read_open_bracket();
-
 int read_closed_bracket();
-
 int read_semilcon();
-
 int read_identifier();
-
-
-/*
- * Reat the multiplier operator from the token stream.
- */
 int read_mul();
-
-/*
- * Read the add operator from the token stream (+).
- */
 int read_add();
-
 int read_less();
 int read_greater();
 int read_equals();
-
-/*
- * Read assignment token from the stream.
- */
 int read_assign();
-
 int read_open_curly();
-
 int read_close_curly();
-
-/* Get a copy of the token representation. */
 char *get_token_repr();
 
 
