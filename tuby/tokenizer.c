@@ -218,6 +218,12 @@ int next_token()
         next_char();
         return 1;
     }
+    else if (g_source->current == '<')
+    {
+        g_token.type = ttLess;
+        next_char();
+        return 1;
+    }
     else if (g_source->current == '|' && token_peek(1) == '|')
     {
         return read_or();

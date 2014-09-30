@@ -95,6 +95,17 @@ void int_not_equals_operator()
     stack_set_ret_val(ret_val); 
 }
 
+void int_less_operator()
+{
+    Value *param1 = stack_function_param(0);
+    Value *param2 = stack_function_param(1);
+    int int_val1 = param1->data.int_val;
+    int int_val2 = param2->data.int_val;
+    Value *ret_val = alloc_val(BoolType);
+    ret_val->data.bool_val = int_val1 < int_val2;
+    stack_set_ret_val(ret_val); 
+}
+
 void int_mul_operator()
 {
     Value *param1 = stack_function_param(0);
@@ -191,6 +202,17 @@ void int_init_module()
     func = (FuncDef*)malloc(sizeof(FuncDef));
     func->name = strdup("!=");
     func->native = int_not_equals_operator;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = BoolType;
+    vector_init(func->params);
+    vector_push(func->params, new_param_info(IntType, 0));
+    vector_push(func->params, new_param_info(IntType, 0));
+    func_def(func);
+    
+    // int < int;
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("<");
+    func->native = int_less_operator;
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = BoolType;
     vector_init(func->params);

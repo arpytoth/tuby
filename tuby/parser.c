@@ -740,7 +740,6 @@ AstNode *parse_equals()
     {
         return term1;
     }
-
 }
 
 AstNode *parse_and()
@@ -781,10 +780,28 @@ AstNode *parse_or()
     }
 }
 
+AstNode *parse_less()
+{
+    AstNode *term1 = parse_or();
+    if (g_token.type == ttLess)
+    {
+        AstNode *term2 = NULL;
+        AstNode *less = NULL;
+
+        next_token();
+        term2 = parse_less();
+        less = ast_binary("<", term1, term2);
+        return less;
+    }
+    else
+    {
+        return term1;
+    }
+}
 AstNode *parse_expr()
 {
     AstNode *expr = NULL;
-    expr = parse_or();
+    expr = parse_less();
     return expr;
 }
 
