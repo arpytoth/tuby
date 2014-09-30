@@ -17,7 +17,6 @@
  *    
  *   Toth Arpad (arpytoth@yahoo.com)
  */
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -564,9 +563,12 @@ AstNode *parse_stmt()
             free(identifier);
             return func_call_node;
         }
+        else if (g_token.type == ttIdentifier)
+        {
+            parse_error("'%s' is not a valid type.", identifier);
+        }
         else
         {
-            free(identifier);
             parse_error("( expected");
         }
     }
@@ -575,6 +577,9 @@ AstNode *parse_stmt()
     return 0;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+///////////////////////////// PARSE EXPRESSION /////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 AstNode *parse_term()
 {
@@ -667,10 +672,47 @@ AstNode *parse_mul()
     }
 }
 
+AstNode *parse_div()
+{
+    AstNode *term1 = parse_mul();
+    if (g_token.type == ttDiv)
+    {
+        AstNode *term2 = NULL;
+        AstNode *div = NULL;
+
+        next_token();
+        term2 = parse_div();
+        div = ast_binary("/", term1, term2);
+        return div;
+    }
+    else
+    {
+        return term1;
+    }
+}
+
+AstNode *parse_mod()
+{
+    AstNode *term1 = parse_div();
+    if (g_token.type == ttMod)
+    {
+        AstNode *term2 = NULL;
+        AstNode *mod = NULL;
+
+        next_token();
+        term2 = parse_mod();
+        mod = ast_binary("%", term1, term2);
+        return mod;
+    }
+    else
+    {
+        return term1;
+    }
+}
 
 AstNode *parse_sub()
 {
-    AstNode *term1 = parse_mul();
+    AstNode *term1 = parse_mod();
     if (g_token.type == ttSub)
     {
         AstNode *term2 = NULL;

@@ -117,6 +117,28 @@ void int_mul_operator()
     stack_set_ret_val(ret_val); 
 }
 
+void int_div_operator()
+{
+    Value *param1 = stack_function_param(0);
+    Value *param2 = stack_function_param(1);
+    int int_val1 = param1->data.int_val;
+    int int_val2 = param2->data.int_val;
+    Value *ret_val = alloc_val(IntType);
+    ret_val->data.int_val = int_val1 / int_val2;
+    stack_set_ret_val(ret_val); 
+}
+
+void int_mod_operator()
+{
+    Value *param1 = stack_function_param(0);
+    Value *param2 = stack_function_param(1);
+    int int_val1 = param1->data.int_val;
+    int int_val2 = param2->data.int_val;
+    Value *ret_val = alloc_val(IntType);
+    ret_val->data.int_val = int_val1 % int_val2;
+    stack_set_ret_val(ret_val); 
+}
+
 void int_assign_operator()
 {
     Value *dest = stack_function_param(0);
@@ -179,6 +201,28 @@ void int_init_module()
      // int * int;
     func = (FuncDef*)malloc(sizeof(FuncDef));
     func->name = strdup("*");
+    func->native = int_mul_operator;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = IntType;
+    vector_init(func->params);
+    vector_push(func->params, new_param_info(IntType, 0));
+    vector_push(func->params, new_param_info(IntType, 0));
+    func_def(func);
+   
+    // int / int;
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("/");
+    func->native = int_mul_operator;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = IntType;
+    vector_init(func->params);
+    vector_push(func->params, new_param_info(IntType, 0));
+    vector_push(func->params, new_param_info(IntType, 0));
+    func_def(func);
+
+    // int % int;
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("%");
     func->native = int_mul_operator;
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = IntType;

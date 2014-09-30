@@ -55,7 +55,6 @@ int is_letter(const char c)
         return 0;
 }
 
-
 int is_digit(const char c)
 {
     if (c >= '0' && c <= '9') 
@@ -158,6 +157,53 @@ int read_and()
     next_char();
     return 1;
 }
+
+
+
+int read_identifier()
+{
+    int start = g_source->pos;
+    int end = start;
+    int size = 0;
+
+    while (is_letter(g_source->current) ||
+           is_digit(g_source->current) ||
+           g_source->current == '_')
+    {
+        if (next_char() < 0) 
+        {
+            error("EOF reached!");
+            return 0;
+        }
+    }
+
+    end = g_source->pos - 1;
+
+    size = end - start + 2;
+    strncpy(g_token.repr, g_source->data + start, size - 1);
+    g_token.repr[size - 1] = '\0';
+   
+    if (strcmp(g_token.repr, "for") == 0)
+        g_token.type = ttFor;
+    else if (strcmp(g_token.repr, "while") == 0)
+        g_token.type = ttWhile;
+    else if (strcmp(g_token.repr, "do") == 0)
+        g_token.type = ttDo;
+    else if (strcmp(g_token.repr, "if") == 0)
+        g_token.type = ttIF;
+    else if (strcmp(g_token.repr, "else") == 0)
+        g_token.type = ttElse;
+    else if (strcmp(g_token.repr, "true") == 0)
+        g_token.type = ttTrue;
+    else if (strcmp(g_token.repr, "false") == 0)
+        g_token.type = ttFalse;
+    else if (strcmp(g_token.repr, "include") == 0)
+        g_token.type = ttInclude;
+    else
+        g_token.type = ttIdentifier;
+    return 1;
+}
+
 
 int next_token()
 {
@@ -275,6 +321,12 @@ int next_token()
     {
         return read_mul();
     }
+    else if (g_source->current == '%')
+    {
+        g_token.type = ttMod;
+        next_char();
+        return 1;
+    }
     else if (g_source->current == '/')
     {
         g_token.type = ttDiv;
@@ -295,7 +347,7 @@ int next_token()
     {
         g_token.type = ttEOF; 
         return 0;
-   }
+    }
 }
 
 int read_number()
@@ -346,66 +398,7 @@ int token_read_string()
 
 }
 
-int read_identifier()
-{
-    int start = g_source->pos;
-    int end = start;
-    int size = 0;
 
-    while (is_letter(g_source->current))
-    {
-        if (next_char() < 0) 
-        {
-            error("EOF reached!");
-            return 0;
-        }
-    }
-
-    end = g_source->pos - 1;
-
-    size = end - start + 2;
-    strncpy(g_token.repr, g_source->data + start, size - 1);
-    g_token.repr[size - 1] = '\0';
-   
-    if (strcmp(g_token.repr, "for") == 0)
-    {
-        g_token.type = ttFor;
-    }
-    else if (strcmp(g_token.repr, "while") == 0)
-    {
-        g_token.type = ttWhile;
-    }
-    else if (strcmp(g_token.repr, "do") == 0)
-    {
-        g_token.type = ttDo;
-    }
-    else if (strcmp(g_token.repr, "if") == 0)
-    {
-        g_token.type = ttIF;
-    }
-    else if (strcmp(g_token.repr, "else") == 0)
-    {
-        g_token.type = ttElse;
-    }
-    else if (strcmp(g_token.repr, "true") == 0)
-    {
-        g_token.type = ttTrue;
-    }
-    else if (strcmp(g_token.repr, "false") == 0)
-    {
-        g_token.type = ttFalse;
-    }
-    else if (strcmp(g_token.repr, "include") == 0)
-    {
-        g_token.type = ttInclude;
-    }
-    else
-    {
-        g_token.type = ttIdentifier;
-    }
-
-    return 1;
-}
 
 
 int read_mul()
