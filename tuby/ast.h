@@ -236,4 +236,5 @@ AstNode *ast_assign(AstNode *lvalue, AstNode *val);
 AstNode *ast_index_access(AstNode *value, AstNode *index);
 AstNode *ast_str_val(char *value);
 AstNode *ast_char_val(char value);
+AstNode *ast_return(AstNode *val);
 #endif // _AST_H_ 

@@ -19,6 +19,7 @@
  */
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "ast.h"
 #include "parser.h"
@@ -336,6 +337,19 @@ void parse_function_def(const char *name)
 }
 
 
+AstNode *parse_return()
+{
+    AstNode *val;
+    next_token();
+    val = parse_expr();
+    if (g_token.type != ttSemilcon)
+        parse_error("; expected.");
+    next_token();
+
+    return ast_return(val);
+}
+
+
 AstNode *parse_stmt()
 {
     if (g_token.type == ttEOF)
@@ -364,6 +378,12 @@ AstNode *parse_stmt()
         stmt_list_node->content.stmt_list = stmt_list;
         varmap_purge();
         return stmt_list_node; 
+    }
+
+    if (g_token.type == ttReturn) 
+    {
+        printf("Readed return");
+        return parse_return();
     }
 
     if (g_token.type == ttFor)

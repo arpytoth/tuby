@@ -199,6 +199,8 @@ int read_identifier()
         g_token.type = ttFalse;
     else if (strcmp(g_token.repr, "include") == 0)
         g_token.type = ttInclude;
+    else if (strcmp(g_token.repr, "return") == 0)
+        g_token.type = ttReturn;
     else
         g_token.type = ttIdentifier;
     return 1;

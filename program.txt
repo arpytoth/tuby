@@ -1,3 +1,1 @@
-#include "math.txt"
-
-fibo(10);
+return 1;

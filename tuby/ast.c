@@ -220,3 +220,12 @@ AstNode *ast_char_val(char value)
     node->content.char_val = value;
     return node;
 }
+
+AstNode *ast_return(AstNode *val)
+{
+    AstNode *node = (AstNode*)malloc(sizeof(AstNode));
+    node->type = antReturn;
+    node->value_type = val->value_type;
+    node->content.ret.ret_val = val;
+    return node;
+}
