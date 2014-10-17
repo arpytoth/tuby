@@ -53,6 +53,13 @@ Value *interpret_func_var_val(AstNode *node)
     return alloc_use_val(value);
 }
 
+void interpret_return(AstNode *node)
+{
+    Return *r = &node->content.ret;
+    Value *val = eval(r->ret_val);
+    stack_set_ret_val(val);
+
+}
 
 Value *interpret_function_call(AstNode* node)
 {
@@ -217,6 +224,10 @@ void interpret_node(AstNode *node)
             e = e->next;
         }
         varmap_purge();
+    }
+    else if (node->type == antReturn)
+    {
+        interpret_return(node);
     }
     else if (node->type == antIf)
     {

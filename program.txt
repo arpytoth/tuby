@@ -1,1 +1,10 @@
-return 1;
+int ceva()
+{
+    return 1;
+}
+
+
+ceva();
+int val;
+val = ceva();
+print(val);
