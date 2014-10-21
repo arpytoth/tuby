@@ -1,6 +1,6 @@
 int ceva()
 {
-    return 666;
+    return 666 + 1;
 }
 
 int val;

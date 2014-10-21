@@ -56,9 +56,9 @@ int main()
     //printf("The source file is;\n %s\n", g_source->data);
 
     parse();
-    printf("Parse finished");
     varmap_release();
     interpret();
 
+    printf("Allocator count: %d\n", g_alloc_count);
     return 1;
 }
