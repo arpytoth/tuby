@@ -248,7 +248,7 @@ AstNode *parse_assign(AstNode *lvalue)
  * So basically we are in the : int main( state, we need to read
  * the list of parameters and the statement list. 
  */
-void parse_function_def(const char *name)
+void parse_function_def(ValueType *type, const char *name)
 {
     AstNode *body = NULL;
     FuncDef *func = NULL;
@@ -328,7 +328,7 @@ void parse_function_def(const char *name)
     body->content.stmt_list = stmt_list;
     func->name = strdup(name);
     func->native = NULL;
-    func->value_type = VoidType;
+    func->value_type = type;
     func->params = params;
     func->body = body; 
     func_def(func);
@@ -372,10 +372,7 @@ AstNode *parse_function_call(char *identifier)
     }
 
     next_token(); 
-    if (g_token.type != ttSemilcon)
-        parse_error("; expected.");
-    next_token();
-
+    
     func_call_node->content.func_call.func = 
         func_get(identifier, &func_call->params);
 
@@ -421,7 +418,6 @@ AstNode *parse_stmt()
 
     if (g_token.type == ttReturn) 
     {
-        printf("Readed return");
         return parse_return();
     }
 
@@ -504,7 +500,7 @@ AstNode *parse_stmt()
             
             if (g_token.type == ttOpenBracket)
             {
-                parse_function_def(identifier); 
+                parse_function_def(val_type, identifier); 
                 return NULL;
             }
             else if (g_token.type == ttAssign)
@@ -593,7 +589,11 @@ AstNode *parse_stmt()
         // Function Call
         if (g_token.type == ttOpenBracket)
         {
-            return parse_function_call(identifier);
+            AstNode *func_call = parse_function_call(identifier);
+            if (g_token.type != ttSemilcon)
+                parse_error("; expected.");
+            next_token();
+            return func_call;
         }
         else if (g_token.type == ttIdentifier)
         {
@@ -670,7 +670,6 @@ AstNode *parse_term()
             if (var == NULL)
                 parse_error("Variable %s is not defined yet.", identifier);
 
-            next_token();
             if (g_token.type == ttOpenSquare)
             {
                 AstNode *index_access = NULL;
@@ -685,7 +684,7 @@ AstNode *parse_term()
     }
     else
     {
-        error("Expression expected.");
+        parse_error("Expression expected.");
     }
     return term;
 }
