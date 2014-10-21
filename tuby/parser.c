@@ -328,7 +328,7 @@ void parse_function_def(const char *name)
     body->content.stmt_list = stmt_list;
     func->name = strdup(name);
     func->native = NULL;
-    func->value_type = NULL;
+    func->value_type = VoidType;
     func->params = params;
     func->body = body; 
     func_def(func);
@@ -347,6 +347,45 @@ AstNode *parse_return()
     next_token();
 
     return ast_return(val);
+}
+
+AstNode *parse_function_call(char *identifier)
+{
+    /*
+     * We basically readed <identifier>(
+     * so we must read params and search if function exists.
+     */
+    AstNode *func_call_node = NULL;
+    FuncCall *func_call = NULL;
+
+    func_call_node = (AstNode*)malloc(sizeof(AstNode));
+    func_call_node->type = antFuncCall;
+    func_call = &func_call_node->content.func_call;
+
+    next_token(); 
+    vector_init(&func_call->params);
+
+    while (g_token.type != ttCloseBracket)
+    {
+        AstNode *param = parse_expr();
+        vector_push(&func_call->params, param);
+    }
+
+    next_token(); 
+    if (g_token.type != ttSemilcon)
+        parse_error("; expected.");
+    next_token();
+
+    func_call_node->content.func_call.func = 
+        func_get(identifier, &func_call->params);
+
+    if (func_call_node->content.func_call.func == NULL)
+        parse_error("Function %s not defined\n", identifier);
+    func_call_node->value_type = 
+        func_call_node->content.func_call.func->value_type;
+    free(identifier);
+    return func_call_node;
+
 }
 
 
@@ -554,34 +593,7 @@ AstNode *parse_stmt()
         // Function Call
         if (g_token.type == ttOpenBracket)
         {
-            AstNode *func_call_node = NULL;
-            FuncCall *func_call = NULL;
-
-            func_call_node = (AstNode*)malloc(sizeof(AstNode));
-            func_call_node->type = antFuncCall;
-            func_call = &func_call_node->content.func_call;
-            
-            next_token(); 
-            vector_init(&func_call->params);
-
-            while (g_token.type != ttCloseBracket)
-            {
-                AstNode *param = parse_expr();
-                vector_push(&func_call->params, param);
-            }
-
-            next_token(); 
-            if (g_token.type != ttSemilcon)
-                parse_error("; expected.");
-            next_token();
-
-            func_call_node->content.func_call.func = 
-                func_get(identifier, &func_call->params);
-            
-            if (func_call_node->content.func_call.func == NULL)
-                parse_error("Function %s not defined\n", identifier);
-            free(identifier);
-            return func_call_node;
+            return parse_function_call(identifier);
         }
         else if (g_token.type == ttIdentifier)
         {
@@ -646,23 +658,29 @@ AstNode *parse_term()
     else if (g_token.type == ttIdentifier)
     {
         char *identifier = get_token_repr();
-        AstNode *var = parse_var_val(identifier);
-
-        if (var == NULL)
-            parse_error("Variable %s is not defined yet.", identifier);
-    
         next_token();
-        if (g_token.type == ttOpenSquare)
+
+        if (g_token.type == ttOpenBracket)
         {
-            AstNode *index_access = NULL;
-
-            index_access = parse_index_access(var);
-
-            term = index_access;
+            term = parse_function_call(identifier);
         }
         else
         {
-            term = var;
+            AstNode *var = parse_var_val(identifier);
+            if (var == NULL)
+                parse_error("Variable %s is not defined yet.", identifier);
+
+            next_token();
+            if (g_token.type == ttOpenSquare)
+            {
+                AstNode *index_access = NULL;
+                index_access = parse_index_access(var);
+                term = index_access;
+            }
+            else
+            {
+                term = var;
+            }
         }
     }
     else

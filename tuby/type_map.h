@@ -32,7 +32,6 @@ typedef struct ValueType
     int is_ref; // this is a pointer to the uval_type;
 } ValueType;
 
-
 /*
  * An entry from the Type Map.
  */
@@ -58,10 +57,8 @@ typedef struct
 } type_map;
 
 
-/* The primitive integer type. */
+extern ValueType *VoidType;
 extern ValueType *IntType;
-
-/* The primitive boolean type.*/
 extern ValueType *BoolType;
 
 /* Global type map, sort of a singleton, used to store all types by name. */

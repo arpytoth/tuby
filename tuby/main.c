@@ -53,10 +53,10 @@ int main()
     src_reset(g_source);
     src_next(g_source);
 
-    printf("The source file is;\n %s\n", g_source->data);
+    //printf("The source file is;\n %s\n", g_source->data);
 
     parse();
-
+    printf("Parse finished");
     varmap_release();
     interpret();
 
