@@ -1,9 +1,4 @@
-int ceva()
-{
-    return 666 + 1;
-    print("Hello World");
-}
-
-int val;
-val = ceva();
-print(val);
+#include "math.txt"
+int prime;
+prime = is_prime(15);
+print(prime);

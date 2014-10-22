@@ -212,7 +212,7 @@ void int_init_module()
     // int / int;
     func = (FuncDef*)malloc(sizeof(FuncDef));
     func->name = strdup("/");
-    func->native = int_mul_operator;
+    func->native = int_div_operator;
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = IntType;
     vector_init(func->params);
@@ -223,7 +223,7 @@ void int_init_module()
     // int % int;
     func = (FuncDef*)malloc(sizeof(FuncDef));
     func->name = strdup("%");
-    func->native = int_mul_operator;
+    func->native = int_mod_operator;
     func->params = (vector*)malloc(sizeof(vector));
     func->value_type = IntType;
     vector_init(func->params);
