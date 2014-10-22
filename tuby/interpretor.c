@@ -264,7 +264,7 @@ void interpret_node(AstNode *node)
 
         interpret_node(f->init);
         val = eval(f->cond);
-        while(val->data.bool_val != 0)
+        while(val->data.bool_val != 0 && !return_flag)
         {
             interpret_node(f->body);
             interpret_node(f->inc);
