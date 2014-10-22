@@ -278,7 +278,7 @@ void interpret_node(AstNode *node)
     {
         While *i = &node->content.while_;
         Value *val = eval(i->cond);
-        while (val->data.bool_val != 0)
+        while (val->data.bool_val != 0 && !return_flag)
         {
             interpret_node(i->body);
             alloc_free_val(val);
