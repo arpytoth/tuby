@@ -35,6 +35,14 @@
 #include "tuby_char.h"
 
 
+/*
+ * If return_flag is set to true, all evaluations interpret and eval
+ * calls should return imediately until a stack pop is called or the program
+ * closes. It means return statement was evaluated:) The flag is reset to false
+ * in case return was called inside a function.
+ */
+int return_flag = 0;
+
 void interpret_error(const char *format, ...)
 {
      va_list arguments;  
@@ -58,7 +66,7 @@ void interpret_return(AstNode *node)
     Return *r = &node->content.ret;
     Value *val = eval(r->ret_val);
     stack_set_ret_val(val);
-
+    return_flag = 1;
 }
 
 Value *interpret_function_call(AstNode* node)
@@ -211,6 +219,9 @@ void interpret_node(AstNode *node)
 {
     if (node == NULL)
         error("Fatal ERROR!! NULL NODE");
+    
+    if (return_flag)
+        return;
 
     if (node->type == antStmtList)
     {
@@ -320,6 +331,7 @@ void interpret_node(AstNode *node)
             alloc_free_val(val);
         }
         stack_pop();
+        return_flag = 0;
     }
     else if (node->type == antVarDecl)
     {

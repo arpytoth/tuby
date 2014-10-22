@@ -1,6 +1,7 @@
 int ceva()
 {
     return 666 + 1;
+    print("Hello World");
 }
 
 int val;
