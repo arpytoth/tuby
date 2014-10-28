@@ -59,6 +59,25 @@ void string_add_operator()
     stack_set_ret_val(ret_val); 
 }
 
+void str_add_int_operator()
+{
+    // string + int
+    char buffer[20];
+    Value *param1 = stack_function_param(0);
+    Value *param2 = stack_function_param(1);
+    
+    String *str_val = &param1->data.str_val;
+    int int_val = param2->data.int_val;
+
+    sprintf(buffer, "%d", int_val);
+    Value *ret_val = alloc_val(StrType);
+    ret_val->data.str_val.len = strlen(buffer) + str_val->len;
+    ret_val->data.str_val.buffer = (char*)malloc(ret_val->data.str_val.len + 1);
+    strcat(ret_val->data.str_val.buffer, str_val->buffer);
+    strcat(ret_val->data.str_val.buffer, buffer);
+    stack_set_ret_val(ret_val); 
+}
+
 void string_assign_operator()
 {
     struct Value *lvalue= stack_function_param(0);
@@ -125,6 +144,17 @@ void string_init_module()
     vector_push(func->params, new_param_info(StrType, 0));
     func_def(func);
     
+    // string + int;
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("+");
+    func->native = str_add_int_operator;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = StrType;
+    vector_init(func->params);
+    vector_push(func->params, new_param_info(StrType, 0));
+    vector_push(func->params, new_param_info(IntType, 0));
+    func_def(func);
+
     // string[int];
     func = (FuncDef*)malloc(sizeof(FuncDef));
     func->name = strdup("[]");
