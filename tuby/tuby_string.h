@@ -23,11 +23,11 @@
 
 #include "type_map.h"
 
-struct String
+typedef struct String
 {
     int len;
     char *buffer;
-};
+} String;
 
 extern ValueType *StrType;
 
@@ -36,6 +36,7 @@ void string_init(struct String *str);
 int string_len(struct String *str);
 void string_set(struct String *str, const char *val);
 void string_dup(struct String *dest, struct String *src);
+void string_concat(String *dest, String *str1, String *str2);
 void string_free(struct String *str);
 char string_at(struct String *str, int index);
 

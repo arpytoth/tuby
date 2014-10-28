@@ -44,6 +44,21 @@ void string_square_operator()
     stack_set_ret_val(char_at_index); 
 }
 
+void string_add_operator()
+{
+    // doing the append operator.
+    // string + string
+    Value *param1 = stack_function_param(0);
+    Value *param2 = stack_function_param(1);
+    
+    String *val1 = &param1->data.str_val;
+    String *val2 = &param2->data.str_val;
+
+    Value *ret_val = alloc_val(StrType);
+    string_concat(&ret_val->data.str_val, val1, val2);   
+    stack_set_ret_val(ret_val); 
+}
+
 void string_assign_operator()
 {
     struct Value *lvalue= stack_function_param(0);
@@ -98,6 +113,17 @@ void string_init_module()
     vector_push(func->params, new_param_info(StrType, 1));
     vector_push(func->params, new_param_info(StrType, 0));
     func_def(func);
+  
+    // string + string;
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("+");
+    func->native = string_add_operator;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = StrType;
+    vector_init(func->params);
+    vector_push(func->params, new_param_info(StrType, 0));
+    vector_push(func->params, new_param_info(StrType, 0));
+    func_def(func);
     
     // string[int];
     func = (FuncDef*)malloc(sizeof(FuncDef));
@@ -116,7 +142,7 @@ void string_init_module()
 void string_init(struct String *str)
 {
     str->len = 0;
-    str->buffer = NULL;
+    str->buffer = strdup("");
 }
 
 
@@ -129,14 +155,30 @@ int string_len(struct String *str)
 void string_set(struct String *str, const char *val)
 {
    int len = strlen(val);
+   if (str->buffer != NULL)
+       free(str->buffer);
    str->buffer = strdup(val);
    str->len = len;
 }
 
 void string_dup(struct String *dest, struct String *src)
 {
+    if (dest->buffer != NULL)
+        free(dest->buffer);
+    
     dest->buffer = strdup(src->buffer);
     dest->len = src->len;
+}
+
+void string_concat(String *dest, String *str1, String *str2)
+{
+    if (dest->buffer != NULL)
+        free(dest->buffer);
+    dest->len = str1->len + str2->len;
+    dest->buffer = (char *)malloc(dest->len + 1);
+    dest->buffer[0] = '\0';
+    strcat(dest->buffer, str1->buffer);
+    strcat(dest->buffer, str2->buffer);
 }
 
 void string_free(struct String *str)
