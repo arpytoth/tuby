@@ -3,6 +3,7 @@ d: FLAGS = -O0 -g -Wall -c -fmessage-length=0
 
 OBJ += tuby/source.o
 OBJ += tuby/redblack.o
+OBJ += tuby/object_type.o
 OBJ += tuby/ast.o
 OBJ += tuby/func_table.o
 OBJ += tuby/interpretor.o

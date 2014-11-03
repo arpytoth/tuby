@@ -24,6 +24,7 @@
 #include "type_map.h"
 #include "tuby_array.h"
 #include "tuby_string.h"
+#include "object_type.h"
 
 struct Value;
 typedef struct Value Value;
@@ -35,6 +36,7 @@ union AllValues
     char char_val;
     struct Array array_val;
     struct String str_val;
+    Object obj_val;
 };
 
 
