@@ -21,13 +21,7 @@
 #ifndef _TUBY_STRING_H_
 #define _TUBY_STRING_H_
 
-#include "type_map.h"
-
-typedef struct String
-{
-    int len;
-    char *buffer;
-} String;
+#include "tuby.h"
 
 extern ValueType *StrType;
 

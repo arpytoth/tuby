@@ -33,7 +33,7 @@ void parse();
 
 AstNode *parse_stmt();
 AstNode *parse_expr();
-
+void parse_class();
 AstNode *parse_for();
 
 

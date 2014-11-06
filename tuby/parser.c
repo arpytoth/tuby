@@ -416,6 +416,12 @@ AstNode *parse_stmt()
         return stmt_list_node; 
     }
 
+    if (g_token.type == ttClass) 
+    {
+        parse_class();
+        return NULL;
+    }
+
     if (g_token.type == ttReturn) 
     {
         return parse_return();
@@ -905,4 +911,64 @@ void parse()
     g_root.type = antStmtList;
     g_root.content.stmt_list = stmt_list;
     varmap_purge();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//                                 PARSE CLASS                                //
+////////////////////////////////////////////////////////////////////////////////
+
+void parse_class()
+{
+    ValueType *type = NULL;
+    /*
+     * At this point we parsed the 'class' keyword and now we must parse 
+     * the actual class declaration.
+     * class name
+     * {
+     *      <type> member1;
+     *      <type> member2;
+     * }
+     *
+     */
+    next_token();
+
+    if (g_token.type != ttIdentifier)
+        parse_error("Class name expected.");    
+    
+    type = type_create(g_token.repr);
+    type_map_put(type);
+
+    next_token();
+    if (g_token.type != ttOpenCurly)
+        parse_error("{ expected");
+    do
+    {
+        Member *member;
+        ValueType *val_type;
+
+        next_token();
+        val_type = type_map_get(g_token.repr);
+        
+        if (val_type == NULL)
+            parse_error("A type name expected");
+        
+        next_token();
+        val_type = parse_value_type(val_type);
+        
+        if (g_token.type != ttIdentifier)
+            parse_error("Member name expected");
+        printf("Parsed: %s  %s \n", val_type->name, g_token.repr);
+        
+        member = member_create(g_token.repr, val_type);
+        type_add_member(type, member);
+
+        next_token();
+        if (g_token.type != ttSemilcon)
+            parse_error("; expected");
+        
+        next_token();
+        if (g_token.type == ttCloseCurly)
+            break;
+    } while (1);
+    next_token(); // skip last } and return.
 }

@@ -1,4 +1,4 @@
-#include "tutorial.txt"
-
-print_hello();
-
+class HelloWorld
+{
+    int member1;
+}

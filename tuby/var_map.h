@@ -21,15 +21,9 @@
 #ifndef _VAR_MAP_H_
 #define _VAR_MAP_H_
 
+#include "tuby.h"
 #include "type_map.h"
 #include "allocator.h"
-
-typedef struct Var
-{
-    char *name;
-    ValueType *val_type;
-    Value *val;
-} Var;
 
 
 /*

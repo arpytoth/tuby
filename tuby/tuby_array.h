@@ -19,14 +19,7 @@
  */
 #ifndef _TUBY_ARRAY_H_
 #define _TUBY_ARRAY_H_
-
-#include "vector.h"
-#include "type_map.h"
-
-struct Array
-{
-    vector *data;
-};
+#include "tuby.h"
 
 void array_type_init(struct ValueType *type);
 void array_init(struct Array *arr);

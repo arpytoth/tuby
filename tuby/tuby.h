@@ -21,13 +21,30 @@
 #ifndef _TUBY_H_
 #define _TUBY_H_
 
+#include "vector.h"
+#include "list.h"
+
 /*
  * This file contains the structures used internally by the Tuby 
  * virtual machine along with primitive types and so on.
  */
 
+struct Value;
+struct Var;
+struct ValueType;
 
+//----------------------------------------------------------------------------//
 
+typedef struct Member 
+{
+    char *name;
+    struct ValueType *val_type;
+} Member;
+
+Member *member_create(char *name, struct ValueType *type);
+void member_destroy(Member *member);
+
+//----------------------------------------------------------------------------//
 
 typedef struct ValueType
 {
@@ -35,10 +52,41 @@ typedef struct ValueType
     struct ValueType *uval_type; // underlying value type.
     int is_array; // this is an array of uval_type;
     int is_ref; // this is a pointer to the uval_type;
+    List members;
 } ValueType;
 
-struct Value;
-typedef struct Value Value;
+ValueType *type_create(char *name);
+void type_destroy(ValueType *type);
+void type_add_member(ValueType *type, Member *member);
+
+//----------------------------------------------------------------------------//
+
+typedef struct Var
+{
+    char *name;
+    ValueType *val_type;
+    struct Value *val;
+} Var;
+
+
+typedef struct Array
+{
+    vector *data;
+} Array;
+
+
+typedef struct String
+{
+    int len;
+    char *buffer;
+} String;
+
+
+typedef struct Object
+{
+    char *name;
+} Object;
+
 
 union AllValues
 {
@@ -50,8 +98,7 @@ union AllValues
     Object obj_val;
 };
 
-
-struct Value
+typedef struct Value
 {
     ValueType *value_type;
     union AllValues data;
@@ -65,16 +112,7 @@ struct Value
      */
     struct Value *parent;
     int index;
-};
-
-
-typedef struct Var
-{
-    char *name;
-    ValueType *val_type;
-    Value *val;
-} Var;
-
+} Value;
 
 #endif // _TUBY_H_
 

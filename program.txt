@@ -1,3 +1,6 @@
-string msg;
-msg = "Hello" + "World";
-print("The int value is: " + 1);
+class HelloWorld
+{
+    int member;
+}
+
+HelloWorld ceva;

@@ -23,7 +23,7 @@
 
 #include "vector.h"
 #include "list.h"
-#include "tuby_string.h"
+#include "tuby.h"
 #include "type_map.h"
 #include "allocator.h"
 #include "var_map.h"

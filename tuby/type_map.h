@@ -20,17 +20,11 @@
 #ifndef _TYPE_MAP_H_
 #define _TYPE_MAP_H_
 
+#include "tuby.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // Type Map Structures.
 ////////////////////////////////////////////////////////////////////////////////
-
-typedef struct ValueType
-{
-    char *name; // name of this type
-    struct ValueType *uval_type; // underlying value type.
-    int is_array; // this is an array of uval_type;
-    int is_ref; // this is a pointer to the uval_type;
-} ValueType;
 
 /*
  * An entry from the Type Map.

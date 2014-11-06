@@ -20,6 +20,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "tuby.h"
+#include "list.h"
 #include "type_map.h"
 #include "string.h"
 #include "tuby_array.h"
@@ -29,7 +31,36 @@ ValueType *IntType;
 ValueType *BoolType;
 type_map g_type_map;
 
+////////////////////////////////////////////////////////////////////////////////
+//                           Value Type                                       //
+////////////////////////////////////////////////////////////////////////////////
 
+ValueType *type_create(char *name)
+{
+    ValueType *type = (ValueType*)malloc(sizeof(ValueType));
+    type->uval_type = NULL;
+    type->name = strdup(name);
+    list_init(&type->members);
+    return type;
+}
+
+//----------------------------------------------------------------------------//
+
+void type_destroy(ValueType *type)
+{
+    free(type->name);
+    list_clear(&type->members);
+    free(type);
+}
+
+//----------------------------------------------------------------------------//
+
+void type_add_member(ValueType *type, Member *member)
+{
+    list_push(&type->members, member);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void type_map_init()
 {
     g_type_map.first = NULL;

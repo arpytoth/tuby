@@ -201,6 +201,8 @@ int read_identifier()
         g_token.type = ttInclude;
     else if (strcmp(g_token.repr, "return") == 0)
         g_token.type = ttReturn;
+    else if (strcmp(g_token.repr, "class") == 0)
+        g_token.type = ttClass;
     else
         g_token.type = ttIdentifier;
     return 1;

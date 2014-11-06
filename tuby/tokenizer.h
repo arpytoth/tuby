@@ -29,7 +29,7 @@ enum TokenType
     ttOpenSquare, ttCloseSquare, ttAssign, ttAdd, ttSub, ttMul, 
     ttDiv, ttMod, ttEquals, ttNotEquals, ttAnd, ttOr, ttInc, ttDec, ttLess, 
     ttGreater, ttTrue, ttFalse, ttIF, ttElse, ttWhile, ttFor,
-    ttDo, ttEOF, ttInclude, ttReturn
+    ttDo, ttEOF, ttInclude, ttReturn, ttClass
 };
 
 
