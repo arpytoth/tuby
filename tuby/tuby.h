@@ -52,6 +52,7 @@ typedef struct ValueType
     struct ValueType *uval_type; // underlying value type.
     int is_array; // this is an array of uval_type;
     int is_ref; // this is a pointer to the uval_type;
+    int is_class; // this is a class type.
     List members;
 } ValueType;
 
@@ -81,12 +82,19 @@ typedef struct String
     char *buffer;
 } String;
 
+//----------------------------------------------------------------------------//
 
 typedef struct Object
 {
-    char *name;
+    List *members;
 } Object;
 
+void obj_init(Object *obj);
+void obj_free(Object *obj);
+void obj_use(Object *obj);
+void obj_copy(Object *dest, Object *src);
+
+//----------------------------------------------------------------------------//
 
 union AllValues
 {

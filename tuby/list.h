@@ -34,6 +34,7 @@ typedef struct List
 {
     struct ListElem *first;
     struct ListElem *last;
+    int ref_count;
 } List;
 
 List *list_create();

@@ -45,6 +45,7 @@ void list_init(List *l)
 {
     l->first = NULL;
     l->last = NULL;
+    l->ref_count = 0;
 }
 
 void list_clear(List *l)

@@ -50,6 +50,10 @@ Value *alloc_val(ValueType *val_type)
     {
         array_init(&val->data.array_val);
     }
+    if (val_type->is_class)
+    {
+        list_init(&val->data.obj_val.members);
+    }
     LOG(llDebug, "Allocated new value: %d", (int)(uintptr_t)val);
     g_alloc_count++;
     return val;
