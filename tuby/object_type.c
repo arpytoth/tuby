@@ -21,13 +21,14 @@ void member_destroy(Member *member)
     free(member);
 }
 
-//----------------------------------------------------------------------------//
+////////////////////////////////////////////////////////////////////////////////
+//                                 OBJECT                                     //
+////////////////////////////////////////////////////////////////////////////////
 
-void array_init(struct Array *arr)
+void obj_init(Object *obj)
 {
-    arr->data = (vector*)malloc(sizeof(vector));
-    vector_init(arr->data);
-    arr->data->ref_count = 1;
+    obj->members = list_create();
+    obj->members->ref_count = 1;
 }
 
 //----------------------------------------------------------------------------//
@@ -36,10 +37,15 @@ void obj_free(Object *obj)
 {
     if (obj != NULL)
     {
-        obj->data->ref_count--;
-        if (arr->data->ref_count == 0)
+        obj->members->ref_count--;
+        if (obj->members->ref_count == 0)
         {
-            int i;
+            ListElem *e = obj->members->first;
+            while (e != NULL)
+            {
+                Var *var = (Var*)e->data;
+                
+            }
             int length = vector_length(arr->data);
             for (i = 0; i < length; i++)
             {
