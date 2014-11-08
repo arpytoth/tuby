@@ -53,7 +53,7 @@ void var_set(Var *var, struct Value *val)
 {
     if (var->val != NULL)
         alloc_free_val(var->val);
-    var->value = val;
+    var->val = val;
 }
 
 //----------------------------------------------------------------------------//

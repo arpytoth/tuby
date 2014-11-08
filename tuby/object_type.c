@@ -44,17 +44,10 @@ void obj_free(Object *obj)
             while (e != NULL)
             {
                 Var *var = (Var*)e->data;
-                
+                var_free(var);
+                e = e->next;
             }
-            int length = vector_length(arr->data);
-            for (i = 0; i < length; i++)
-            {
-                Value *elem = (Value*)vector_at(arr->data, i);
-                if (elem != NULL)
-                    alloc_free_val(elem);
-            }
-            free(arr->data);
-            arr->data = NULL;
+            list_free(obj->members);
         }              
     }
 }
