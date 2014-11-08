@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "tuby.h"
+#include "allocator.h"
 
 //----------------------------------------------------------------------------//
 
@@ -25,15 +26,27 @@ void member_destroy(Member *member)
 //                                 OBJECT                                     //
 ////////////////////////////////////////////////////////////////////////////////
 
-void obj_init(Object *obj)
+void obj_init(Object *obj, ValueType *type)
 {
+    ListElem *e;
     obj->members = list_create();
     obj->members->ref_count = 1;
+
+    e = type->members.first;
+    while (e != NULL)
+    {
+        Member *m = (Member*)e->data;
+        Value *val = alloc_val(m->val_type);
+        Var *var = var_create(m->name, m->val_type);
+        var_set(var, val);
+        list_push(obj->members, var);
+        e = e->next;
+    }
 }
 
 //----------------------------------------------------------------------------//
 
-void obj_free(Object *obj)
+void obj_destroy(Object *obj)
 {
     if (obj != NULL)
     {
@@ -50,6 +63,15 @@ void obj_free(Object *obj)
             list_free(obj->members);
         }              
     }
+}
+
+//----------------------------------------------------------------------------//
+
+void obj_free(Object *obj)
+{
+    obj_destroy(obj);
+    if (obj != NULL)
+        free(obj);
 }
 
 //----------------------------------------------------------------------------//

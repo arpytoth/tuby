@@ -52,7 +52,7 @@ Value *alloc_val(ValueType *val_type)
     }
     if (val_type->is_class)
     {
-        list_init(&val->data.obj_val.members);
+        obj_init(&val->data.obj_val, val_type);
     }
     LOG(llDebug, "Allocated new value: %d", (int)(uintptr_t)val);
     g_alloc_count++;
@@ -62,7 +62,11 @@ Value *alloc_val(ValueType *val_type)
 struct Value *alloc_by_value(struct Value *orig)
 {
     struct Value *clone = alloc_val(orig->value_type);
-    if (orig->value_type->is_array)
+    if (orig->value_type->is_class)
+    {
+        obj_copy(&clone->data.obj_val, &orig->data.obj_val);
+    }
+    else if (orig->value_type->is_array)
     {
         array_copy(&clone->data.array_val, &orig->data.array_val);
     }
@@ -103,6 +107,10 @@ void alloc_free_val(Value *val)
         else if (val->value_type->is_array)
         {
             array_free(&val->data.array_val);
+        }
+        else if (val->value_type->is_class)
+        {
+            obj_destroy(&val->data.obj_val);
         }
 
         LOG(llDebug, "Freeing value %d", (int)(uintptr_t)val);

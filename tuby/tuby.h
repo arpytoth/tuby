@@ -94,10 +94,12 @@ typedef struct Object
     List *members;
 } Object;
 
-void obj_init(Object *obj);
+void obj_init(Object *obj, ValueType *val_type);
+void obj_destroy(Object *obj);
 void obj_free(Object *obj);
 void obj_use(Object *obj);
 void obj_copy(Object *dest, Object *src);
+Var *obj_get_var(char *name);
 
 //----------------------------------------------------------------------------//
 
