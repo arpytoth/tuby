@@ -69,7 +69,12 @@ typedef struct Var
     struct Value *val;
 } Var;
 
+Var *var_create(char *name, ValueType *val_type);
+void var_init(Var *var, char *name, ValueType *val_type);
+void var_set(Var *var, struct Value *val);
+void var_free(Var *var);
 
+//----------------------------------------------------------------------------//
 typedef struct Array
 {
     vector *data;

@@ -21,12 +21,52 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "tuby.h"
 #include "var_map.h"
 #include "utils.h"
 #include "allocator.h"
 
 VarMap *g_varmap;
 
+//////////////////////////////////////////////////////////////////////////////////                                   VARIABLE                                 //
+////////////////////////////////////////////////////////////////////////////////
+
+Var *var_create(char *name, ValueType *val_type)
+{
+    Var *var = (Var*)malloc(sizeof(Var));
+    var_init(var, name, val_type);
+    return var;
+}
+
+//----------------------------------------------------------------------------//
+
+void var_init(Var *var, char *name, ValueType *val_type)
+{
+    var->name = strdup(name);
+    var->val_type = val_type;
+    var->val = NULL;
+}
+
+//----------------------------------------------------------------------------//
+
+void var_set(Var *var, struct Value *val)
+{
+    if (var->val != NULL)
+        alloc_free_val(var->val);
+    var->value = val;
+}
+
+//----------------------------------------------------------------------------//
+
+void var_free(Var *var)
+{
+    free(var->name);
+    if (var->val != NULL)
+        alloc_free_val(var->val);
+    free(var);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 void varmap_init()
 {
