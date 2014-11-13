@@ -984,12 +984,13 @@ void parse_class()
     next_token();
     if (g_token.type != ttOpenCurly)
         parse_error("{ expected");
+    
+    next_token();
     do
     {
         Member *member;
         ValueType *val_type;
 
-        next_token();
         val_type = type_map_get(g_token.repr);
         
         if (val_type == NULL)
@@ -1000,7 +1001,6 @@ void parse_class()
         
         if (g_token.type != ttIdentifier)
             parse_error("Member name expected");
-        printf("Parsed: %s  %s \n", val_type->name, g_token.repr);
         
         member = member_create(g_token.repr, val_type);
         type_add_member(type, member);

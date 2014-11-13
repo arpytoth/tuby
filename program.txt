@@ -1,8 +1,13 @@
-class HelloWorld
+class FileInfo
 {
-    int member;
+   int size;
+   string name;
 }
 
-HelloWorld ceva;
-ceva.member = 10;
-print(ceva.member);
+FileInfo info;
+
+info.name = "c:/hello world";
+info.size = 10;
+
+print("Info is:" + info.name + " and size is: " + info.size);
+
