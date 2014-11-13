@@ -3,6 +3,30 @@
 
 #include "tuby.h"
 #include "allocator.h"
+#include "stack.h"
+
+////////////////////////////////////////////////////////////////////////////////
+//                     NATIVE FUNCTIONS RELATED TO OBJECTS                    //
+////////////////////////////////////////////////////////////////////////////////
+
+void obj_dot_operator()
+{
+    struct Value *obj_val = stack_function_param(0);
+    struct Value *member_val = stack_function_param(1);
+    String *member = &member_val->data.str_val;
+    Object *obj = &obj_val->data.obj_val;
+    Var *var = obj_get_var(obj, member->buffer);
+    stack_set_ret_val(var->val); 
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//                              OBJECT TYPE                                   //
+////////////////////////////////////////////////////////////////////////////////
+
+void obj_type_init(ValueType *type)
+{
+
+}
 
 //----------------------------------------------------------------------------//
 
@@ -92,4 +116,18 @@ void obj_copy(Object *dest, Object *src)
 
 //----------------------------------------------------------------------------//
 
+Var *obj_get_var(Object *obj, char *name)
+{
+    ListElem *e = obj->members->first;
+    while (e != NULL)
+    {
+        Var *var = e->data;
+        if (strcmp(var->name, name) == 0)
+            return var;
 
+        e = e->next;    
+    }
+    return NULL;
+}
+
+//----------------------------------------------------------------------------//

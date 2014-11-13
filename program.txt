@@ -4,3 +4,5 @@ class HelloWorld
 }
 
 HelloWorld ceva;
+ceva.member = 10;
+print(ceva.member);

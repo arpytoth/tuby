@@ -57,7 +57,8 @@ enum AstNodeType
 {
     antFuncCall, antIntVal, antCharVal, antStrVal, antBoolVal,
     antVarDecl, antAssign, antVarVal, antFuncVarVal, antReturn, 
-    antIf, antFor, antWhile, antIndexAccess, antStmtList
+    antIf, antFor, antWhile, antIndexAccess, antStmtList,
+    antMemberAccess
 };
 
 
@@ -174,6 +175,17 @@ typedef struct
     AstNode *val;
 } IndexAccess;
 
+//----------------------------------------------------------------------------//
+
+typedef struct MemberAccess
+{
+    AstNode *obj;
+    char *member;
+} MemberAccess;
+
+//----------------------------------------------------------------------------//
+
+
 /*
  * Instruction that causes a subprogram to exit and also sets the return
  * value in the stack frame.
@@ -202,6 +214,7 @@ union AllNodeContent
     While while_;
     For for_;
     IndexAccess index_access;
+    MemberAccess member_access;
 };
 
 
@@ -237,4 +250,5 @@ AstNode *ast_index_access(AstNode *value, AstNode *index);
 AstNode *ast_str_val(char *value);
 AstNode *ast_char_val(char value);
 AstNode *ast_return(AstNode *val);
+AstNode *ast_member_access(AstNode *obj, char *member);
 #endif // _AST_H_ 

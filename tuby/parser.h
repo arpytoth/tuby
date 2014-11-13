@@ -34,6 +34,7 @@ void parse();
 AstNode *parse_stmt();
 AstNode *parse_expr();
 void parse_class();
+AstNode *parse_dot_operator();
 AstNode *parse_for();
 
 

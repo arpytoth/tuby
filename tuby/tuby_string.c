@@ -168,6 +168,12 @@ void string_init_module()
 
 }
 
+String *str_create()
+{
+    String *str = (String*)malloc(sizeof(String));
+    string_init(str);
+    return str;
+}
 
 void string_init(struct String *str)
 {

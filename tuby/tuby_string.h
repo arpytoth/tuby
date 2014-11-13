@@ -26,6 +26,7 @@
 extern ValueType *StrType;
 
 void string_init_module();
+String *str_create();
 void string_init(struct String *str);
 int string_len(struct String *str);
 void string_set(struct String *str, const char *val);

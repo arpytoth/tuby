@@ -158,6 +158,15 @@ int read_and()
     return 1;
 }
 
+int read_dot()
+{
+    g_token.type = ttDot;
+    g_token.repr[0] = '.';
+    g_token.repr[1] = '\0';
+    next_char();
+    return 1;
+}
+
 
 
 int read_identifier()
@@ -223,6 +232,10 @@ int next_token()
     if (is_digit(g_source->current))
     {
         return read_number();
+    }
+    else if (g_source->current == '.')
+    {
+        return read_dot();
     }
     else if (g_source->current == ',')
     {

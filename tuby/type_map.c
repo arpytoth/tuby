@@ -60,6 +60,23 @@ void type_add_member(ValueType *type, Member *member)
     list_push(&type->members, member);
 }
 
+//----------------------------------------------------------------------------//
+
+Member *type_get_member(ValueType *type, const char *member)
+{
+    ListElem *e = type->members.first;
+    while (e != NULL)
+    {
+        Member *m = (Member*)e->data;
+        if (strcmp(m->name, member) == 0)
+            return m;
+        e = e->next;
+    }
+    return NULL;
+}
+
+//----------------------------------------------------------------------------//
+
 ////////////////////////////////////////////////////////////////////////////////
 void type_map_init()
 {

@@ -59,6 +59,7 @@ typedef struct ValueType
 ValueType *type_create(char *name);
 void type_destroy(ValueType *type);
 void type_add_member(ValueType *type, Member *member);
+Member *type_get_member(ValueType *type, const char *member);
 
 //----------------------------------------------------------------------------//
 
@@ -86,6 +87,7 @@ typedef struct String
     int len;
     char *buffer;
 } String;
+String *str_create();
 
 //----------------------------------------------------------------------------//
 
@@ -99,7 +101,7 @@ void obj_destroy(Object *obj);
 void obj_free(Object *obj);
 void obj_use(Object *obj);
 void obj_copy(Object *dest, Object *src);
-Var *obj_get_var(char *name);
+Var *obj_get_var(Object *obj, char *name);
 
 //----------------------------------------------------------------------------//
 
@@ -126,6 +128,9 @@ typedef struct Value
      * array or string value.
      */
     struct Value *parent;
+    
+    Var *var; /* If set to a non NULL value it means this value is linked to
+                 a variable and var must be set with the value. */
     int index;
 } Value;
 

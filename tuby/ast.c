@@ -229,3 +229,22 @@ AstNode *ast_return(AstNode *val)
     node->content.ret.ret_val = val;
     return node;
 }
+
+//----------------------------------------------------------------------------//
+
+AstNode *ast_member_access(AstNode *obj, char *member)
+{
+    ValueType *val_type = obj->value_type;
+    Member *m = type_get_member(val_type, member);
+    if (m == NULL)
+        parse_error("Member %s not defined", member);
+
+    AstNode *node = (AstNode*)malloc(sizeof(AstNode));   
+    node->type = antMemberAccess;
+    node->value_type = m->val_type;
+    node->content.member_access.member = strdup(member);
+    node->content.member_access.obj = obj;
+    return node;
+}
+
+//----------------------------------------------------------------------------//

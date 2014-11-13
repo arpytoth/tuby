@@ -532,6 +532,25 @@ AstNode *parse_stmt()
             return var_decl;
         }
 
+        if (g_token.type == ttDot)
+        {
+            AstNode *member_access = NULL;
+            AstNode *var_val = NULL;
+
+            var_val = parse_var_val(identifier);
+            if (var_val == NULL)
+                parse_error("Variable %s not defined yet", identifier);
+            
+            member_access = parse_dot_operator(var_val);
+
+            if (g_token.type != ttAssign)
+                parse_error("= expected. ");
+             
+            next_token(); 
+            return parse_assign(member_access);
+
+        }
+     
         /*
          * It is an identifier with array mark. Well this probably
          * means index access left value.
@@ -670,12 +689,19 @@ AstNode *parse_term()
         {
             term = parse_function_call(identifier);
         }
+        else if (g_token.type == ttDot)
+        {
+            AstNode *var = parse_var_val(identifier);
+            if (var == NULL)
+                parse_error("Variable %s is not defined yet.", identifier);
+            free(identifier);
+            term = parse_dot_operator(var);
+        }
         else
         {
             AstNode *var = parse_var_val(identifier);
             if (var == NULL)
                 parse_error("Variable %s is not defined yet.", identifier);
-
             if (g_token.type == ttOpenSquare)
             {
                 AstNode *index_access = NULL;
@@ -896,7 +922,7 @@ void parse()
 {
     List stmt_list;
     AstNode *stmt = NULL;
-
+    
     varmap_push();
     next_token();
     
@@ -916,6 +942,23 @@ void parse()
 ////////////////////////////////////////////////////////////////////////////////
 //                                 PARSE CLASS                                //
 ////////////////////////////////////////////////////////////////////////////////
+AstNode *parse_dot_operator(AstNode *value)
+{
+    /*
+     * Parse something like name.member 
+     * basically member was readed now we are at . and we must actually
+     * parse the . operator.
+     */
+    AstNode *member;
+
+    next_token();
+    if (g_token.type != ttIdentifier)
+        parse_error("Identifier expected.");
+    
+    member = ast_member_access(value, g_token.repr); 
+    next_token();
+    return member; 
+}
 
 void parse_class()
 {

@@ -69,6 +69,25 @@ void interpret_return(AstNode *node)
     return_flag = 1;
 }
 
+Value *interpret_method_access(AstNode *node)
+{
+    MemberAccess *ma = &node->content.member_access;
+    char *member = ma->member;
+    AstNode *obj = ma->obj;
+    Value *val = eval(obj);
+    Var *var = obj_get_var(&val->data.obj_val, member);
+    if (var == NULL)
+        interpret_error("Member not found %s", member);
+
+    if (var->val == NULL) 
+    {
+        var->val = alloc_val(var->val_type);
+        var->val->value_type = var->val_type;
+    }
+    alloc_free_val(val);
+    return alloc_use_val(var->val);
+}
+
 Value *interpret_function_call(AstNode* node)
 {
     FuncCall *fc = &node->content.func_call;
@@ -120,8 +139,11 @@ Value *interpret_function_call(AstNode* node)
 
 Value *eval(AstNode *node)
 {
-    
-    if (node->type == antFuncCall)
+    if (node->type == antMemberAccess)
+    {
+        return interpret_method_access(node);
+    }
+    else if (node->type == antFuncCall)
     {
         return interpret_function_call(node);
     }
@@ -213,8 +235,75 @@ Value *eval(AstNode *node)
     }
 }
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
+void interpret_assign(AstNode *node)
+{
+    Assign *assign = &node->content.assign;
+
+    /*
+     * The string index access is a special case because the string is
+     * not implemented as an array but a a direct char[] C style. This
+     * is because that way is more efficient.
+     */
+    if (assign->lvalue->type == antIndexAccess &&
+        assign->lvalue->content.index_access.val->value_type == StrType)
+    {
+        struct String *str = NULL;
+        Value *str_val = NULL;
+        Value *rvalue = NULL;
+        Value *index = NULL;
+        int int_index;
+
+        str_val = eval(assign->lvalue->content.index_access.val);
+        str = &str_val->data.str_val;
+        index = eval(assign->lvalue->content.index_access.index);
+
+        if (index->value_type != IntType)
+            interpret_error("String index must be of type int");
+
+        int_index = index->data.int_val;
+        rvalue = eval(assign->expr);
+
+        if (rvalue->value_type != CharType)
+            interpret_error("Only char can be assigned to string[]");
+
+        str->buffer[int_index] = rvalue->data.char_val;
+        alloc_free_val(str_val);
+        alloc_free_val(index);
+        alloc_free_val(rvalue);
+    }
+    else
+    {
+        Value *lvalue = eval(assign->lvalue);
+        Value *rvalue = eval(assign->expr);
+        if (lvalue->value_type == StrType)
+        {
+            string_dup(&lvalue->data.str_val, &rvalue->data.str_val);
+            lvalue->is_null = rvalue->is_null;
+        }
+        else if (lvalue->value_type->is_array)
+        {
+            array_copy(&lvalue->data.array_val, &rvalue->data.array_val);
+            lvalue->is_null = rvalue->is_null;
+        }
+        else if (lvalue->var != NULL)
+        {
+            // the leftvalue is basically a variable not an actual value.
+            // now we must get the variable and assign the rvalue to the
+            // variable.
+            interpret_error("Variable assign is not interpreted yet");
+        }
+        else
+        {
+            lvalue->data = rvalue->data;
+            lvalue->is_null = rvalue->is_null;
+        }
+        alloc_free_val(lvalue);
+        alloc_free_val(rvalue);
+    }
+
+}
 void interpret_node(AstNode *node)
 {
     if (node == NULL)
@@ -348,68 +437,15 @@ void interpret_node(AstNode *node)
     }
     else if (node->type == antAssign)
     {
-        Assign *assign = &node->content.assign;
-     
-        /*
-         * The string index access is a special case because the string is
-         * not implemented as an array but a a direct char[] C style. This
-         * is because that way is more efficient.
-         */
-        if (assign->lvalue->type == antIndexAccess &&
-            assign->lvalue->content.index_access.val->value_type == StrType)
-        {
-            struct String *str = NULL;
-            Value *str_val = NULL;
-            Value *rvalue = NULL;
-            Value *index = NULL;
-            int int_index;
-
-            str_val = eval(assign->lvalue->content.index_access.val);
-            str = &str_val->data.str_val;
-            index = eval(assign->lvalue->content.index_access.index);
-            
-            if (index->value_type != IntType)
-                interpret_error("String index must be of type int");
-
-            int_index = index->data.int_val;
-            rvalue = eval(assign->expr);
-
-            if (rvalue->value_type != CharType)
-                interpret_error("Only char can be assigned to string[]");
-
-            str->buffer[int_index] = rvalue->data.char_val;
-            alloc_free_val(str_val);
-            alloc_free_val(index);
-            alloc_free_val(rvalue);
-        }
-        else
-        {
-            Value *lvalue = eval(assign->lvalue);
-            Value *rvalue = eval(assign->expr);
-            if (lvalue->value_type == StrType)
-            {
-                string_dup(&lvalue->data.str_val, &rvalue->data.str_val);
-                lvalue->is_null = rvalue->is_null;
-            }
-            else if (lvalue->value_type->is_array)
-            {
-                array_copy(&lvalue->data.array_val, &rvalue->data.array_val);
-                lvalue->is_null = rvalue->is_null;
-            }
-            else
-            {
-                lvalue->data = rvalue->data;
-                lvalue->is_null = rvalue->is_null;
-            }
-            alloc_free_val(lvalue);
-            alloc_free_val(rvalue);
-        }
+        interpret_assign(node);
     }
     else
     {
         error("Fatal Error. Invalid statement.");
     }
 }
+
+
 
 //-----------------------------------------------------------------------------
 

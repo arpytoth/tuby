@@ -215,7 +215,6 @@ VarMap *varmap_pop()
     }
 }
 
-
 void varmap_purge()
 {
     VarMap *map = varmap_pop();
