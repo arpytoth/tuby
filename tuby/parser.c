@@ -369,6 +369,8 @@ AstNode *parse_function_call(char *identifier)
     {
         AstNode *param = parse_expr();
         vector_push(&func_call->params, param);
+        if (g_token.type == ttComma)
+            next_token();
     }
 
     next_token(); 

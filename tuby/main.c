@@ -34,6 +34,7 @@
 #include "tuby_string.h"
 #include "int_type.h"
 #include "bool_type.h"
+#include "file.h"
 #include "source.h"
 
 int main()
@@ -47,6 +48,7 @@ int main()
     int_init_module();
     char_init_module();
     string_init_module();
+    file_init_module();
 
     g_source = src_create("program.txt");
     src_preproc(g_source);

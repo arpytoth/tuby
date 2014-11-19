@@ -23,6 +23,7 @@ OBJ += tuby/tuby_string.o
 OBJ += tuby/tuby_char.o
 OBJ += tuby/int_type.o
 OBJ += tuby/bool_type.o
+OBJ += tuby/file.o
 
 %.o: %.c
 	@echo Building: "$<"
