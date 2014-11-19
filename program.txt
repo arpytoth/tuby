@@ -1,2 +1,4 @@
-print("Opening file");
-fopen("out.txt","rw+");
+int file;
+file = fopen("out.txt","w");
+fprintf(file, "Hello World");
+print("The file id is: " + file);

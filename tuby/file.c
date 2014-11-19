@@ -29,6 +29,20 @@
 RedBlackTree *g_file_map;
 int g_file_seed;
 
+int file_map(FILE *fp)
+{
+    if (fp == NULL)
+        return -1;
+    g_file_seed++;
+    irb_insert(g_file_map, g_file_seed, fp);
+    return g_file_seed;
+}
+
+FILE *file_get(int id)
+{
+    FILE *fp = (FILE*)irb_search(g_file_map, id);
+    return fp;
+}
 ////////////////////////////////////////////////////////////////////////////////
 //                         NATIVE FILE FUNCTIONS                              //
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,10 +51,30 @@ void file_fopen()
 {
     Value *filename_param = stack_function_param(0);
     Value *mode_param = stack_function_param(1);
-    
+    char *filename = filename_param->data.str_val.buffer;
+    char *mode = mode_param->data.str_val.buffer;
+    FILE *fp = fopen(filename, mode);
+    int id = file_map(fp);
     Value *fileid = alloc_val(IntType);
-    fileid->data.int_val = 0;
+    fileid->data.int_val = id;
     stack_set_ret_val(fileid);
+}
+
+void file_fprintf()
+{
+    Value *file_param = stack_function_param(0);
+    Value *text_param = stack_function_param(1);
+    int fileid = file_param->data.int_val;
+    char *text =text_param->data.str_val.buffer;
+    FILE *fp = file_get(fileid);
+    int size = -1;
+    if (fp != NULL)
+        size = fprintf(fp, "%s", text);
+
+    Value *res = alloc_val(IntType);
+    res->data.int_val = size;
+    stack_set_ret_val(res);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,6 +83,9 @@ void file_fopen()
 
 void file_init_module()
 {
+    g_file_map = irb_new();
+    g_file_seed = 0;
+
     FuncDef *func;
 
     // fopen
@@ -56,10 +93,22 @@ void file_init_module()
     func->name = strdup("fopen");
     func->native = file_fopen;
     func->params = (vector*)malloc(sizeof(vector));
-    func->value_type = NULL;
+    func->value_type = IntType;
     vector_init(func->params);
     vector_push(func->params, new_param_info(StrType, 0));
     vector_push(func->params, new_param_info(StrType, 0));
     func_def(func);
+ 
+    // fprintf(string)
+    func = (FuncDef*)malloc(sizeof(FuncDef));
+    func->name = strdup("fprintf");
+    func->native = file_fprintf;
+    func->params = (vector*)malloc(sizeof(vector));
+    func->value_type = IntType;
+    vector_init(func->params);
+    vector_push(func->params, new_param_info(IntType, 0));
+    vector_push(func->params, new_param_info(StrType, 0));
+    func_def(func);
+
 }
 
