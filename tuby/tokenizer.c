@@ -395,6 +395,8 @@ int token_read_string()
     int start = g_source->pos + 1;
     int end = start;
     int size = 0;
+    int i;
+    int index = 0;
     next_char();
     while (g_source->current != '"')
     {
@@ -407,7 +409,14 @@ int token_read_string()
 
     end = g_source->pos - 1;
     size = end - start + 2;
-    strncpy(g_token.repr, g_source->data + start, size - 1);
+    
+    // process escape sequences.
+    for (i = start; i < start+size -1; i++)
+    {
+        g_token.repr[index] = g_source->data[i];
+        index++;
+    }
+
     g_token.repr[size - 1] = '\0';
     g_token.type = ttString;
     next_char();
