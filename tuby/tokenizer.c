@@ -80,7 +80,21 @@ int token_peek(int pos)
 {
     int actual_pos = g_source->pos + pos;
 
-    if (g_source->pos < g_source->size - 1)
+    if (actual_pos < g_source->size - 1)
+    {
+        return g_source->data[actual_pos];
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+int token_at(int pos)
+{
+    int actual_pos =  pos;
+
+    if (actual_pos < g_source->size - 1)
     {
         return g_source->data[actual_pos];
     }
@@ -390,6 +404,7 @@ int read_number()
     return 1;
 }
 
+
 int token_read_string()
 {
     int start = g_source->pos + 1;
@@ -413,7 +428,15 @@ int token_read_string()
     // process escape sequences.
     for (i = start; i < start+size -1; i++)
     {
-        g_token.repr[index] = g_source->data[i];
+        if (token_at(i) == '\\' && token_at(i+1) == 'n')
+        {
+            g_token.repr[index] = '\n';
+            i++;
+        }
+        else 
+        {
+            g_token.repr[index] = g_source->data[i];
+        }
         index++;
     }
 
