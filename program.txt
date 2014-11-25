@@ -1,3 +1,12 @@
 int file;
 file = fopen("out.txt","a+");
-print("Hello World\nAnotherWord\nAndFinally");
+fprintf(file, "Hello World\nAnotherWord\nAndFinally");
+
+int buffer[];
+int i;
+for (i = 0; i < 100; i++;)
+{
+    buffer[i] = 1;
+}
+
+print("The value is: " + buffer[1000]);

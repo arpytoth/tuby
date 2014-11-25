@@ -76,11 +76,13 @@ void var_set(Var *var, struct Value *val);
 void var_free(Var *var);
 
 //----------------------------------------------------------------------------//
+
 typedef struct Array
 {
     vector *data;
 } Array;
 
+//----------------------------------------------------------------------------//
 
 typedef struct String
 {

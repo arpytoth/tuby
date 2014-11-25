@@ -77,6 +77,25 @@ void file_fprintf()
 
 }
 
+void file_fread()
+{   
+    Value *file_param = stack_function_param(0);
+    Value *size_param = stack_function_param(1);
+    
+    int fileid = file_param->data.int_val;
+    int size  =text_param->data.int_val;
+    FILE *fp = file_get(fileid);
+    int size = -1;
+    
+    char buffer[255]; // TODO dynamic allocation.
+    if (fp != NULL)
+        size = fread(buffer, 0, 250, fp);
+
+    Value *res = alloc_val(IntType);
+    res->data.int_val = size;
+    stack_set_ret_val(res);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //                                FILE MODULE                                 //
 ////////////////////////////////////////////////////////////////////////////////
